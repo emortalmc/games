@@ -1,15 +1,18 @@
 package dev.emortal.minestom.lobby;
 
+import dev.emortal.api.modules.ModuleManager;
 import dev.emortal.minestom.core.module.core.playerprovider.EmortalPlayer;
 import dev.emortal.minestom.lobby.emote.Emote;
+import dev.emortal.minestom.lobby.emote.EmoteMenu;
 import dev.emortal.minestom.lobby.gadget.Fireball;
 import dev.emortal.minestom.lobby.gadget.Gadget;
 import dev.emortal.minestom.lobby.gadget.LightningRod;
 import dev.emortal.minestom.lobby.gadget.Trumpet;
 import dev.emortal.minestom.lobby.gadget.blaster.InkBlaster;
 import dev.emortal.minestom.lobby.gadget.lobber.BlockLobber;
+import dev.emortal.minestom.lobby.game.ServerSelectorMenu;
 import dev.emortal.minestom.lobby.util.CustomModels;
-import dev.emortal.minestom.lobby.util.MusicPlayerInventory;
+import dev.emortal.minestom.lobby.util.MusicPlayerMenu;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -31,21 +34,17 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public final class LobbyEvents {
-    public static final Tag<@NotNull Boolean> SERVER_SELECTOR_TAG = Tag.Boolean("serverSelector");
     public static final ItemStack SERVER_SELECTOR_ITEM = ItemStack.builder(Material.COMPASS)
             .set(DataComponents.ITEM_NAME, Component.text("Server Selector", NamedTextColor.GOLD).decoration(TextDecoration.ITALIC, false))
-            .set(SERVER_SELECTOR_TAG, true)
             .build();
-    public static final Tag<@NotNull Boolean> MUSIC_PLAYER_TAG = Tag.Boolean("musicPlayer");
+
     public static final ItemStack MUSIC_PLAYER_ITEM = ItemStack.builder(Material.JUKEBOX)
             .set(DataComponents.ITEM_NAME, Component.text("Music Player", NamedTextColor.LIGHT_PURPLE).decoration(TextDecoration.ITALIC, false))
-            .set(MUSIC_PLAYER_TAG, true)
             .build();
-    public static final Tag<@NotNull Boolean> EMOTES_TAG = Tag.Boolean("emotes");
+
     public static final ItemStack EMOTES_ITEM = ItemStack.builder(Material.PHANTOM_MEMBRANE)
             .itemModel(CustomModels.EMOTES.getModelId())
             .set(DataComponents.ITEM_NAME, Component.text("Emotes", NamedTextColor.AQUA).decoration(TextDecoration.ITALIC, false))
-            .set(EMOTES_TAG, true)
             .build();
 
     private static final String EMORTAL_UUID = "7bd5b459-1e6b-4753-8274-1fbd2fe9a4d5";
@@ -59,9 +58,9 @@ public final class LobbyEvents {
 //            new BubbleBlower()
     );
 
-    public static void registerGeneric(@NotNull EventNode<@NotNull Event> eventNode, @NotNull Instance instance) {
+    public static void registerGeneric(LobbyModule lobbyModule, @NotNull EventNode<@NotNull Event> eventNode, @NotNull Instance instance) {
         eventNode.addListener(PlayerSpawnEvent.class, event -> onSpawn(event.getPlayer(), event.getInstance(), instance));
-        eventNode.addListener(PlayerUseItemEvent.class, LobbyEvents::onItemUse);
+        eventNode.addListener(PlayerUseItemEvent.class, event -> onItemUse(lobbyModule, event));
 
         for (Gadget gadget : GADGETS) {
             gadget.registerListeners(eventNode);
@@ -96,23 +95,27 @@ public final class LobbyEvents {
         player.setTag(LobbyTags.LOBBABLE, true);
     }
 
-    private static void onItemUse(@NotNull PlayerUseItemEvent event) {
+    private static void onItemUse(LobbyModule lobbyModule, @NotNull PlayerUseItemEvent event) {
         if (event.getHand() != PlayerHand.MAIN) return;
 
         Player player = event.getPlayer();
         ItemStack mainHandItem = player.getItemInMainHand();
-        if (mainHandItem.hasTag(MUSIC_PLAYER_TAG)) {
+
+        if (SERVER_SELECTOR_ITEM.equals(mainHandItem)) {
             cancel(event);
-            player.openInventory(MusicPlayerInventory.getInventory());
+            ServerSelectorMenu menu = new ServerSelectorMenu(player, lobbyModule.matchmaker, lobbyModule.playerTracker, lobbyModule.configProvider);
+            player.openInventory(menu.getInventory());
         }
 
-        if (mainHandItem.hasTag(EMOTES_TAG)) {
+        if (MUSIC_PLAYER_ITEM.equals(mainHandItem)) {
             cancel(event);
-            Emote.openInventory(player);
+            player.openInventory(new MusicPlayerMenu(player).getInventory());
         }
 
-
-
+        if (EMOTES_ITEM.equals(mainHandItem)) {
+            cancel(event);
+            player.openInventory(new EmoteMenu(player).getInventory());
+        }
     }
 
     public static void registerProtectionEvents(@NotNull EventNode<@NotNull Event> eventNode, @NotNull Instance spawnInstance) {

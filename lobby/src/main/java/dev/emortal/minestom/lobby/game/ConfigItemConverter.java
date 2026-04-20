@@ -55,13 +55,13 @@ final class ConfigItemConverter {
             lore.add(Component.text("Right click to select map", NamedTextColor.AQUA).decoration(TextDecoration.ITALIC, false));
         }
 
-//        lore.add(Component.empty());
-//        lore.add(Component.text()
-//                .append(Component.text("● ", NamedTextColor.GREEN))
-//                .append(Component.text(playerCount, NamedTextColor.GREEN, TextDecoration.BOLD))
-//                .append(Component.text(" playing", NamedTextColor.GREEN))
-//                .build()
-//                .decoration(TextDecoration.ITALIC, false));
+        lore.add(Component.empty());
+        lore.add(Component.text()
+                .append(Component.text("● ", NamedTextColor.GREEN))
+                .append(Component.text(playerCount, NamedTextColor.GREEN, TextDecoration.BOLD))
+                .append(Component.text(" playing", NamedTextColor.GREEN))
+                .build()
+                .decoration(TextDecoration.ITALIC, false));
 
         return lore;
     }

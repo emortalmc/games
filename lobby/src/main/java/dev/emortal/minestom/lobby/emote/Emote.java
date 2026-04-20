@@ -26,7 +26,6 @@ public class Emote {
     private static final Path MODEL_PATH = Path.of("emotes.bbmodel");
     public static BBModel MODEL;
 
-    private static final EmoteInventory INVENTORY = new EmoteInventory();
     private static final Tag<@NotNull EmoteTask> TASK_TAG = Tag.Transient("emoteTask");
 
     public static void init(EventNode<@NotNull Event> eventNode) {
@@ -58,11 +57,6 @@ public class Emote {
         EmoteTask emoteTask = new EmoteTask(player, emote);
         player.setTag(TASK_TAG, emoteTask);
     }
-
-    public static void openInventory(Player player) {
-        player.openInventory(INVENTORY);
-    }
-
 
     public static class EmoteTask implements Supplier<TaskSchedule> {
         private final Pos originalPos;

@@ -6,6 +6,7 @@ import dev.emortal.api.modules.annotation.Dependency;
 import dev.emortal.api.modules.annotation.ModuleData;
 import dev.emortal.api.modules.env.ModuleEnvironment;
 import dev.emortal.api.service.matchmaker.MatchmakerService;
+import dev.emortal.api.service.playertracker.PlayerTrackerService;
 import dev.emortal.api.utils.GrpcStubCollection;
 import dev.emortal.minestom.core.module.MinestomModule;
 import dev.emortal.minestom.core.module.kubernetes.KubernetesModule;
@@ -17,7 +18,6 @@ import dev.emortal.minestom.lobby.commands.TrainCommand;
 import dev.emortal.minestom.lobby.emote.Emote;
 import dev.emortal.minestom.lobby.events.EventManager;
 import dev.emortal.minestom.lobby.features.*;
-import dev.emortal.minestom.lobby.game.ServerSelector;
 import dev.emortal.minestom.lobby.util.PolarConvertingLoader;
 import net.hollowcube.polar.ChunkSelector;
 import net.minestom.server.MinecraftServer;
@@ -31,6 +31,7 @@ import net.minestom.server.instance.block.Block;
 import net.minestom.server.instance.block.BlockManager;
 import net.minestom.server.network.packet.server.play.TeamsPacket;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,6 +44,10 @@ public final class LobbyModule extends MinestomModule {
 
     public static final Pos SPAWN_POINT = new Pos(0.5, 66, 0.5, 180f, 0f);
     private static final int SPAWN_CHUNK_RADIUS = 5;
+
+    @Nullable MatchmakerService matchmaker;
+    @Nullable PlayerTrackerService playerTracker;
+    ConfigProvider<GameModeConfig> configProvider;
 
     LobbyModule(@NotNull ModuleEnvironment environment) {
         super(environment);
@@ -71,16 +76,30 @@ public final class LobbyModule extends MinestomModule {
         this.spawnFeatures(instance);
 
         LiveConfigModule liveConfigModule = this.environment.moduleProvider().getModule(LiveConfigModule.class);
-        if (liveConfigModule != null) this.loadSelectorAndNpcs(liveConfigModule, instance);
+
+        if (liveConfigModule != null) {
+            this.configProvider = liveConfigModule.getGameModes();
+
+            if (this.configProvider == null) {
+                LOGGER.warn("GameModeCollection is not present in LiveConfigModule");
+            } else {
+                Collection<GameModeConfig> allConfigs = this.configProvider.allConfigs();
+                LOGGER.info("Loaded modes ({}): {}", allConfigs.size(), allConfigs.stream().map(GameModeConfig::friendlyName).collect(Collectors.joining(", ")));
+                LOGGER.debug("Game modes: {}", allConfigs);
+                this.matchmaker = GrpcStubCollection.getMatchmakerService().orElse(null);
+                this.playerTracker = GrpcStubCollection.getPlayerTrackerService().orElse(null);
+            }
+        }
 
         MessagingModule messagingModule = this.environment.moduleProvider().getModule(MessagingModule.class);
+
         if (messagingModule != null) GrpcStubCollection.getPartyService().ifPresent(partyService -> {
             EventNode<@NotNull PlayerEvent> eventManagerNode = EventNode.type("event-manager", EventFilter.PLAYER);
             MinecraftServer.getGlobalEventHandler().addChild(eventManagerNode);
             new EventManager(messagingModule, partyService, eventManagerNode, instance);
         });
 
-        LobbyEvents.registerGeneric(this.eventNode, instance);
+        LobbyEvents.registerGeneric(this, this.eventNode, instance);
         LobbyEvents.registerProtectionEvents(this.eventNode, instance);
 
         CommandManager commandManager = MinecraftServer.getCommandManager();
@@ -112,22 +131,6 @@ public final class LobbyModule extends MinestomModule {
         new EmortalRoomFeature().register(instance);
         new ABSSecretFeature().register(instance);
         new ModelDecorationFeature().register(instance);
-    }
-
-    private void loadSelectorAndNpcs(@NotNull LiveConfigModule module, @NotNull Instance instance) {
-        ConfigProvider<GameModeConfig> gameModes = module.getGameModes();
-        if (gameModes == null) {
-            LOGGER.warn("GameModeCollection is not present in LiveConfigModule");
-            return;
-        }
-
-        Collection<GameModeConfig> allConfigs = gameModes.allConfigs();
-
-        LOGGER.info("Loaded modes ({}): {}", allConfigs.size(), allConfigs.stream().map(GameModeConfig::friendlyName).collect(Collectors.joining(", ")));
-        LOGGER.debug("Game modes: {}", allConfigs);
-
-        MatchmakerService matchmaker = GrpcStubCollection.getMatchmakerService().orElse(null);
-        new ServerSelector(instance, matchmaker, GrpcStubCollection.getPlayerTrackerService().orElse(null), this.eventNode, gameModes);
     }
 
     private void loadKubernetesFeatures() {
