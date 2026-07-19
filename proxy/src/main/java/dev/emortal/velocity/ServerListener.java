@@ -9,6 +9,10 @@ import com.velocitypowered.api.proxy.server.RegisteredServer;
 import dev.emortal.messaging.message.Channel;
 import dev.emortal.messaging.message.OnlinePlayersMessage;
 import dev.emortal.messaging.types.GameInfo;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,11 +44,38 @@ public class ServerListener {
 
     @Subscribe
     void changeServer(ServerPostConnectEvent event) {
-        plugin.getRedis().sendMessage(Channel.ALL, new OnlinePlayersMessage(getOnlinePlayers()));
+        updateOnlinePlayers();
     }
     @Subscribe
     void changeServer(DisconnectEvent event) {
+        updateOnlinePlayers();
+    }
+
+    private void updateOnlinePlayers() {
         plugin.getRedis().sendMessage(Channel.ALL, new OnlinePlayersMessage(getOnlinePlayers()));
+
+        proxy.sendPlayerListHeader(() -> createTablistHeader());
+        proxy.sendPlayerListFooter(() -> createTablistFooter(proxy.getPlayerCount()));
+    }
+
+    private Component createTablistHeader() {
+        return Component.text()
+                .append(Component.text("┌                                                  ", NamedTextColor.GOLD))
+                .append(Component.text("┐ ", NamedTextColor.LIGHT_PURPLE))
+                .appendNewline()
+                .append(MiniMessage.miniMessage().deserialize("<gradient:gold:light_purple><bold>EmortalMC</bold></gradient>"))
+                .appendNewline()
+                .build();
+    }
+
+    private Component createTablistFooter(int online) {
+        return Component.text()
+                .append(Component.text(" ", NamedTextColor.GRAY)).appendNewline()
+                .append(Component.text(online + " online", NamedTextColor.GRAY)).appendNewline()
+                .append(Component.text("ᴍᴄ.ᴇᴍᴏʀᴛᴀʟ.ᴅᴇᴠ", TextColor.color(0x266ee0))).appendNewline()
+                .append(Component.text("└                                                  ", NamedTextColor.LIGHT_PURPLE))
+                .append(Component.text("┘ ", NamedTextColor.GOLD))
+                .build();
     }
 
     public Map<String, Integer> getOnlinePlayers() {
