@@ -2,7 +2,6 @@ package dev.emortal.minestom.lobby.features;
 
 import dev.emortal.minestom.lobby.util.PolarConvertingLoader;
 import dev.emortal.minestom.lobby.util.entity.BetterEntity;
-import net.hollowcube.polar.ChunkSelector;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
@@ -69,7 +68,7 @@ public final class ABSSecretFeature implements LobbyFeature {
         private final Instance instance;
 
         public SecretWorld() {
-            PolarConvertingLoader loader = new PolarConvertingLoader("absworld", ChunkSelector.radius(3));
+            PolarConvertingLoader loader = new PolarConvertingLoader("absworld");
             instance = loader.load().join();
 
             instance.enableAutoChunkLoad(false);

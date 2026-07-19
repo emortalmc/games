@@ -1,7 +1,6 @@
 package dev.emortal.minestom.lobby.features;
 
 import dev.emortal.minestom.lobby.util.PolarConvertingLoader;
-import net.hollowcube.polar.ChunkSelector;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.minestom.server.coordinate.Point;
@@ -20,7 +19,7 @@ public class OldLobbyFeature implements LobbyFeature {
 
     @Override
     public void register(@NotNull Instance instance) {
-        PolarConvertingLoader loader = new PolarConvertingLoader("oldlobby", ChunkSelector.radius(4));
+        PolarConvertingLoader loader = new PolarConvertingLoader("oldlobby");
         CompletableFuture<InstanceContainer> oldLobbyInstance = loader.load();
 
         oldLobbyInstance.thenAccept(oldInstance -> {

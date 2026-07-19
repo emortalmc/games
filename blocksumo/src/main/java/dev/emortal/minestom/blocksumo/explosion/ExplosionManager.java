@@ -11,6 +11,7 @@ import net.minestom.server.entity.EntityType;
 import net.minestom.server.entity.GameMode;
 import net.minestom.server.entity.Player;
 import net.minestom.server.entity.damage.Damage;
+import net.minestom.server.entity.metadata.other.PrimedTntMeta;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.batch.AbsoluteBlockBatch;
 import net.minestom.server.instance.block.Block;
@@ -44,9 +45,8 @@ public final class ExplosionManager {
     public @NotNull Entity spawnTnt(@NotNull Point origin, int fuseTime, @NotNull ExplosionData data, @Nullable Player placer) {
         Entity tnt = new Entity(EntityType.TNT);
 
-        // TODO: Minestom borky https://github.com/Minestom/Minestom/pull/2678
-//        PrimedTntMeta meta = (PrimedTntMeta) tnt.getEntityMeta();
-//        meta.setFuseTime(fuseTime);
+        PrimedTntMeta meta = (PrimedTntMeta) tnt.getEntityMeta();
+        meta.setFuseTime(fuseTime);
 
         tnt.setVelocity(new Vec(0.4, 4, 0).rotateAroundY(ThreadLocalRandom.current().nextDouble(Math.PI*2)));
 
