@@ -1,8 +1,9 @@
 package dev.emortal.minestom.minesweeper.view;
 
+import dev.emortal.minestom.minesweeper.board.Board;
+import dev.emortal.minestom.minesweeper.map.MapManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.minestom.server.instance.Instance;
 import net.minestom.server.timer.TaskSchedule;
 import org.jetbrains.annotations.NotNull;
 
@@ -10,32 +11,30 @@ import java.time.Duration;
 
 public final class ActionBar {
 
-    private final @NotNull Instance instance;
+    private final @NotNull Board board;
     private final long startTime;
 
     private int flags;
-    private int lives;
 
-    public ActionBar(@NotNull Instance instance) {
-        this.instance = instance;
-        this.lives = 3;
-        this.startTime = System.currentTimeMillis();
+    public ActionBar(@NotNull Board board) {
+        this.board = board;
+        this.startTime = System.currentTimeMillis() - board.getStartingTicks() * 50L;
 
         // Keep action bar shown
-        this.instance.scheduler().buildTask(this::update).repeat(TaskSchedule.tick(20)).schedule();
+        this.board.getInstance().scheduler().buildTask(this::update).repeat(TaskSchedule.tick(20)).schedule();
     }
 
     public void incrementLives() {
-        if (this.lives < 3) {
-            this.lives++;
+        if (this.board.getLives() < MapManager.MAX_LIVES) {
+            this.board.setLives(this.board.getLives() + 1);
             this.update();
         }
     }
 
     public int decrementLives() {
-        this.lives--;
+        this.board.setLives(this.board.getLives() - 1);
         this.update();
-        return this.lives;
+        return this.board.getLives();
     }
 
     public void incrementFlags() {
@@ -44,7 +43,7 @@ public final class ActionBar {
     }
 
     public void decrementFlags() {
-        this.flags--;
+        if (this.flags > 0) this.flags--;
         this.update();
     }
 
@@ -53,11 +52,11 @@ public final class ActionBar {
         Duration duration = Duration.ofMillis(now - this.startTime);
 
         // ☠ {mines} MINES | ⚑ {flags} FLAGS | ⌚ 1m 23s
-        this.instance.sendActionBar(Component.text().append(Component.text("⚑ ", NamedTextColor.GREEN))
+        this.board.getInstance().sendActionBar(Component.text().append(Component.text("⚑ ", NamedTextColor.GREEN))
                 .append(Component.text(this.flags, NamedTextColor.GREEN))
                 .append(Component.text(" FLAGS", NamedTextColor.GREEN))
                 .append(Component.text(" | ", NamedTextColor.DARK_GRAY))
-                .append(Component.text("♥ ", NamedTextColor.RED)).append(Component.text(this.lives, NamedTextColor.RED))
+                .append(Component.text("♥ ", NamedTextColor.RED)).append(Component.text(this.board.getLives(), NamedTextColor.RED))
                 .append(Component.text(" LIVES", NamedTextColor.RED))
                 .append(Component.text(" | ", NamedTextColor.DARK_GRAY))
                 .append(Component.text("⌚ ", NamedTextColor.AQUA))

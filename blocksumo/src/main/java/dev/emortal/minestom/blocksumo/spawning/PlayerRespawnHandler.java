@@ -1,6 +1,6 @@
 package dev.emortal.minestom.blocksumo.spawning;
 
-import dev.emortal.api.model.gamedata.V1BlockSumoPlayerData;
+import dev.emortal.messaging.types.BlockSumoData;
 import dev.emortal.minestom.blocksumo.Main;
 import dev.emortal.minestom.blocksumo.game.BlockSumoGame;
 import dev.emortal.minestom.blocksumo.game.PlayerTags;
@@ -140,8 +140,7 @@ public final class PlayerRespawnHandler {
             PlayerRespawnHandler.this.game.getSpawnProtectionManager().startProtection(this.player, 4000);
 
             this.prepareRespawn(respawnPos, 5);
-            this.giveWoolAndShears();
-            this.giveColoredChestplate();
+            giveItems(player);
         }
 
         private void reset() {
@@ -210,22 +209,27 @@ public final class PlayerRespawnHandler {
                     .delay(TaskSchedule.tick(restoreDelay * ServerFlag.SERVER_TICKS_PER_SECOND))
                     .schedule();
         }
+    }
 
-        private void giveWoolAndShears() {
-            V1BlockSumoPlayerData playerData = PlayerRespawnHandler.this.game.getPlayerDataMap().getOrDefault(this.player.getUuid(), Main.DEFAULT_PLAYER_DATA);
-            TeamColor color = this.player.getTag(PlayerTags.TEAM_COLOR);
+    public void giveItems(Player player) {
+        giveWoolAndShears(player);
+        giveColoredChestplate(player);
+    }
 
-            this.player.getInventory().setItemStack(playerData.getShearsSlot(), ItemStack.of(Material.SHEARS, 1));
-            this.player.getInventory().setItemStack(playerData.getBlockSlot(), color.getWoolItem());
-        }
+    public void giveWoolAndShears(Player player) {
+        BlockSumoData playerData = PlayerRespawnHandler.this.game.getPlayerDataMap().getOrDefault(player.getUuid(), Main.DEFAULT_PLAYER_DATA);
+        TeamColor color = player.getTag(PlayerTags.TEAM_COLOR);
 
-        private void giveColoredChestplate() {
-            TeamColor color = this.player.getTag(PlayerTags.TEAM_COLOR);
-            ItemStack chestplate = ItemStack.builder(Material.LEATHER_CHESTPLATE)
-                    .set(DataComponents.DYED_COLOR, color.getNamedTextColor())
-                    .build();
-            this.player.setChestplate(chestplate);
-        }
+        player.getInventory().setItemStack(playerData.shearsSlot(), ItemStack.of(Material.SHEARS, 1));
+        player.getInventory().setItemStack(playerData.blockSlot(), color.getWoolItem());
+    }
+
+    public void giveColoredChestplate(Player player) {
+        TeamColor color = player.getTag(PlayerTags.TEAM_COLOR);
+        ItemStack chestplate = ItemStack.builder(Material.LEATHER_CHESTPLATE)
+                .set(DataComponents.DYED_COLOR, color.getNamedTextColor())
+                .build();
+        player.setChestplate(chestplate);
     }
 
     public RespawnPointSelector getRespawnPointSelector() {

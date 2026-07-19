@@ -1,8 +1,7 @@
 package dev.emortal.minestom.lazertag.gun;
 
+import dev.emortal.minestom.core.raycast.Ray;
 import dev.emortal.minestom.lazertag.game.LazerTagGame;
-import dev.emortal.minestom.lazertag.raycast.RaycastResult;
-import dev.emortal.minestom.lazertag.raycast.RaycastUtil;
 import dev.emortal.minestom.lazertag.util.DisplayEntityUtil;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
@@ -53,24 +52,38 @@ public abstract class Gun {
             Vec shootDir = spread(shooter.getPosition().direction(), this.itemInfo.spread());
             Pos eyePos = shooter.getPosition().add(0, shooter.getEyeHeight(), 0);
 
-            RaycastResult raycast = RaycastUtil.raycast(this.game.getInstance(), eyePos, shootDir, this.itemInfo.distance(),
-                    entity -> entity != shooter && entity instanceof Player player && player.getGameMode() == GameMode.ADVENTURE);
-            Point hitPoint = raycast.hitPosition() == null ? eyePos.add(shootDir.mul(this.itemInfo.distance())) : raycast.hitPosition();
 
-            if (raycast.hitEntity() != null) { // Hit entity
-                this.game.getDamageHandler().damage((Player) raycast.hitEntity(), shooter, shooter.getPosition(), this.itemInfo.damage());
-            } else { // Hit block
-                // TODO: hit block animation
+            Ray ray = new Ray(eyePos, shootDir.mul(this.itemInfo.distance()));
+            List<Ray.Intersection<Entity>> hit = ray.entities(shooter.getInstance().getEntities());
+
+            if (hit.isEmpty()) {
+                Point hitPoint = eyePos.add(shootDir.mul(this.itemInfo.distance()));
+                renderBulletTrail(eyePos, shootDir, hitPoint);
+                return;
             }
 
-            List<Entity> entities = DisplayEntityUtil.drawLine(this.game.getInstance(), eyePos.add(shootDir.mul(2.0)), hitPoint, new java.awt.Color(255, 255, 0, 100).getRGB(), 0, 0.3);
-            this.game.getInstance().scheduler().buildTask(() -> {
-                for (Entity entity : entities) {
-                    entity.remove();
-                }
-            }).delay(TaskSchedule.tick(7)).schedule();
-//            ParticleUtil.renderBulletTrail(this.game.getInstance(), eyePos.add(shootDir.mul(2.0)), hitPoint, 1.5);
+            // TODO: hit block animation
+            for (Ray.Intersection<Entity> intersection : hit) {
+                Entity entity = intersection.object();
+                if (entity == shooter) continue;
+                if (!(entity instanceof Player player)) continue;
+                if (player.getGameMode() != GameMode.ADVENTURE) continue;
+
+                Point hitPoint = intersection.point();
+                this.game.getDamageHandler().damage(player, shooter, shooter.getPosition(), this.itemInfo.damage());
+
+                renderBulletTrail(eyePos, shootDir, hitPoint);
+            }
         }
+    }
+
+    private void renderBulletTrail(Pos eyePos, Vec direction, Point hitPoint) {
+        List<Entity> entities = DisplayEntityUtil.drawLine(this.game.getInstance(), eyePos.add(direction.mul(2.0)), hitPoint, new java.awt.Color(255, 255, 0, 100).getRGB(), 0, 0.3);
+        this.game.getInstance().scheduler().buildTask(() -> {
+            for (Entity entity : entities) {
+                entity.remove();
+            }
+        }).delay(TaskSchedule.tick(7)).schedule();
     }
 
     public void afterShoot(Player shooter, int ammo) {

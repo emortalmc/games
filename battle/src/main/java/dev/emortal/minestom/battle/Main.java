@@ -1,26 +1,31 @@
 package dev.emortal.minestom.battle;
 
+import dev.emortal.messaging.types.GameInfo;
 import dev.emortal.minestom.battle.game.BattleGame;
-import dev.emortal.minestom.battle.map.MapManager;
-import dev.emortal.minestom.gamesdk.MinestomGameServer;
-import dev.emortal.minestom.gamesdk.config.GameSdkConfig;
+import dev.emortal.minestom.core.EmortalServer;
+import dev.emortal.minestom.core.game.config.GameConfig;
+import dev.emortal.minestom.core.map.MapManager;
 import io.github.togar2.pvp.MinestomPvP;
-import net.minestom.server.MinecraftServer;
+
+import java.util.Set;
 
 public final class Main {
     private static final int MIN_PLAYERS = 2;
+    private static final int MAX_PLAYERS = 12;
+    private static final Set<String> MAPS = Set.of(
+            "caverns",
+            "cove",
+            "crucible"
+    );
 
     static void main() {
-        MinestomGameServer.create((a) -> {
+        EmortalServer.start(() -> {
             MinestomPvP.init();
-            MinecraftServer.getConnectionManager().setPlayerProvider(PermissionCustomPlayer::new);
 
-            MapManager mapManager = new MapManager();
-
-            return GameSdkConfig.builder()
-                    .minPlayers(MIN_PLAYERS)
-                    .gameCreator(info -> new BattleGame(info, mapManager.getMap(info.mapId())))
-                    .build();
+            MapManager mapManager = new MapManager(MAPS);
+            GameInfo gameInfo = new GameInfo("battle", MAPS, MIN_PLAYERS, MAX_PLAYERS, GameInfo.MatchMethod.COUNTDOWN);
+            GameConfig gameConfig = new GameConfig(MIN_PLAYERS, GameConfig.FinishBehaviour.LOBBY, info -> new BattleGame(info, mapManager.loadMap(info.map())));
+            EmortalServer.registerGame(gameInfo, gameConfig);
         });
     }
 }

@@ -32,6 +32,8 @@ public class BoardReader {
         validateVersion(version);
 
         long seed = buffer.read(LONG);
+        long ticks = buffer.read(LONG);
+        int lives = buffer.read(VAR_INT);
 
         var compressedDataLength = buffer.read(VAR_INT);
 
@@ -41,7 +43,7 @@ public class BoardReader {
         newBuffer.writeIndex(bytes.length);
         buffer = newBuffer;
 
-        Board board = new Board(seed, instance, MapTheme.DEFAULT);
+        Board board = new Board(seed, ticks, lives, instance, MapTheme.DEFAULT);
 
         List<Chunk> chunks = new ArrayList<>();
 

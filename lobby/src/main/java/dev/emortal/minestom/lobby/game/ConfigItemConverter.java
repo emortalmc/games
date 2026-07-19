@@ -1,6 +1,6 @@
 package dev.emortal.minestom.lobby.game;
 
-import dev.emortal.api.liveconfigparser.configs.common.ConfigItem;
+import dev.emortal.minestom.lobby.config.ConfigItem;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -22,6 +22,7 @@ final class ConfigItemConverter {
     private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
 
     static @Nullable ItemStack convert(@NotNull ConfigItem item, @NotNull List<Component> lore) {
+        if (item.material() == null) return null;
         Material material = Material.fromKey(item.material());
         if (material == null) {
             LOGGER.error("Failed to parse material '{}' from config item", item.material());
@@ -37,8 +38,7 @@ final class ConfigItemConverter {
     }
 
     static @NotNull List<Component> convertLore(@NotNull ConfigItem item) {
-        if (item.lore() == null) return new ArrayList<>(); // Lore should never be null but there's a big in the live-config-parser (Jan 2024)
-
+        if (item.lore() == null) return new ArrayList<>();
         List<Component> lore = new ArrayList<>();
         for (String line : item.lore()) {
             lore.add(MINI_MESSAGE.deserialize(line).decoration(TextDecoration.ITALIC, false));
@@ -55,13 +55,15 @@ final class ConfigItemConverter {
             lore.add(Component.text("Right click to select map", NamedTextColor.AQUA).decoration(TextDecoration.ITALIC, false));
         }
 
-//        lore.add(Component.empty());
-//        lore.add(Component.text()
-//                .append(Component.text("● ", NamedTextColor.GREEN))
-//                .append(Component.text(playerCount, NamedTextColor.GREEN, TextDecoration.BOLD))
-//                .append(Component.text(" playing", NamedTextColor.GREEN))
-//                .build()
-//                .decoration(TextDecoration.ITALIC, false));
+        if (playerCount > 0) {
+            lore.add(Component.empty());
+            lore.add(Component.text()
+                    .append(Component.text("● ", NamedTextColor.GREEN))
+                    .append(Component.text(playerCount, NamedTextColor.GREEN, TextDecoration.BOLD))
+                    .append(Component.text(" playing", NamedTextColor.GREEN))
+                    .build()
+                    .decoration(TextDecoration.ITALIC, false));
+        }
 
         return lore;
     }

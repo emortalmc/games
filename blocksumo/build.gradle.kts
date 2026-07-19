@@ -1,6 +1,6 @@
 plugins {
     java
-    id("com.gradleup.shadow") version "9.3.1"
+    id("com.gradleup.shadow") version "9.5.1"
 }
 
 group = "dev.emortal.minestom.blocksumo"
@@ -10,24 +10,17 @@ repositories {
     mavenCentral()
     mavenLocal()
 
-    maven("https://repo.emortal.dev/snapshots")
-    maven("https://repo.emortal.dev/releases")
-
     maven("https://jitpack.io")
     maven("https://packages.confluent.io/maven/")
 }
 
 dependencies {
-    implementation(project(":gamesdk"))
-
-    implementation("dev.emortal:rayfast:9ce231a")
-
-    compileOnly("org.jetbrains:annotations:24.0.1")
+    implementation(project(":core"))
 }
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(25))
+        languageVersion.set(JavaLanguageVersion.of(26))
     }
 }
 

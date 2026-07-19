@@ -5,9 +5,9 @@ import dev.emortal.minestom.blocksumo.event.events.BlockSumoEvent;
 import dev.emortal.minestom.blocksumo.game.BlockSumoGame;
 import dev.emortal.minestom.blocksumo.powerup.PowerUp;
 import dev.emortal.minestom.blocksumo.powerup.PowerUpManager;
-import dev.emortal.minestom.core.module.core.playerprovider.EmortalPlayer;
-import dev.emortal.minestom.gamesdk.game.Game;
-import dev.emortal.minestom.gamesdk.game.GameProvider;
+import dev.emortal.minestom.core.game.Game;
+import dev.emortal.minestom.core.game.GameProvider;
+import dev.emortal.minestom.core.utils.command.ExtraConditions;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.minestom.server.MinecraftServer;
@@ -34,7 +34,7 @@ public final class GameCommand extends Command {
         super("game");
         this.gameProvider = gameProvider;
 
-        this.setCondition((sender, cmd) -> Conditions.playerOnly(sender, cmd) && sender instanceof EmortalPlayer e && e.hasPermission("command.game.blocksumo"));
+        this.setCondition((sender, cmd) -> Conditions.playerOnly(sender, cmd) && ExtraConditions.hasPermission(sender, "command.game.blocksumo"));
 
         ArgumentLiteral event = new ArgumentLiteral("event");
         ArgumentLiteral start = new ArgumentLiteral("start");

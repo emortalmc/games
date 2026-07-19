@@ -1,6 +1,6 @@
 plugins {
     java
-    id("com.gradleup.shadow") version "9.3.1"
+    id("com.gradleup.shadow") version "9.5.1"
 }
 
 group = "dev.emortal"
@@ -18,13 +18,13 @@ repositories {
 }
 
 dependencies {
-    implementation(project(":gamesdk"))
+    implementation(project(":core"))
     implementation("com.github.luben:zstd-jni:1.5.7-4")
 }
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(25))
+        languageVersion.set(JavaLanguageVersion.of(26))
     }
 }
 

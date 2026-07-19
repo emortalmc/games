@@ -1,6 +1,6 @@
 package dev.emortal.minestom.lobby;
 
-import dev.emortal.minestom.core.module.core.playerprovider.EmortalPlayer;
+import dev.emortal.minestom.core.utils.command.ExtraConditions;
 import dev.emortal.minestom.lobby.emote.Emote;
 import dev.emortal.minestom.lobby.gadget.Fireball;
 import dev.emortal.minestom.lobby.gadget.Gadget;
@@ -77,22 +77,20 @@ public final class LobbyEvents {
         player.getInventory().setItemStack(4, SERVER_SELECTOR_ITEM);
         player.getInventory().setItemStack(0, MUSIC_PLAYER_ITEM);
 
-        if (!(player instanceof EmortalPlayer emortalPlayer)) return;
-
-        if (emortalPlayer.hasPermission("lobby.emotes")) {
+        if (ExtraConditions.hasPermission(player, "lobby.emotes")) {
             player.getInventory().setItemStack(1, EMOTES_ITEM);
         }
 
         int gadgetSlot = 9;
         for (Gadget gadget : GADGETS) {
-            if (!gadget.isAllowed(emortalPlayer)) continue;
+            if (!gadget.isAllowed(player)) continue;
             gadget.give(player, gadgetSlot);
             gadgetSlot++;
         }
 
         handlePlayerSpecific(player);
 
-        if (emortalPlayer.hasPermission("lobby.fly")) player.setAllowFlying(true);
+        if (ExtraConditions.hasPermission(player, "lobby.fly")) player.setAllowFlying(true);
         player.setTag(LobbyTags.LOBBABLE, true);
     }
 
@@ -127,13 +125,13 @@ public final class LobbyEvents {
 
     private static void onLogin(@NotNull AsyncPlayerConfigurationEvent event, @NotNull Instance spawnInstance) {
         event.setSpawningInstance(spawnInstance);
-        event.getPlayer().setRespawnPoint(LobbyModule.SPAWN_POINT);
+        event.getPlayer().setRespawnPoint(Entrypoint.SPAWN_POINT);
     }
 
     private static void onMove(@NotNull PlayerMoveEvent event) {
         Player player = event.getPlayer();
         if (player.getPosition().y() < -10) {
-            player.teleport(LobbyModule.SPAWN_POINT);
+            player.teleport(Entrypoint.SPAWN_POINT);
         }
     }
 

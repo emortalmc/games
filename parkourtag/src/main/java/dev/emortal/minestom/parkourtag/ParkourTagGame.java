@@ -1,18 +1,14 @@
 package dev.emortal.minestom.parkourtag;
 
-import com.google.common.collect.Sets;
-import dev.emortal.minestom.gamesdk.MinestomGameServer;
-import dev.emortal.minestom.gamesdk.config.GameCreationInfo;
-import dev.emortal.minestom.gamesdk.game.Game;
-import dev.emortal.minestom.gamesdk.util.GameWinLoseMessages;
+import com.alibaba.fastjson2.JSONObject;
+import dev.emortal.minestom.core.game.Game;
+import dev.emortal.minestom.core.game.config.GameCreationInfo;
+import dev.emortal.minestom.core.game.util.GameWinLoseMessages;
+import dev.emortal.minestom.core.map.LoadedMap;
 import dev.emortal.minestom.parkourtag.listeners.ParkourTagAttackListener;
 import dev.emortal.minestom.parkourtag.listeners.ParkourTagDoubleJumpListener;
 import dev.emortal.minestom.parkourtag.listeners.ParkourTagTickListener;
-import dev.emortal.minestom.parkourtag.map.LoadedMap;
-import dev.emortal.minestom.parkourtag.map.MapData;
 import dev.emortal.minestom.parkourtag.physics.MinecraftPhysics;
-import io.micrometer.core.instrument.Gauge;
-import io.micrometer.core.instrument.Metrics;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
@@ -24,6 +20,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.title.Title;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.ServerFlag;
+import net.minestom.server.color.TeamColor;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.EntityType;
@@ -42,6 +39,7 @@ import org.jetbrains.annotations.Nullable;
 import java.time.Duration;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Supplier;
 
@@ -51,19 +49,19 @@ public class ParkourTagGame extends Game {
     private static final Pos SPAWN_POINT = new Pos(0.5, 65.0, 0.5);
 
     public static final Team TAGGER_TEAM = MinecraftServer.getTeamManager().createBuilder("taggers")
-            .teamColor(NamedTextColor.RED)
+            .teamColor(TeamColor.RED)
             .nameTagVisibility(TeamsPacket.NameTagVisibility.ALWAYS)
             .collisionRule(TeamsPacket.CollisionRule.NEVER)
             .updateTeamPacket()
             .build();
     public static final Team GOONS_TEAM = MinecraftServer.getTeamManager().createBuilder("goons")
-            .teamColor(NamedTextColor.GREEN)
+            .teamColor(TeamColor.GREEN)
             .nameTagVisibility(TeamsPacket.NameTagVisibility.HIDE_FOR_OTHER_TEAMS)
             .collisionRule(TeamsPacket.CollisionRule.NEVER)
             .updateTeamPacket()
             .build();
     public static final Team DEAD_TEAM = MinecraftServer.getTeamManager().createBuilder("dead")
-            .teamColor(NamedTextColor.GRAY)
+            .teamColor(TeamColor.GRAY)
             .prefix(Component.text("☠ ", NamedTextColor.GRAY))
             .nameTagVisibility(TeamsPacket.NameTagVisibility.NEVER)
             .collisionRule(TeamsPacket.CollisionRule.NEVER)
@@ -72,18 +70,18 @@ public class ParkourTagGame extends Game {
 
     public static final int MIN_PLAYERS = 2;
 
-    private final @NotNull LoadedMap map;
+    private final MinecraftPhysics physics;
 
-    private final Set<Player> taggers = Sets.newConcurrentHashSet();
-    private final Set<Player> goons = Sets.newConcurrentHashSet();
+    private final Set<Player> taggers = ConcurrentHashMap.newKeySet();
+    private final Set<Player> goons = ConcurrentHashMap.newKeySet();
     private final BossBar bossBar = BossBar.bossBar(Component.empty(), 0f, BossBar.Color.PINK, BossBar.Overlay.PROGRESS);
 
     private GameStage gameStage = GameStage.PRE_GAME;
     private @Nullable Task gameTimerTask;
 
-    protected ParkourTagGame(@NotNull GameCreationInfo creationInfo, @NotNull LoadedMap map) {
-        super(creationInfo);
-        this.map = map;
+    protected ParkourTagGame(@NotNull GameCreationInfo creationInfo, @NotNull LoadedMap map, MinecraftPhysics physics) {
+        super(creationInfo, map);
+        this.physics = physics;
 
         ParkourTagTickListener.registerListener(this.getEventNode(), this, this.getInstance());
     }
@@ -117,17 +115,17 @@ public class ParkourTagGame extends Game {
 
     @Override
     public @NotNull Instance getSpawningInstance(@NotNull Player player) {
-        return this.map.instance();
+        return getMap().instance();
     }
 
     public @NotNull Instance getInstance() {
-        return this.map.instance();
+        return getMap().instance();
     }
 
     public void start() {
         this.playSound(Sound.sound(SoundEvent.BLOCK_PORTAL_TRIGGER, Sound.Source.MASTER, 0.45f, 1.27f));
 
-        this.map.instance().scheduler().submitTask(new Supplier<>() {
+        getMap().instance().scheduler().submitTask(new Supplier<>() {
             int i = 3;
 
             @Override
@@ -151,29 +149,13 @@ public class ParkourTagGame extends Game {
                 return TaskSchedule.seconds(1);
             }
         });
-
-        String gameId = this.getCreationInfo().id();
-
-        this.meters.addAll(Set.of(
-                Gauge.builder("parkourtag.taggers_count", this, game -> game.getTaggers().size())
-                        .tag("gameId", gameId)
-                        .description("The amount of taggers currently in the game")
-                        .register(Metrics.globalRegistry),
-
-                Gauge.builder("parkourtag.goons_count", this, game -> game.getGoons().size())
-                        .tag("gameId", gameId)
-                        .description("The amount of goons currently in the game")
-                        .register(Metrics.globalRegistry)
-
-//                Gauge.builder("parkourtag.time_remaining", this, game -> game.get) todo
-        ));
     }
 
     private void pickTagger() {
         ThreadLocalRandom random = ThreadLocalRandom.current();
 
-        this.map.instance().scheduler().submitTask(new Supplier<>() {
-            int nameIter = MinestomGameServer.TEST_MODE ? 3 : 15;
+        getMap().instance().scheduler().submitTask(new Supplier<>() {
+            int nameIter = 15;
             final int offset = random.nextInt(ParkourTagGame.this.getPlayers().size());
 
             @Override
@@ -190,7 +172,7 @@ public class ParkourTagGame extends Game {
                     playSound(Sound.sound(SoundEvent.ENTITY_ENDER_DRAGON_GROWL, Sound.Source.MASTER, 0.8f, 1f), Sound.Emitter.self());
 
                     // fancy rainbow name animation
-                    map.instance().scheduler().submitTask(new Supplier<>() {
+                    getMap().instance().scheduler().submitTask(new Supplier<>() {
                         int i = 0;
 
                         @Override
@@ -254,12 +236,14 @@ public class ParkourTagGame extends Game {
         holderEntity.setNoGravity(true);
         ((AreaEffectCloudMeta) holderEntity.getEntityMeta()).setRadius(0f);
 
-        MapData spawns = this.map.mapData();
-        holderEntity.setInstance(this.map.instance(), spawns.tagger().add(0, 0.1, 0)).thenRun(() -> {
+        JSONObject data = getMap().data();
+        Pos taggerSpawn = data.getObject("tagger", Pos.class);
+        Pos goonSpawn = data.getObject("goon", Pos.class);
+        holderEntity.setInstance(getMap().instance(), taggerSpawn.add(0, 0.1, 0)).thenRun(() -> {
             for (Player tagger : taggers) {
                 holderEntity.addPassenger(tagger);
                 tagger.setGlowing(true);
-                tagger.teleport(spawns.tagger());
+                tagger.teleport(taggerSpawn);
                 tagger.updateViewerRule((entity) -> entity.getEntityId() == holderEntity.getEntityId());
                 tagger.showTitle(
                         Title.title(
@@ -270,8 +254,8 @@ public class ParkourTagGame extends Game {
                 );
             }
 
-            this.map.instance().scheduler().submitTask(new Supplier<>() {
-                int secondsLeft = MinestomGameServer.TEST_MODE ? 2 : 7;
+            getMap().instance().scheduler().submitTask(new Supplier<>() {
+                int secondsLeft = 7;
 
                 @Override
                 public TaskSchedule get() {
@@ -306,7 +290,7 @@ public class ParkourTagGame extends Game {
             player.showBossBar(this.bossBar);
 
             if (player.getTeam() == null) { // if player is not tagger
-                player.teleport(spawns.goon());
+                player.teleport(goonSpawn);
                 player.setTeam(GOONS_TEAM);
                 player.showTitle(
                         Title.title(
@@ -329,7 +313,7 @@ public class ParkourTagGame extends Game {
         int glowing = 15 + ((playerCount * 15) / 8); // 30 seconds with 8 players, 18 with 2
         int doubleJump = glowing / 2; // 15 seconds with 8 players, 9 with 2
 
-        this.gameTimerTask = this.map.instance().scheduler().submitTask(new Supplier<>() {
+        this.gameTimerTask = getMap().instance().scheduler().submitTask(new Supplier<>() {
             int secondsLeft = playTime;
 
             @Override
@@ -438,7 +422,7 @@ public class ParkourTagGame extends Game {
             }
         }
 
-        this.map.instance().scheduler().buildTask(this::finish)
+        getMap().instance().scheduler().buildTask(this::finish)
                 .delay(TaskSchedule.seconds(6))
                 .schedule();
     }
@@ -455,17 +439,15 @@ public class ParkourTagGame extends Game {
         return this.gameStage;
     }
 
-    public @NotNull LoadedMap getMap() {
-        return map;
-    }
+
 
     public MinecraftPhysics getPhysics() {
-        return getMap().physics();
+        return physics;
     }
 
     @Override
     public void cleanUp() {
-        this.map.instance().scheduleNextTick(MinecraftServer.getInstanceManager()::unregisterInstance);
+        getMap().instance().scheduleNextTick(MinecraftServer.getInstanceManager()::unregisterInstance);
 
         this.getPhysics().clear();
 

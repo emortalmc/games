@@ -2,7 +2,6 @@ package dev.emortal.minestom.parkourtag.listeners;
 
 import dev.emortal.minestom.parkourtag.GameStage;
 import dev.emortal.minestom.parkourtag.ParkourTagGame;
-import dev.emortal.minestom.parkourtag.map.MapManager;
 import dev.emortal.minestom.parkourtag.utils.NoTickingEntity;
 import dev.emortal.minestom.parkourtag.utils.PTQuaternion;
 import net.kyori.adventure.sound.Sound;
@@ -31,7 +30,7 @@ public class ParkourTagTickListener {
     private static final Tag<Boolean> launchCooldownTag = Tag.Boolean("launchCooldown");
 
     public static void registerListener(EventNode<Event> eventNode, ParkourTagGame game, Instance instance) {
-        if (instance.getTag(MapManager.MAP_ID_TAG).equals("city")) {
+        if (game.getMap().data().getString("name").equalsIgnoreCase("city")) {
             createRailParticle(3, 60, -16, game, instance);
             createRailParticle(5, 61, -18, game, instance);
 

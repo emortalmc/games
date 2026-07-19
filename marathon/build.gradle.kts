@@ -1,7 +1,7 @@
 plugins {
     java
     application
-    id("com.gradleup.shadow") version "9.3.1"
+    id("com.gradleup.shadow") version "9.5.1"
 //    id("org.graalvm.buildtools.native") version "0.11.0"
 }
 
@@ -20,12 +20,13 @@ repositories {
 }
 
 dependencies {
-    implementation(project(":gamesdk"))
+    implementation(project(":core"))
+    implementation("org.mariadb.jdbc:mariadb-java-client:3.5.9")
 }
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(25))
+        languageVersion.set(JavaLanguageVersion.of(26))
     }
 }
 

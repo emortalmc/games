@@ -1,7 +1,6 @@
 package dev.emortal.minestom.blocksumo.spawning;
 
 import dev.emortal.minestom.blocksumo.game.BlockSumoGame;
-import dev.emortal.minestom.blocksumo.map.MapData;
 import net.minestom.server.coordinate.Point;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.GameMode;
@@ -41,12 +40,12 @@ public final class RespawnPointSelector {
         }
 
         Pos pos = floorPos(bestPosition);
-        Pos direction = MapData.CENTER.sub(pos.x() + 0.5, MapData.CENTER.y(), pos.z() + 0.5);
+        Pos direction = BlockSumoGame.CENTER.sub(pos.x() + 0.5, BlockSumoGame.CENTER.y(), pos.z() + 0.5);
 
         queuedPoints.add(pos);
         removeQueuedPointAfterDelay(pos);
 
-        return MapData.CENTER.add(pos).withDirection(direction);
+        return BlockSumoGame.CENTER.add(pos).withDirection(direction);
     }
 
     private @NotNull Pos floorPos(Pos pos) {

@@ -83,7 +83,7 @@ public final class HotelReceptionistFeature implements LobbyFeature {
 
 
         InteractionEntity zakInteraction = new InteractionEntity();
-        zakInteraction.setInstance(instance, ZAK_POS.sub(0, 1, 0));
+        zakInteraction.setInstance(instance, ZAK_POS);
         zakInteraction.setHitConsumer(player -> {
             player.sendActionBar(
                     Component.text()

@@ -1,8 +1,8 @@
 package dev.emortal.minestom.minesweeper.game;
 
-import dev.emortal.minestom.gamesdk.config.GameCreationInfo;
-import dev.emortal.minestom.gamesdk.game.Game;
-import dev.emortal.minestom.gamesdk.util.GameWinLoseMessages;
+import dev.emortal.minestom.core.game.Game;
+import dev.emortal.minestom.core.game.config.GameCreationInfo;
+import dev.emortal.minestom.core.game.util.GameWinLoseMessages;
 import dev.emortal.minestom.minesweeper.board.Board;
 import dev.emortal.minestom.minesweeper.map.MapManager;
 import dev.emortal.minestom.minesweeper.util.MinesweeperLoseMessages;
@@ -19,34 +19,31 @@ import net.minestom.server.event.player.PlayerBlockBreakEvent;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.timer.TaskSchedule;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
 
 public final class MinesweeperGame extends Game {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(MinesweeperGame.class);
+
     private final @NotNull Board board;
 
     private final TeamAllocator teamAllocator = new TeamAllocator();
     private final PlayerDisconnectHandler disconnectHandler = new PlayerDisconnectHandler(this, this.teamAllocator);
+    private final SaveHandler saveHandler;
 
     public MinesweeperGame(@NotNull GameCreationInfo creationInfo, @NotNull Board board) {
-        super(creationInfo);
+        super(creationInfo, null);
 
         this.board = board;
         new InteractionManager(this, board);
 
-        this.getEventNode().addListener(PlayerBlockBreakEvent.class, event -> event.setCancelled(true));
+        this.saveHandler = new SaveHandler(board, creationInfo.playerIds());
+        this.saveHandler.startAutosaveTask();
 
-//        board.getInstance().scheduler().buildTask(() -> {
-//            System.out.println("Saving game...");
-//            byte[] data = BoardWriter.write(board);
-//            try {
-//                Files.write(Path.of("game.mines"), data);
-//                System.out.println("Saved game!");
-//            } catch (IOException e) {
-//                throw new RuntimeException(e);
-//            }
-//        }).repeat(TaskSchedule.tick(20 * 10)).delay(TaskSchedule.tick(20 * 20)).schedule();
+        this.getEventNode().addListener(PlayerBlockBreakEvent.class, event -> event.setCancelled(true));
     }
 
     @Override
@@ -71,12 +68,12 @@ public final class MinesweeperGame extends Game {
         player.getAttribute(Attribute.BLOCK_INTERACTION_RANGE).setBaseValue(12);
         this.teamAllocator.allocate(player);
 
-        player.sendMessage(Component.text("Infinite Minesweeper is WIP - Your progress is not yet saved", NamedTextColor.AQUA));
         player.sendMessage(Component.text("Seed: " + this.board.getSeed(), NamedTextColor.AQUA));
     }
 
     @Override
     public void onLeave(@NotNull Player player) {
+        LOGGER.info("{} left", player.getName());
         this.disconnectHandler.onDisconnect(player);
     }
 
@@ -110,7 +107,14 @@ public final class MinesweeperGame extends Game {
 
         this.board.revealMines();
 
-        this.board.getInstance().scheduler().buildTask(this::finish).delay(TaskSchedule.seconds(4)).schedule();
+        this.saveHandler.delete();
+
+        this.board.getInstance().scheduler().buildTask(this::finish).delay(TaskSchedule.seconds(10)).schedule();
+    }
+
+    public void save() {
+        LOGGER.info("Saving board");
+        this.saveHandler.save();
     }
 
     public @NotNull Board getBoard() {

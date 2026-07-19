@@ -1,18 +1,16 @@
 package dev.emortal.minestom.blocksumo.scoreboard;
 
-import com.google.common.collect.Sets;
 import dev.emortal.minestom.blocksumo.game.BlockSumoGame;
 import dev.emortal.minestom.blocksumo.game.PlayerTags;
 import dev.emortal.minestom.blocksumo.utils.text.TextUtil;
-import it.unimi.dsi.fastutil.Pair;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.minestom.server.Viewable;
 import net.minestom.server.entity.Player;
+import net.minestom.server.scoreboard.Sidebar;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Comparator;
 import java.util.Set;
@@ -21,60 +19,53 @@ import java.util.stream.Collectors;
 public final class ScoreboardManager implements Viewable {
 
     private static final @NotNull Component FOOTER = Component.text()
-            .append(Component.text(TextUtil.convertToSmallFont("mc.emortal.dev"), NamedTextColor.DARK_GRAY))
+            .append(Component.text(TextUtil.smallFont("mc.emortal.dev"), NamedTextColor.DARK_GRAY))
             .build();
 
     // max lines is 12 because we take up 3 of our 15 lines with the header and footer
     private static final int MAX_LINES = 12;
 
-    private final @NotNull Scoreboard scoreboard = new Scoreboard(BlockSumoGame.TITLE);
+    private final @NotNull Sidebar sidebar = new Sidebar(BlockSumoGame.TITLE);
 
-    private @Nullable Set<Player> scores;
+    private Set<Player> scores = Set.of();
 
     public ScoreboardManager() {
-        this.scoreboard.createLine(new Scoreboard.ScoreboardLine("header_spacer", Component.empty(), 99));
-        this.scoreboard.createLine(new Scoreboard.ScoreboardLine("footer_spacer", Component.empty(), -8));
-        this.scoreboard.createLine(new Scoreboard.ScoreboardLine("footer", FOOTER, -9));
+
+        this.sidebar.createLine(new Sidebar.ScoreboardLine("header_spacer", Component.empty(), 99));
+        this.sidebar.createLine(new Sidebar.ScoreboardLine("footer_spacer", Component.empty(), -8));
+        this.sidebar.createLine(new Sidebar.ScoreboardLine("footer", FOOTER, -9));
     }
 
     public void updateScoreboard() {
         Set<Player> newScores = this.getViewers().stream()
-                .map(player -> Pair.of(player, player.getTag(PlayerTags.LIVES)))
-                .filter(pair -> pair.second() > 0)
-                .sorted(Comparator.<Pair<Player, Byte>, Byte>comparing(Pair::second).reversed())
+                .sorted(Comparator.comparingInt(p -> -p.getTag(PlayerTags.LIVES)))
                 .limit(MAX_LINES)
-                .map(Pair::first)
                 .collect(Collectors.toSet());
 
-        if (this.scores == null) {
-            // this is the first update, so we just create all the lines
-            this.scores = newScores;
-            for (Player player : newScores) this.scoreboard.createLine(createLine(player));
-            return;
+        // remove any players that are no longer within the top MAX_LINES
+        for (Player p : this.scores) {
+            if (newScores.contains(p)) continue;
+            this.sidebar.removeLine(p.getUuid().toString());
         }
 
-        // remove any players that are no longer within the top MAX_LINES
-        Sets.SetView<Player> removed = Sets.difference(this.scores, newScores);
-        for (Player player : removed) this.scoreboard.removeLine(player.getUuid().toString());
-
-        // add any players that are now within the top MAX_LINES
-        Sets.SetView<Player> added = Sets.difference(newScores, this.scores);
-        for (Player player : added) this.scoreboard.createLine(createLine(player));
-
-        // update the content of any players that are still within the top MAX_LINES
-        Sets.SetView<Player> updated = Sets.intersection(newScores, this.scores);
-        for (Player player : updated) {
-            byte lives = player.getTag(PlayerTags.LIVES);
-            this.scoreboard.updateLineContent(player.getUuid().toString(), createScoreboardComponent(player, lives));
-            this.scoreboard.updateLineScore(player.getUuid().toString(), lives);
+        for (Player score : this.scores) {
+            updateLine(score);
         }
 
         this.scores = newScores;
     }
 
-    private @NotNull Scoreboard.ScoreboardLine createLine(@NotNull Player player) {
+    private void updateLine(@NotNull Player player) {
         byte lives = player.getTag(PlayerTags.LIVES);
-        return new Scoreboard.ScoreboardLine(player.getUuid().toString(), createScoreboardComponent(player, lives), lives);
+
+        String lineId = player.getUuid().toString();
+
+        if (this.sidebar.getLine(lineId) != null) { // line already exists, update
+            this.sidebar.updateLineContent(lineId, createScoreboardComponent(player, lives));
+            this.sidebar.updateLineScore(lineId, lives);
+        } else { // line does not exist, create
+            this.sidebar.createLine(new Sidebar.ScoreboardLine(lineId, createScoreboardComponent(player, lives), lives));
+        }
     }
 
     private @NotNull Component createScoreboardComponent(@NotNull Player player, byte lives) {
@@ -99,17 +90,17 @@ public final class ScoreboardManager implements Viewable {
 
     @Override
     public boolean addViewer(@NotNull Player player) {
-        return this.scoreboard.addViewer(player);
+        return this.sidebar.addViewer(player);
     }
 
     @Override
     public boolean removeViewer(@NotNull Player player) {
-        return this.scoreboard.removeViewer(player);
+        return this.sidebar.removeViewer(player);
     }
 
     @Override
-    public @NotNull Set<@NotNull Player> getViewers() {
-        return this.scoreboard.getViewers();
+    public @NotNull Set<? extends Player> getViewers() {
+        return this.sidebar.getViewers();
     }
 
 }

@@ -1,7 +1,6 @@
 package dev.emortal.minestom.blocksumo.powerup;
 
 import dev.emortal.minestom.blocksumo.game.BlockSumoGame;
-import dev.emortal.minestom.blocksumo.map.MapData;
 import dev.emortal.minestom.blocksumo.powerup.item.*;
 import dev.emortal.minestom.blocksumo.powerup.item.hook.GrapplingHook;
 import dev.emortal.minestom.blocksumo.utils.FireworkUtil;
@@ -37,7 +36,7 @@ import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 
 public final class PowerUpManager {
-    private static final Pos FIREWORK_CENTER = MapData.CENTER.add(0, 1, 0);
+    private static final Pos FIREWORK_CENTER = BlockSumoGame.CENTER.add(0, 1, 0);
 
     private final @NotNull PowerUpRegistry registry;
     private final @NotNull BlockSumoGame game;
@@ -212,7 +211,7 @@ public final class PowerUpManager {
         entity.setMergeable(false);
         entity.setPickupDelay(5, TimeUnit.CLIENT_TICK);
         entity.setBoundingBox(0.5, 0.25, 0.5);
-        entity.setInstance(this.game.getInstance(), MapData.CENTER);
+        entity.setInstance(this.game.getInstance(), BlockSumoGame.CENTER);
 
         this.notifySpawned(item);
         this.displaySpawnedFirework();

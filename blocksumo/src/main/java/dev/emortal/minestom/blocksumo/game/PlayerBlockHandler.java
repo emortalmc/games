@@ -1,6 +1,5 @@
 package dev.emortal.minestom.blocksumo.game;
 
-import dev.emortal.minestom.blocksumo.map.MapData;
 import dev.emortal.minestom.blocksumo.powerup.PowerUp;
 import net.kyori.adventure.sound.Sound;
 import net.minestom.server.coordinate.Point;
@@ -25,7 +24,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class PlayerBlockHandler {
-    private static final Point SPAWN = MapData.CENTER.sub(0.5, 0, 0.5);
+    private static final Point SPAWN = BlockSumoGame.CENTER.sub(0.5, 0, 0.5);
 
     private static final Direction[] DIRECTIONS = Direction.values();
 

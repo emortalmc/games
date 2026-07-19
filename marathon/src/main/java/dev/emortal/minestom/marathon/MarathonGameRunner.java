@@ -1,10 +1,8 @@
 package dev.emortal.minestom.marathon;
 
-import dev.emortal.api.model.gamedata.V1MarathonData;
-import dev.emortal.api.utils.kafka.FriendlyKafkaProducer;
-import dev.emortal.minestom.core.module.messaging.MessagingModule;
-import dev.emortal.minestom.gamesdk.config.GameCreationInfo;
-import dev.emortal.minestom.gamesdk.game.Game;
+import dev.emortal.messaging.types.MarathonData;
+import dev.emortal.minestom.core.game.Game;
+import dev.emortal.minestom.core.game.config.GameCreationInfo;
 import dev.emortal.minestom.marathon.listener.MovementListener;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.item.ItemDropEvent;
@@ -26,21 +24,14 @@ import static dev.emortal.minestom.marathon.MarathonGame.RESET_POINT;
 
 public final class MarathonGameRunner extends Game {
     private final Map<UUID, MarathonGame> games = Collections.synchronizedMap(new HashMap<>());
-    private final Map<UUID, V1MarathonData> playerData;
+    private final Map<UUID, MarathonData> playerData;
     private final RegistryKey<DimensionType> dimension;
-    private final @Nullable FriendlyKafkaProducer kafkaProducer;
 
-    public MarathonGameRunner(@NotNull GameCreationInfo creationInfo, @Nullable MessagingModule messaging,
-                              @NotNull RegistryKey<DimensionType> dimension, @NotNull Map<UUID, V1MarathonData> playerData) {
-        super(creationInfo);
+    public MarathonGameRunner(@NotNull GameCreationInfo creationInfo,
+                              @NotNull RegistryKey<DimensionType> dimension, @NotNull Map<UUID, MarathonData> playerData) {
+        super(creationInfo, null);
         this.playerData = playerData;
         this.dimension = dimension;
-
-        if (messaging != null) {
-            this.kafkaProducer = messaging.getKafkaProducer();
-        } else {
-            this.kafkaProducer = null;
-        }
 
         MovementListener movementListener = new MovementListener(this);
 
@@ -58,20 +49,20 @@ public final class MarathonGameRunner extends Game {
     public void onPreJoin(@NotNull Player player) {
         player.setRespawnPoint(RESET_POINT.add(0, 1, 0));
 
-        V1MarathonData data = this.playerData.getOrDefault(player.getUuid(), Main.DEFAULT_PLAYER_DATA);
+        MarathonData data = this.playerData.getOrDefault(player.getUuid(), Main.DEFAULT_PLAYER_DATA);
 
         MarathonGame game = this.games.computeIfAbsent(player.getUuid(), uuid -> new MarathonGame(
-                this.dimension, this.kafkaProducer, player, data));
+                this.dimension, player, data));
 
         player.eventNode().addListener(PlayerSpawnEvent.class, event -> game.refreshInventory());
     }
 
     @Override
     public void onJoin(@NotNull Player player) {
-        V1MarathonData data = this.playerData.getOrDefault(player.getUuid(), Main.DEFAULT_PLAYER_DATA);
+        MarathonData data = this.playerData.getOrDefault(player.getUuid(), Main.DEFAULT_PLAYER_DATA);
 
         MarathonGame game = this.games.computeIfAbsent(player.getUuid(), uuid -> new MarathonGame(
-                this.dimension, this.kafkaProducer, player, data));
+                this.dimension, player, data));
 
         game.onJoin(player);
     }

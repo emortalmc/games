@@ -1,6 +1,6 @@
 package dev.emortal.minestom.lobby.commands;
 
-import dev.emortal.minestom.core.module.core.playerprovider.EmortalPlayer;
+import dev.emortal.minestom.core.utils.command.ExtraConditions;
 import dev.emortal.minestom.lobby.util.entity.BetterEntity;
 import net.minestom.server.command.builder.Command;
 import net.minestom.server.command.builder.condition.Conditions;
@@ -31,7 +31,7 @@ public class TrainCommand extends Command {
     public TrainCommand(@NotNull Instance instance) {
         super("train");
 
-        this.setCondition((sender, cmd) -> Conditions.playerOnly(sender, cmd) && sender instanceof EmortalPlayer e && e.hasPermission("command.lobby.train"));
+        this.setCondition((sender, cmd) -> Conditions.playerOnly(sender, cmd) && ExtraConditions.hasPermission(sender, "command.lobby.train"));
 
         setDefaultExecutor((sender, context) -> {
             if (!(sender instanceof Player player)) return;

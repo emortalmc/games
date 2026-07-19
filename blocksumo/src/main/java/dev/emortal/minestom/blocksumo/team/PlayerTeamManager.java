@@ -37,7 +37,7 @@ public final class PlayerTeamManager {
         TeamColor allocatedColor = player.getTag(PlayerTags.TEAM_COLOR);
 
         Team minestomTeam = MinecraftServer.getTeamManager().createBuilder(allocatedColor.getTextColor().asHexString())
-                .teamColor(allocatedColor.getNamedTextColor())
+                .teamColor(allocatedColor.getTeamColor())
                 .collisionRule(TeamsPacket.CollisionRule.NEVER)
                 .updateTeamPacket()
                 .build();

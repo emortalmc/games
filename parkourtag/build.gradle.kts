@@ -1,6 +1,6 @@
 plugins {
     java
-    id("com.gradleup.shadow") version "9.3.1"
+    id("com.gradleup.shadow") version "9.5.1"
 }
 
 group = "dev.emortal.minestom.parkourtag"
@@ -9,27 +9,24 @@ version = "1.0-SNAPSHOT"
 repositories {
     mavenCentral()
 
-    maven("https://repo.emortal.dev/snapshots")
-    maven("https://repo.emortal.dev/releases")
-
     maven("https://jitpack.io")
     maven("https://packages.confluent.io/maven/")
 }
 
 dependencies {
-    implementation(project(":gamesdk"))
+    implementation(project(":core"))
 
     // jolt-jni
-    runtimeOnly("com.github.oshi:oshi-core:6.9.2")
-    implementation("com.github.stephengold:jolt-jni-Windows64:3.5.2")
-    runtimeOnly("com.github.stephengold:jolt-jni-Linux64:3.5.2:ReleaseSp")
-    runtimeOnly("com.github.stephengold:jolt-jni-Windows64:3.5.2:ReleaseSp")
+    runtimeOnly("com.github.oshi:oshi-core:7.3.2")
+    implementation("com.github.stephengold:jolt-jni-Linux_ARM64:4.3.0")
+    runtimeOnly("com.github.stephengold:jolt-jni-Linux64:4.3.0:ReleaseSp")
+    runtimeOnly("com.github.stephengold:jolt-jni-Linux_ARM64:4.3.0:ReleaseSp")
     implementation("io.github.electrostat-lab:snaploader:1.1.1-stable")
 }
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(25))
+        languageVersion.set(JavaLanguageVersion.of(26))
     }
 }
 

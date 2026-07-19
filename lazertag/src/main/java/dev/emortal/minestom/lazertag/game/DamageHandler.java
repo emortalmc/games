@@ -1,7 +1,7 @@
 package dev.emortal.minestom.lazertag.game;
 
+import dev.emortal.minestom.core.map.LoadedMap;
 import dev.emortal.minestom.lazertag.gun.Gun;
-import dev.emortal.minestom.lazertag.map.LoadedMap;
 import dev.emortal.minestom.lazertag.util.entity.BetterEntity;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
@@ -311,7 +311,7 @@ public final class DamageHandler {
 
     private @NotNull Pos getRandomSpawnPoint() {
         ThreadLocalRandom random = ThreadLocalRandom.current();
-        List<Pos> spawns = this.map.data().spawns();
+        List<Pos> spawns = this.map.data().getList("spawns", Pos.class);
         return spawns.get(random.nextInt(spawns.size()));
     }
 

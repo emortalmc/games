@@ -1,10 +1,10 @@
 package dev.emortal.minestom.lazertag.game;
 
-import dev.emortal.minestom.gamesdk.config.GameCreationInfo;
-import dev.emortal.minestom.gamesdk.game.Game;
-import dev.emortal.minestom.gamesdk.util.GameWinLoseMessages;
+import dev.emortal.minestom.core.game.Game;
+import dev.emortal.minestom.core.game.config.GameCreationInfo;
+import dev.emortal.minestom.core.game.util.GameWinLoseMessages;
+import dev.emortal.minestom.core.map.LoadedMap;
 import dev.emortal.minestom.lazertag.gun.GunManager;
-import dev.emortal.minestom.lazertag.map.LoadedMap;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -28,17 +28,15 @@ public final class LazerTagGame extends Game {
 
     public static final int KILLS_TO_WIN = 20;
 
-    private final @NotNull LoadedMap map;
     private final @NotNull GunManager gunManager;
     private final @NotNull DamageHandler damageHandler;
     private final @NotNull ScoreboardHandler scoreboardHandler;
 
     public LazerTagGame(@NotNull GameCreationInfo creationInfo, @NotNull LoadedMap map) {
-        super(creationInfo);
-        this.map = map;
+        super(creationInfo, map);
 
         this.gunManager = new GunManager(this);
-        this.damageHandler = new DamageHandler(this, this.map);
+        this.damageHandler = new DamageHandler(this, map);
         this.scoreboardHandler = new ScoreboardHandler(this);
     }
 
@@ -86,11 +84,11 @@ public final class LazerTagGame extends Game {
 
     @Override
     public @NotNull Instance getSpawningInstance(@NotNull Player player) {
-        return this.map.instance();
+        return getMap().instance();
     }
 
     public @NotNull Instance getInstance() {
-        return this.map.instance();
+        return getMap().instance();
     }
 
     public void victory() {
@@ -123,7 +121,7 @@ public final class LazerTagGame extends Game {
             }
         }
 
-        this.map.instance().scheduler().buildTask(this::finish)
+        getMap().instance().scheduler().buildTask(this::finish)
                 .delay(TaskSchedule.seconds(6))
                 .schedule();
     }
@@ -146,7 +144,7 @@ public final class LazerTagGame extends Game {
 
     @Override
     public void cleanUp() {
-        this.map.instance().scheduleNextTick(MinecraftServer.getInstanceManager()::unregisterInstance);
+        getMap().instance().scheduleNextTick(MinecraftServer.getInstanceManager()::unregisterInstance);
     }
 
     public @NotNull DamageHandler getDamageHandler() {

@@ -1,6 +1,6 @@
 package dev.emortal.minestom.lobby.gadget;
 
-import dev.emortal.minestom.core.module.core.playerprovider.EmortalPlayer;
+import dev.emortal.minestom.core.utils.command.ExtraConditions;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.Player;
 import net.minestom.server.entity.PlayerHand;
@@ -39,8 +39,8 @@ public abstract class Gadget {
         // do nothing by default - only for projectiles
     }
 
-    public boolean isAllowed(@NotNull EmortalPlayer player) {
-        return player.hasPermission("lobby.gadget." + this.permissionName);
+    public boolean isAllowed(@NotNull Player player) {
+        return ExtraConditions.hasPermission(player, "lobby.gadget." + this.permissionName);
     }
 
     public void give(@NotNull Player player, int slot) {

@@ -1,12 +1,12 @@
 package dev.emortal.minestom.marathon;
 
-import dev.emortal.api.model.gamedata.GameDataGameMode;
-import dev.emortal.api.model.gamedata.V1MarathonData;
-import dev.emortal.api.utils.GrpcStubCollection;
-import dev.emortal.minestom.core.module.messaging.MessagingModule;
-import dev.emortal.minestom.gamesdk.MinestomGameServer;
-import dev.emortal.minestom.gamesdk.config.GameSdkConfig;
-import dev.emortal.minestom.gamesdk.util.GamePlayerDataRepository;
+import dev.emortal.messaging.types.GameInfo;
+import dev.emortal.messaging.types.MarathonData;
+import dev.emortal.minestom.core.EmortalServer;
+import dev.emortal.minestom.core.game.config.GameConfig;
+import dev.emortal.minestom.marathon.command.LeaderboardCommand;
+import dev.emortal.minestom.marathon.leaderboard.LeaderboardDB;
+import dev.emortal.minestom.marathon.options.BlockAnimation;
 import dev.emortal.minestom.marathon.options.BlockPalette;
 import dev.emortal.minestom.marathon.options.Time;
 import net.kyori.adventure.key.Key;
@@ -18,20 +18,20 @@ import net.minestom.server.registry.RegistryKey;
 import net.minestom.server.world.DimensionType;
 import net.minestom.server.world.attribute.EnvironmentAttribute;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public final class Main {
-    public static final @NotNull V1MarathonData DEFAULT_PLAYER_DATA = V1MarathonData.newBuilder()
-            .setTime(Time.MIDNIGHT.name())
-            .setBlockPalette(BlockPalette.OVERWORLD.name())
-            .build();
+    public static final @NotNull MarathonData DEFAULT_PLAYER_DATA = new MarathonData(Time.MIDNIGHT.name(), BlockPalette.OVERWORLD.name(), BlockAnimation.POPOUT.name());
+
+    private static @Nullable LeaderboardDB DB;
 
     static void main() {
-        MinestomGameServer.create(moduleManager -> {
-
+        EmortalServer.start(() -> {
             DimensionType overworld = MinecraftServer.getDimensionTypeRegistry().get(DimensionType.OVERWORLD);
 
             DimensionType dimensionType = DimensionType.builder()
@@ -46,25 +46,36 @@ public final class Main {
                     .build();
             RegistryKey<DimensionType> dimension = MinecraftServer.getDimensionTypeRegistry().register(Key.key("fullbright"), dimensionType);
 
-            GamePlayerDataRepository<V1MarathonData> playerStorage = new GamePlayerDataRepository<>(
-                    GrpcStubCollection.getGamePlayerDataService().orElse(null), DEFAULT_PLAYER_DATA,
-                    V1MarathonData.class, GameDataGameMode.MARATHON
-            );
+            GameConfig gameConfig = new GameConfig(1, GameConfig.FinishBehaviour.LOBBY, info -> {
+                Map<UUID, MarathonData> playerData = new HashMap<>();
+                for (UUID uuid : info.playerIds()) {
+                    playerData.put(uuid, DEFAULT_PLAYER_DATA); // TODO: this
+                }
 
-            return GameSdkConfig.builder()
-                    .minPlayers(1)
-                    .gameCreator(info -> {
-                        Map<UUID, V1MarathonData> playerData;
+                return new MarathonGameRunner(info, dimension, playerData);
+            });
+            GameInfo gameInfo = new GameInfo("marathon", List.of(), 1, 1, GameInfo.MatchMethod.INSTANT);
+            EmortalServer.registerGame(gameInfo, gameConfig);
 
-                        try {
-                            playerData = playerStorage.getPlayerData(info.playerIds());
-                        } catch (Exception e) {
-                            playerData = info.playerIds().stream().collect(Collectors.toMap(id -> id, id -> DEFAULT_PLAYER_DATA));
-                        }
-
-                        return new MarathonGameRunner(info, moduleManager.getModule(MessagingModule.class), dimension, playerData);
-                    })
-                    .build();
+            String dbConnString = getValue("dbUrl", "");
+            String dbUserString = getValue("dbUser", "");
+            String dbPassString = getValue("dbPass", "");
+            if (!dbConnString.isBlank()) {
+                DB = new LeaderboardDB(dbConnString, dbUserString, dbPassString);
+                DB.connect();
+                MinecraftServer.getCommandManager().register(new LeaderboardCommand(DB));
+            }
         });
+    }
+
+    public static @Nullable LeaderboardDB getLeaderboardDB() {
+        return DB;
+    }
+
+    private static @NotNull String getValue(@NotNull String key, @NotNull String defaultValue) {
+        String value = System.getProperty(key);
+        if (value != null && !value.isEmpty()) return value;
+
+        return defaultValue;
     }
 }

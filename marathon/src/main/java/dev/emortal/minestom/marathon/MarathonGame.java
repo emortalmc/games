@@ -1,16 +1,10 @@
 package dev.emortal.minestom.marathon;
 
-import com.google.protobuf.Any;
-import com.google.protobuf.Descriptors;
-import com.google.protobuf.FieldMask;
-import com.google.protobuf.util.FieldMaskUtil;
-import dev.emortal.api.message.gamedata.UpdateGamePlayerDataMessage;
-import dev.emortal.api.model.gamedata.GameDataGameMode;
-import dev.emortal.api.model.gamedata.V1MarathonData;
-import dev.emortal.api.utils.kafka.FriendlyKafkaProducer;
+import dev.emortal.messaging.types.MarathonData;
 import dev.emortal.minestom.marathon.animator.BlockAnimator;
 import dev.emortal.minestom.marathon.generator.DefaultGenerator;
 import dev.emortal.minestom.marathon.generator.Generator;
+import dev.emortal.minestom.marathon.leaderboard.LeaderboardDB;
 import dev.emortal.minestom.marathon.options.BlockAnimation;
 import dev.emortal.minestom.marathon.options.BlockPalette;
 import dev.emortal.minestom.marathon.options.Time;
@@ -52,9 +46,10 @@ import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 public final class MarathonGame {
     public static final int TIME_SLOT = 20;
@@ -66,12 +61,7 @@ public final class MarathonGame {
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("mm:ss");
     public static final @NotNull Tag<Boolean> MARATHON_ENTITY_TAG = Tag.Boolean("marathonEntity");
 
-    private static final FieldMask MARATHON_DATA_FIELDS = FieldMaskUtil.fromStringList(V1MarathonData.getDescriptor().getFields().stream()
-            .map(Descriptors.FieldDescriptor::getName)
-            .collect(Collectors.toUnmodifiableSet()));
-
     private final @NotNull Instance instance;
-    private final @Nullable FriendlyKafkaProducer producer;
     private final @NotNull Player player;
     private final @NotNull Generator generator;
 
@@ -88,16 +78,16 @@ public final class MarathonGame {
     private int targetY;
     private boolean runInvalidated;
     private long lastBlockTimestamp = 0;
-    private long startTimestamp = -1;
+    private long startTicks = -1;
     private int index;
 
     private @Nullable Task breakingTask;
 
-    MarathonGame(@NotNull RegistryKey<DimensionType> dimension, @Nullable FriendlyKafkaProducer producer,
-                 @NotNull Player player, V1MarathonData playerData) {
-        this.time = Time.valueOf(playerData.getTime());
-        this.palette = BlockPalette.valueOf(playerData.getBlockPalette());
-        this.animation = playerData.hasAnimation() ? BlockAnimation.valueOf(playerData.getAnimation()) : BlockAnimation.POPOUT;
+    MarathonGame(@NotNull RegistryKey<DimensionType> dimension,
+                 @NotNull Player player, MarathonData playerData) {
+        this.time = Time.valueOf(playerData.time());
+        this.palette = BlockPalette.valueOf(playerData.blockPalette());
+        this.animation = BlockAnimation.valueOf(playerData.animation());
 
         this.instance = MinecraftServer.getInstanceManager().createInstanceContainer(dimension);
         this.instance.setTime(this.time.getTime());
@@ -108,7 +98,6 @@ public final class MarathonGame {
             if (chunk.getViewers().isEmpty()) this.instance.unloadChunk(chunk);
         });
 
-        this.producer = producer;
         this.player = player;
         this.generator = DefaultGenerator.INSTANCE;
         this.animator = this.animation.createAnimator();
@@ -150,22 +139,8 @@ public final class MarathonGame {
     }
 
     private void produceDataUpdate() {
-        if (this.producer == null) {
-            return;
-        }
-
-        this.producer.produceAndForget(UpdateGamePlayerDataMessage.newBuilder()
-                .setGameMode(GameDataGameMode.MARATHON)
-                .setPlayerId(this.player.getUuid().toString())
-                .setData(Any.pack(
-                        V1MarathonData.newBuilder()
-                                .setBlockPalette(this.palette.name())
-                                .setTime(this.time.name())
-                                .setAnimation(this.animation.name())
-                                .build()
-                ))
-                .setDataMask(MARATHON_DATA_FIELDS)
-                .build());
+//        MarathonData newData = new MarathonData(this.time.name(), this.palette.name(), this.animation.name());
+        // TODO: update marathondata in db
     }
 
     void cleanUp() {
@@ -190,10 +165,26 @@ public final class MarathonGame {
         this.player.getInventory().setItemStack(MarathonGame.ANIMATOR_SLOT, animatorItem);
     }
 
+    private void submitScore() {
+        int submitScore = this.score; // copy
+        if (submitScore == 0) return;
+        LeaderboardDB leaderboardDB = Main.getLeaderboardDB();
+        if (leaderboardDB == null) return;
+        long submitStartTicks = this.startTicks; // copy
+        long submitWorldAge = instance.getWorldAge(); // copy
+        CompletableFuture.runAsync(() -> {
+            leaderboardDB.addScore(this.player, submitScore, submitWorldAge - submitStartTicks);
+        }, Executors.newVirtualThreadPerTaskExecutor());
+    }
+
     public void reset() {
         if (this.breakingTask != null) {
             this.breakingTask.cancel();
             this.breakingTask = null;
+        }
+
+        if (this.startTicks != -1) { // reset due to player falling, not due to game start
+            submitScore();
         }
 
         this.score = 0;
@@ -201,7 +192,7 @@ public final class MarathonGame {
         this.index = 0;
         this.runInvalidated = false;
         this.lastBlockTimestamp = 0;
-        this.startTimestamp = -1;
+        this.startTicks = -1;
 
         for (Point block : this.blocks) {
             this.animator.destroyBlockAnimated(this.instance, block, Block.AIR);
@@ -235,7 +226,7 @@ public final class MarathonGame {
         // this stops action bars from being sent to the player during that time
         if (this.player.getPlayerConnection().getClientState() != ConnectionState.PLAY) return;
 
-        long millisTaken = this.startTimestamp == -1 ? 0 : System.currentTimeMillis() - this.startTimestamp;
+        long millisTaken = this.startTicks == -1 ? 0 : (instance.getWorldAge() - this.startTicks) * 50L;
         String formattedTime = DATE_FORMAT.format(new Date(millisTaken));
         double secondsTaken = millisTaken / 1000.0;
         String scorePerSecond = this.score < 5 ? "-.-" : String.valueOf(MathUtils.clamp(Math.floor(this.score / secondsTaken * 10.0) / 10.0, 0.0, 9.9));
@@ -297,7 +288,7 @@ public final class MarathonGame {
     }
 
     public void generateNextBlocks(int blockCount, boolean shouldAnimate) {
-        if (this.startTimestamp == -1 && shouldAnimate) {
+        if (this.startTicks == -1 && shouldAnimate) {
             this.beginTimer();
         }
 
@@ -366,7 +357,7 @@ public final class MarathonGame {
     }
 
     public void beginTimer() {
-        this.startTimestamp = System.currentTimeMillis();
+        this.startTicks = instance.getWorldAge();
     }
 
     public @NotNull Instance getInstance() {

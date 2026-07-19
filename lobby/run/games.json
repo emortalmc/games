@@ -1,0 +1,414 @@
+{
+  "gamemodes": [
+    {
+      "id": "lobby",
+      "enabled": true,
+      "fleetName": "lobby",
+      "friendlyName": "Lobby",
+      "activityNoun": "in the",
+      "minPlayers": 1,
+      "maxPlayers": 100,
+      "maxPlayers": 100,
+      "matchmakerInfo": {
+        "matchMethod": "INSTANT",
+        "selectMethod": "PLAYER_COUNT"
+      },
+      "displayItem": {
+        "name": "<white>Lobby</white>"
+      }
+    },
+    {
+      "id": "marathon",
+      "enabled": true,
+      "fleetName": "marathon",
+      "priority": 105,
+      "friendlyName": "Marathon",
+      "activityNoun": "going on a",
+      "minPlayers": 1,
+      "maxPlayers": 100,
+      "displayItem": {
+        "material": "minecraft:grass_block",
+        "slot": 16,
+        "name": "<red><bold>Marathon</bold></red>",
+        "lore": [
+          "<gray>An infinitely generating,",
+          "<gray>endless parkour gamemode.",
+          "<gray>See how far you can go!"
+        ]
+      },
+      "displayNpc": {
+        "entityType": "PLAYER",
+        "titles": [
+          "<red><bold>Marathon</bold></red>"
+        ],
+        "skin": {
+          "texture": "ewogICJ0aW1lc3RhbXAiIDogMTcyNDI5Mzc1MTM4NywKICAicHJvZmlsZUlkIiA6ICIyMjYwMWIxMGY0MTc0ZjA3OWIwYWM2MGE5NGEzOTBmYiIsCiAgInByb2ZpbGVOYW1lIiA6ICJ1bmRlcmdhbWVndXkiLAogICJzaWduYXR1cmVSZXF1aXJlZCIgOiB0cnVlLAogICJ0ZXh0dXJlcyIgOiB7CiAgICAiU0tJTiIgOiB7CiAgICAgICJ1cmwiIDogImh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODIyOWI4ZTVjYWM0OGE5OGY1ZjQxOTIzYjcxMWJkMjYwMzdlOGFiNzVkMDQ3ZTM1ZGQ2ZTFmYmRhMGJlY2FkNyIKICAgIH0KICB9Cn0=",
+          "signature": "J+TIgPB/VFJEucLlUrFzpQM6sXYS2nZ43JCaBfmY7gXRR+0SRfHsc5bSKGALAP+Rydict3yg2ixfkOEC61LijpcgfsQBVpRuqIm837E9wEG6KwSTRRw3ydLvMTYIr6JKIE5OCsn37FC97Tf0MVR6CgzGyQySFhbLEXNTDr+5LF0DWtXR+TzDngupXqzf2ZqWxvkFdhv6mTFAYdRVbxN9AQRaFGyEcBi9f4nHsVnB7o6WoJWpy7XsSEQR7BmUzDijs6R42RAdoLerF47aDDJBiMNDLcsiTOPzugxJ9vGqpQtkw5cnZbjSvD30KtQPLtCFgDek+RaRIv0v48FERigk7rR1EIIHybJ8ODUu9mfMhQ6skEZsYg5vE+v/ybHC/5nqmQYR1C1thqzPRLUBT+ZqnjuC72RK4eh9OlJ1Usrla3/YJ630+8/Pmlu4K1VapQX+mZEuT1/Hk7QBPvzLBqkgRnkyD5o3kd8XHWJzp0s5J3qXSTfdJCznbTKD2tl7xkkimUJAciO0Tazg7x/UkNRL+0f5a9jhFJAZprNg1hV1jRlGiJJT1MUxziZ2EYOx8mMJ9H9S4JMT7JRITDXsCO6C2EF+HemHAN1GQBOQ1y0L1usu7nML1mthVUB9FSjcJ1C1m4fNY7tEb7eGHkvN5uH7MWmw7943wwIbv3xb6W5KDHU="
+        }
+      },
+      "matchmakerInfo": {
+        "matchMethod": "INSTANT",
+        "selectMethod": "PLAYER_COUNT"
+      }
+    },
+    {
+      "id": "lazertag",
+      "enabled": true,
+      "fleetName": "lazertag",
+      "priority": 110,
+      "friendlyName": "LazerTag",
+      "activityNoun": "shooting in",
+      "minPlayers": 2,
+      "maxPlayers": 12,
+      "displayItem": {
+        "material": "minecraft:netherite_hoe",
+        "slot": 21,
+        "name": "<gradient:gold:yellow><bold>LazerTag</bold></gradient>",
+        "lore": [
+          "<gray>Battle it out with weird and wacky guns.",
+          "<gray>The first player to 25 kills wins!"
+        ]
+      },
+      "displayNpc": {
+        "entityType": "PLAYER",
+        "titles": [
+          "<gradient:gold:yellow><bold>LazerTag</bold></gradient>"
+        ],
+        "skin": {
+          "texture": "ewogICJ0aW1lc3RhbXAiIDogMTYxNDA3NzE5MzQ4MiwKICAicHJvZmlsZUlkIiA6ICJkMGI4MjE1OThmMTE0NzI1ODBmNmNiZTliOGUxYmU3MCIsCiAgInByb2ZpbGVOYW1lIiA6ICJqYmFydHl5IiwKICAic2lnbmF0dXJlUmVxdWlyZWQiIDogdHJ1ZSwKICAidGV4dHVyZXMiIDogewogICAgIlNLSU4iIDogewogICAgICAidXJsIiA6ICJodHRwOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlL2E0NjQxMmMzOTgwODZlYzMxMzIxMzlhMTE5NWU0ODNlMGE0OWRmYThiZWMzZWIxNDc0ZjViMTliMTY0NTE4NmUiCiAgICB9CiAgfQp9",
+          "signature": "krIl4GecgEcDkkEG2DpUvZWnIqpxhJRcFhkaWYYG9A35u49mGkM3eHJX1ys60lF042EXiPpujonZt4Kp8NF0Hn1WblxfnJUfu1o97Tv7iI+vfB2M/cIfEAKnqVvagPkWvhf6N9TITF7szQc6j0ksMNrFv+gV0NKDZFoQPgw+q+ADGPicQdDpub0rr6hzPmv1H1kNQxDgLGxwIAV4fzVToGKRqLKLCHSMC64d3/GJkrtxQzsvnWji9nD3WJzilLmKN7yjB8Cs1xAWTfxIdayeT/k6pDADyqlRs9PCfGISEwMQKHz0kOqNBDA5J6UB08q7zhO1uZyW4v3QaIXXQeyp7dWkffFdRedcNovmWpiOLnC4u8XF5kFUySkvZg4nMHvO+Vr20uFhxiZ7EWaNt1syfNMDEwiZ8oqljTtbEPUhpj68n1hViThhbatj1XeEa6zSqB1pmDw36q+QQUKX4Q894uDXMr6Gij/1LNJ00rfNoDN43UXt29XPN/qQ1Pj5TXctJdV8zBVhrK60qDpII8miHlslGTTwwpMKgEh5K0JJ5xWtmk4tY4TON0RsQ4RjD+UxmfrPDgOyAXoRxWnPVeUldODbkFHn8wMnK6M/k5g8AFOGOM5h8CfnjDqUeiyZPYC6EihC0dxK9yzPZxe2av27LiHUYDWDs3P5zKVKXRbFaR8="
+        }
+      },
+      "matchmakerInfo": {
+        "matchMethod": "COUNTDOWN",
+        "selectMethod": "AVAILABLE"
+      }
+    },
+    {
+      "id": "parkourtag",
+      "enabled": true,
+      "fleetName": "parkourtag",
+      "priority": 115,
+      "friendlyName": "ParkourTag",
+      "activityNoun": "hiding in",
+      "minPlayers": 2,
+      "maxPlayers": 12,
+      "displayItem": {
+        "material": "minecraft:name_tag",
+        "slot": 12,
+        "name": "<green><bold>ParkourTag</bold></green>",
+        "lore": [
+          "<gray>Chase the hiders or flee from the seekers</gray>",
+          "<gray>before the game ends!</gray>"
+        ]
+      },
+      "displayNpc": {
+        "entityType": "PLAYER",
+        "titles": [
+          "<green><bold>ParkourTag</bold></green>"
+        ],
+        "skin": {
+          "texture": "ewogICJ0aW1lc3RhbXAiIDogMTYyMDQ4MzM1ODQ2OSwKICAicHJvZmlsZUlkIiA6ICI1NjY3NWIyMjMyZjA0ZWUwODkxNzllOWM5MjA2Y2ZlOCIsCiAgInByb2ZpbGVOYW1lIiA6ICJUaGVJbmRyYSIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS9mMjUxNjljNGM4YmUyYjc4MWQyNzE0ZDA5M2I0ZDc2MTA3MTFmMWZmMTlkZjYyYjg2MjZjMzNmZWNjZGY3Yjg5IgogICAgfQogIH0KfQ==",
+          "signature": "laCteZJ6UWQOot+RUG011rFs1g5AnZX1tSJEXeia658pNkOrbTNfXS1GK9KQYROg4bFK1VQ/S0N/qbIbQgPJwvoKUJjNExm4D8MKuiFilfk5YolZgkUIfD6ff6dv/wfuU36Zx21UZjDwqRPcIfmcPI2trrp3qmoH6H/6Qh1z9GlI7emK437jgEQSjkCanP9U4/iJ5lrUVt+phKVhXT/RsVeIqUzuCwD7YoTAQAErCdrTdkNfk8e8utIyPdafmLhASaoUarpspi2pbg0QrgnBQlXEl9l3nNJ89dwxRuy0YiMEgHdnzd++Rj6JVvk/d55T1EK5ymm2gICLsZUJidxemmSlS2vkSifHRlMbcWbWrDDPj2svbv9/707jDGJ6XV1ZCdCh0JZTvb1QKavKFypgfC6hipwStTuqskwp3Kq6d65F1QkNxBUsH4jFk1Re5TTAT6qp4D8C5vyUHUBJD35ypdRG3OjZl2a9iH2RWIvmHoYkAc3awxcJD75olX0HNoZ58Yex7x9g0cg/kiT76/g936YxM1rmxo6s21jQh/GsRyS2zsy9OGY8ivqb2UJ0alwPzwtDPLHgyYYk3NTay02N/iwWeo46uuhP7P3erTumjPYoGM6gtwcILdqJqkT27BuRYcyCFg/K9CzV9mdqOFu/vA7jBLEutDv+kC/l7UC/FnU="
+        }
+      },
+      "maps": {
+        "city": {
+          "id": "city",
+          "enabled": true,
+          "friendlyName": "City",
+          "priority": 100,
+          "displayItem": {
+            "slot": 0,
+            "material": "minecraft:grass_block",
+            "name": "<green><bold>City</bold></green>"
+          }
+        },
+        "ruins": {
+          "id": "ruins",
+          "enabled": true,
+          "friendlyName": "Ruins",
+          "priority": 100,
+          "displayItem": {
+            "slot": 1,
+            "material": "minecraft:mossy_cobblestone",
+            "name": "<green><bold>Ruins</bold></green>"
+          }
+        }
+      },
+      "matchmakerInfo": {
+        "matchMethod": "COUNTDOWN",
+        "selectMethod": "AVAILABLE"
+      }
+    },
+    {
+      "id": "blocksumo",
+      "enabled": true,
+      "fleetName": "blocksumo",
+      "priority": 120,
+      "friendlyName": "Block Sumo",
+      "activityNoun": "sumoing in",
+      "minPlayers": 2,
+      "maxPlayers": 12,
+      "displayItem": {
+        "material": "minecraft:fire_charge",
+        "slot": 10,
+        "name": "<gradient:blue:aqua><bold>Block Sumo</bold></gradient>",
+        "lore": [
+          "<gray>Fight other players",
+          "<gray>in a game where your",
+          "<gray>sole goal is to knock",
+          "<gray>other players off the edge!"
+        ]
+      },
+      "displayNpc": {
+        "entityType": "PLAYER",
+        "titles": [
+          "<gradient:blue:aqua><bold>Block Sumo</bold></gradient>"
+        ],
+        "skin": {
+          "texture": "ewogICJ0aW1lc3RhbXAiIDogMTY0ODk0Njk5OTE3OSwKICAicHJvZmlsZUlkIiA6ICI3YmQ1YjQ1OTFlNmI0NzUzODI3NDFmYmQyZmU5YTRkNSIsCiAgInByb2ZpbGVOYW1lIiA6ICJlbW9ydGFsZGV2IiwKICAic2lnbmF0dXJlUmVxdWlyZWQiIDogdHJ1ZSwKICAidGV4dHVyZXMiIDogewogICAgIlNLSU4iIDogewogICAgICAidXJsIiA6ICJodHRwOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlLzkxZDdhOWMwODBlZTdjYTZkZjlhYWJlM2I5NTliYWE4MThkYWUzYjQ1ZWI3YWRjMTMwZmYyNjU1YzlkOTRjY2YiCiAgICB9LAogICAgIkNBUEUiIDogewogICAgICAidXJsIiA6ICJodHRwOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlLzIzNDBjMGUwM2RkMjRhMTFiMTVhOGIzM2MyYTdlOWUzMmFiYjIwNTFiMjQ4MWQwYmE3ZGVmZDYzNWNhN2E5MzMiCiAgICB9CiAgfQp9",
+          "signature": "prWY0EtGdAfqt/nc4Vv/sMBcVEb6WMvaRumTk72e/NKe3dUPxmzlDRm6rw/mEE332JND6+sEI9PmDQ4jj/W41cn/XR/uZIBS+1qLE+57slEQA+ds+/kffKt1358JEV5/qyqCnODLVjwsRwazXJstC3eKNByaTQEyZ2jv/mFeAIAOF+0eQqDaaMGgxdIMRvWR8Nj6uIiBFTdCPIw3OYZ5bxqxm8Epr5PppF+sj7ZK0UyQ5/f1UoO9B/YMUt0OW+UlF3NYcMDs5mrg1N8Ajxvqbe8l0X7eWHgSYd0S/FopSCiVVQOQdZHRyhicmzLv6rE+xW03SB8NRfoaEEvSh8+QiLGMcyETeriwdDzdf8H9Iin3vDkVbMyRTAJ5jL/xDkoFDFR5HtNkrwYBRJoVkiWbnWyoBFofAjmmMmGmT5SFABS7I0iWLEoP4EMzqy84zDbpwOOioQz9UFlZV8AqmyEDv8Hx6px20zdR/jPr7tRQgqRhcPyzNsElcNLhkBfHmhpKffkrEPOAaal49rtB+3Jq+nX8Z1VyEZSW4MYnuq91bFZ1ciMzopYulPwP4cZkrGaqV84lxsqStI5+STi105KP4Bws+XDpop1eyPdDuVL/axq3VVkKeRqSoMv+xRYONGZJQgZ1t0WRIsXk7DLsjtx8QgffxqOwjW5CmZR0liSPfYM="
+        }
+      },
+      "maps": {
+        "blocksumo": {
+          "id": "blocksumo",
+          "enabled": true,
+          "friendlyName": "BlockSumo",
+          "priority": 100,
+          "displayItem": {
+            "slot": 0,
+            "material": "minecraft:purple_wool",
+            "name": "<dark_purple><bold>BlockSumo</bold></dark_purple>"
+          }
+        },
+        "castle": {
+          "id": "castle",
+          "enabled": true,
+          "friendlyName": "Castle",
+          "priority": 100,
+          "displayItem": {
+            "slot": 1,
+            "material": "minecraft:dark_oak_log",
+            "name": "<gray><bold>Castle</bold></gray>"
+          }
+        },
+        "end": {
+          "id": "end",
+          "enabled": true,
+          "friendlyName": "End",
+          "priority": 100,
+          "displayItem": {
+            "slot": 2,
+            "material": "minecraft:end_stone",
+            "name": "<light_purple><bold>End</bold></light_purple>"
+          }
+        },
+        "icebs": {
+          "id": "icebs",
+          "enabled": true,
+          "friendlyName": "Ice",
+          "priority": 100,
+          "displayItem": {
+            "slot": 3,
+            "material": "minecraft:ice",
+            "name": "<aqua><bold>Ice</bold></aqua>"
+          }
+        },
+        "ruinsbs": {
+          "id": "ruinsbs",
+          "enabled": true,
+          "friendlyName": "Ruins",
+          "priority": 100,
+          "displayItem": {
+            "slot": 4,
+            "material": "minecraft:mossy_cobblestone",
+            "name": "<green><bold>Ruins</bold></green>"
+          }
+        },
+        "deepdark": {
+          "id": "deepdark",
+          "enabled": true,
+          "friendlyName": "Deep Dark",
+          "priority": 100,
+          "displayItem": {
+            "slot": 5,
+            "material": "minecraft:sculk_sensor",
+            "name": "<blue><bold>Deep Dark</bold></blue>"
+          }
+        }
+      },
+      "matchmakerInfo": {
+        "matchMethod": "COUNTDOWN",
+        "selectMethod": "AVAILABLE"
+      }
+    },
+    {
+      "id": "tower-defence",
+      "enabled": true,
+      "fleetName": "tower-defence",
+      "priority": 125,
+      "friendlyName": "TowerDefence",
+      "activityNoun": "defending in",
+      "minPlayers": 2,
+      "maxPlayers": 12,
+      "displayItem": {
+        "name": "<gradient:#ffb70f:#ffcd17:#ffb70f><bold>TowerDefence</bold></gradient>"
+      },
+      "maps": {
+        "default": {
+          "id": "default",
+          "enabled": true,
+          "friendlyName": "Default",
+          "priority": 100,
+          "displayItem": {
+            "slot": 0,
+            "material": "minecraft:barrier",
+            "name": "<green><bold>Default</bold></green>"
+          }
+        }
+      },
+      "matchmakerInfo": {
+        "matchMethod": "COUNTDOWN",
+        "selectMethod": "AVAILABLE"
+      }
+    },
+    {
+      "id": "battle",
+      "enabled": true,
+      "fleetName": "battle",
+      "priority": 130,
+      "friendlyName": "Battle",
+      "activityNoun": "sword fighting in",
+      "minPlayers": 2,
+      "maxPlayers": 12,
+      "displayItem": {
+        "material": "minecraft:iron_sword",
+        "slot": 19,
+        "name": "<gradient:#ffc34d:#ffaa00><bold>Battle</bold></gradient>",
+        "lore": [
+          "<gray>The console survival games experience.</gray>",
+          "<gray>Find loot, find player, kill player,</gray>",
+          "<gray>find another player, kill other player,</gray>",
+          "<gray>repeat until win</gray>"
+        ]
+      },
+      "displayNpc": {
+        "entityType": "PLAYER",
+        "titles": [
+          "<gradient:#ffc34d:#ffaa00><bold>Battle</bold></gradient>"
+        ],
+        "skin": {
+          "texture": "ewogICJ0aW1lc3RhbXAiIDogMTYxOTQzOTEzMjA4MiwKICAicHJvZmlsZUlkIiA6ICI5MThhMDI5NTU5ZGQ0Y2U2YjE2ZjdhNWQ1M2VmYjQxMiIsCiAgInByb2ZpbGVOYW1lIiA6ICJCZWV2ZWxvcGVyIiwKICAic2lnbmF0dXJlUmVxdWlyZWQiIDogdHJ1ZSwKICAidGV4dHVyZXMiIDogewogICAgIlNLSU4iIDogewogICAgICAidXJsIiA6ICJodHRwOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlLzgzYmVkNGJiZDc5NmE5MWEyZjE5ZjE2ZTljMDIxMWRiMTFhM2Y4MDk0M2UwZTljODJlNjMxM2I1OWVkZDgxOTEiCiAgICB9CiAgfQp9",
+          "signature": "SFO9i3hwfOOfhNapOWUJ/QiQ8orq47Ld6nCV2xPXNZH9WtOkw+FNJZrDIrxdp0SPA4VaN+7BQL1mq5uHTgGov55KHsJxoeQGvvWKDWeG+V+DsYzkf+34LY6BYWhKdnGNP2EDt/snT3wca9ju8McUsxiqHXkX6UTU68Zj7xFk1HVtusQIjyakva4ST6WB4BdYy6BlLl6ckKo+kGF+aSMhhok8znhwypkO7gGBtK4fYgpuW7I8C2lBn+myGASndikw/CBpuYaUTj1xECdTb0O6Tys937EBkHeELoxoflgkxTBe37DHDCxoQKTnXV28yV+uXOIoNp7botUSho5x5GELqg4T6ma97hjF5Cp1x+3ekZcxx3u0Io2/ifb79p+DBfBkfs50oixWIBXJV4DaZaTgE1MQtRGQBe/baHap5+aeC9LAcCPVBzwMuM7kUqQ0RGv72FaPEojhYU1PvVUC0E+BfQvtg6M19zYJL27OB1Ik9rHAC7U18ilGiGOwUgLoetYIy2JYFGO57cE0MhLe9ERr2kjNFCbwO8l1cWhBpRzMfrr6PQAKFQjt/APPouYH7PNO7eu/vOSy8BcJw3g2tDg79NryUNLO0vkgTVz4+Fr5wkRD3QmieM0Gtv26h+vev9ZKIrSylvpEQkyeSTXrvHov4gtI+m4yfHb8pwdFlZDJSlY="
+        }
+      },
+      "maps": {
+        "caverns": {
+          "id": "caverns",
+          "enabled": true,
+          "friendlyName": "Caverns",
+          "priority": 100,
+          "displayItem": {
+            "slot": 0,
+            "material": "minecraft:cobblestone",
+            "name": "<gray><bold>Caverns</bold></gray>"
+          }
+        },
+        "cove": {
+          "id": "cove",
+          "enabled": true,
+          "friendlyName": "Cove",
+          "priority": 100,
+          "displayItem": {
+            "slot": 1,
+            "material": "minecraft:grass_block",
+            "name": "<green><bold>Cove</bold></green>"
+          }
+        },
+        "crucible": {
+          "id": "crucible",
+          "enabled": true,
+          "friendlyName": "Crucible",
+          "priority": 100,
+          "displayItem": {
+            "slot": 2,
+            "material": "minecraft:netherrack",
+            "name": "<red><bold>Crucible</bold></red>"
+          }
+        }
+      },
+      "matchmakerInfo": {
+        "matchMethod": "COUNTDOWN",
+        "selectMethod": "AVAILABLE"
+      }
+    },
+    {
+      "id": "minesweeper",
+      "enabled": true,
+      "fleetName": "minesweeper",
+      "priority": 110,
+      "friendlyName": "Minesweeper",
+      "activityNoun": "solving",
+      "minPlayers": 1,
+      "maxPlayers": 10,
+      "displayItem": {
+        "material": "minecraft:tnt",
+        "slot": 14,
+        "name": "<green><bold>Minesweeper</bold></green>",
+        "lore": [
+          "<gray>Try not to anger your friends",
+          "<gray>while trying to clear the minefield"
+        ]
+      },
+      "displayNpc": {
+        "entityType": "PLAYER",
+        "titles": [
+          "<green><bold>Minesweeper</bold></green>"
+        ],
+        "skin": {
+          "texture": "ewogICJ0aW1lc3RhbXAiIDogMTY0Mjk3NzYxNjg4NCwKICAicHJvZmlsZUlkIiA6ICIwYTUzMDU0MTM4YWI0YjIyOTVhMGNlZmJiMGU4MmFkYiIsCiAgInByb2ZpbGVOYW1lIiA6ICJQX0hpc2lybyIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS84NzhjODZlYTMyYmFiZTAxOGY3MzFlNTNjMDE4MmQ0YzVlNWU3Y2MwOWQ5MzMxOTJkYmY1ZWE1YWRlZTNlZDAiLAogICAgICAibWV0YWRhdGEiIDogewogICAgICAgICJtb2RlbCIgOiAic2xpbSIKICAgICAgfQogICAgfQogIH0KfQ==",
+          "signature": "U3/TuEu6d7noBtYaQr98/1nI2HqfqNRrymbvVtVZz1dn/Cx4Qr4qiDwbs2buYrPJK1Opv3Cw4/zq5nYE0xc/VYtyGYHUIlE5dbqtYCPfbGYNbBivQXfFhrCndsQjKZbzzjGKVNJPQrvigBKIVV8TP/ylak8eQUtUncTTPOU8K7EjhIbqpwN/qZUgq7aDWvUUZnWV8I6cYwDSETdBZ+UxhoTMzO8+Vnhlo2OzmHtoICLQuZI3qE8ZGPdw35r14oNddPtLdUQ1NGvt7i7dHoeIPDQt68vUq6z6sejqORoXpWgAlIyCvgO5L5yHX58DfqEq7FwECB4q+fXyXVyZLmiiVSDH+wkczyzoUgE2f1hW6ONJ9QiH8n1+PU5Sx37EByTZxOQvOvS+Pj++zYtZHCRzCjcRg6j6u1RnKDteuccywN+bUulCZ7pJavtqMS6XCHd3mQecVUcT8F/jcPmsh2ta27VyueUGQS3ICcM0jiTEaM31ttrVUDszxNqmkmfX1W6MPd2nHXBSaUAWSaXjfdcyKxBOKwV6IxO8Kwjq9SIw5P5KuLdZ2s0m8SgFWIP+sZQI7IsIz0pfxNq9JlHykslQMhux9MOwQNDS29wfI6fGlLCiL1U9xueZAZn4DBp+rIgoXXz4PNxsSkHG7Bvlb5R3v2hK3UZdFDcTkRcU0Io6i2w="
+        }
+      },
+      "matchmakerInfo": {
+        "matchMethod": "INSTANT",
+        "selectMethod": "AVAILABLE"
+      }
+    },
+    {
+      "id": "holeymoley",
+      "enabled": false,
+      "fleetName": "holeymoley",
+      "priority": 120,
+      "friendlyName": "Holey Moley",
+      "activityNoun": "digging in",
+      "minPlayers": 2,
+      "maxPlayers": 20,
+      "displayItem": {
+        "material": "minecraft:iron_shovel",
+        "slot": 10,
+        "name": "<gradient:gold:yellow><bold>Holey Moley</bold></gradient>",
+        "lore": [
+          "<gray>Fight to be the last",
+          "<gray>mole in the dirt cube"
+        ]
+      },
+      "displayNpc": {
+        "entityType": "PLAYER",
+        "titles": [
+          "<gradient:gold:yellow><bold>Holey Moley</bold></gradient>"
+        ],
+        "skin": {
+          "texture": "ewogICJ0aW1lc3RhbXAiIDogMTY2NTQwMDcxNjY5OSwKICAicHJvZmlsZUlkIiA6ICI5NTE3OTkxNjljYzE0MGY1OGM2MmRjOGZmZTU3NjBiZCIsCiAgInByb2ZpbGVOYW1lIiA6ICJZdWFyaWciLAogICJzaWduYXR1cmVSZXF1aXJlZCIgOiB0cnVlLAogICJ0ZXh0dXJlcyIgOiB7CiAgICAiU0tJTiIgOiB7CiAgICAgICJ1cmwiIDogImh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTIzMmM1OWE2OWNhMDUzMmIyM2RkOTViNDI1Mzc3MmU1MmEwZGQzZjU0ZDhkZmNmZjJmOWM4Y2Q5MGI2MzdiOCIKICAgIH0KICB9Cn0=",
+          "signature": "yNjzOUzcK0+6IZDKDnrWii4FSHYHHHbpmrSy2RLQm/9zd5IudZNVw3VcPcXOwxCukBqz2t5+LWfHuzqqRb6mB/V5rZ9KSl+AA+TL3PYSEcvcD5EZJRXO1bYXOgppJ//VflYfbWJnYkQZt83bYf+VJxL40mARezLAlIvSL48rxhtuTgFO/AyoHrCmbjpr/tqqN5QWEqlJmyBaclOgLzTykkQTWx/7fofYoASRK0hEpVjwfbH+DJjK2aM5MC+C61HDG4BO2vBAQicDBDQ9BL+1Q7yPn7gEV7QRrP1p5ldWHL21ARWFAQ4TI80cqBbL+UTQUUSw+UHU7Ft/VA6yuJMFu7b7unUWsee9vIyOJgVeKnanlpCzUFrzTQhV6GcQNbRFImbRAuaDvFcrOvOcBMBoHG80HGSo0A/gnA5V3ozF3bFWsMPpPdI/LuoQsPh8qf/cXpvrmm4ABgY/GaXtpuj08aEOmkrppbeuQCVFToPQrjloDAZCO8Ghx0bHBiChmYJaDqFRMyA0p2P4gT+HFEP5wx3yybpZe1n1+qOvViS6wbly7l1KhTLN6vR77lLRrHlJaiiFGDBRelFwBN23j+eVtV1kjMTgspt3WVDMSzvkw7rXF3d3jMUPgTfpOogrt96yA3PN+17xm1jJMap+Wju2CZzMpgBfRBYaD8VNC19IAUM="
+        }
+      },
+      "matchmakerInfo": {
+        "matchMethod": "COUNTDOWN",
+        "selectMethod": "AVAILABLE"
+      }
+    }
+  ]
+}

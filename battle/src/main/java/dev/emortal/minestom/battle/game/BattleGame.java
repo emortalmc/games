@@ -1,18 +1,18 @@
 package dev.emortal.minestom.battle.game;
 
-import com.google.common.collect.Sets;
+import com.alibaba.fastjson2.JSONObject;
 import dev.emortal.minestom.battle.listeners.PvpListener;
-import dev.emortal.minestom.battle.map.LoadedMap;
-import dev.emortal.minestom.battle.map.MapData;
-import dev.emortal.minestom.gamesdk.config.GameCreationInfo;
-import dev.emortal.minestom.gamesdk.game.Game;
-import dev.emortal.minestom.gamesdk.util.GameWinLoseMessages;
+import dev.emortal.minestom.core.game.Game;
+import dev.emortal.minestom.core.game.config.GameCreationInfo;
+import dev.emortal.minestom.core.game.util.GameWinLoseMessages;
+import dev.emortal.minestom.core.map.LoadedMap;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.title.Title;
 import net.minestom.server.MinecraftServer;
+import net.minestom.server.coordinate.Vec;
 import net.minestom.server.entity.GameMode;
 import net.minestom.server.entity.Player;
 import net.minestom.server.instance.Instance;
@@ -25,12 +25,11 @@ import org.jetbrains.annotations.Nullable;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class BattleGame extends Game {
     private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
-
-    private final @NotNull LoadedMap map;
 
     private final BattleBossBar bossBar = new BattleBossBar();
     private final AtomicBoolean started = new AtomicBoolean();
@@ -39,14 +38,15 @@ public class BattleGame extends Game {
     private @Nullable Task gameTimerTask;
 
     public BattleGame(@NotNull GameCreationInfo creationInfo, @NotNull LoadedMap map) {
-        super(creationInfo);
-        this.map = map;
+        super(creationInfo, map);
     }
 
     @Override
     public void onPreJoin(@NotNull Player player) {
-        MapData data = this.map.data();
-        player.setRespawnPoint(data.circleCenter().add(0, 0, -data.circleRadius()));
+        JSONObject data = getMap().data();
+        Vec circleCenter = data.getObject("circleCenter", Vec.class);
+        double circleRadius = data.getDoubleValue("circleRadius");
+        player.setRespawnPoint(circleCenter.add(0, 0, -circleRadius).asPos());
     }
 
     @Override
@@ -72,13 +72,13 @@ public class BattleGame extends Game {
     public void start() {
         this.started.set(true);
 
-        GameStartHandler startHandler = new GameStartHandler(this, this.map);
+        GameStartHandler startHandler = new GameStartHandler(this, getMap());
         startHandler.freezePlayers();
         this.gameTimerTask = startHandler.createTimerTask(this.bossBar);
     }
 
     void beginTimer() {
-        this.gameTimerTask = this.map.instance().scheduler().submitTask(new GameTimerTask(this, this.bossBar));
+        this.gameTimerTask = getMap().instance().scheduler().submitTask(new GameTimerTask(this, this.bossBar));
     }
 
     public void checkPlayerCounts() {
@@ -142,7 +142,7 @@ public class BattleGame extends Game {
             }
         }
 
-        this.map.instance().scheduler().buildTask(this::finish)
+        getMap().instance().scheduler().buildTask(this::finish)
                 .delay(TaskSchedule.seconds(6))
                 .schedule();
     }
@@ -165,21 +165,26 @@ public class BattleGame extends Game {
 
     @Override
     public void cleanUp() {
-        this.map.instance().scheduleNextTick(MinecraftServer.getInstanceManager()::unregisterInstance);
+        getMap().instance().scheduleNextTick(MinecraftServer.getInstanceManager()::unregisterInstance);
         this.bossBar.delete();
     }
 
     @Override
     public @NotNull Instance getSpawningInstance(@NotNull Player player) {
-        return this.map.instance();
+        return getMap().instance();
     }
 
     public @NotNull Instance getInstance() {
-        return this.map.instance();
+        return getMap().instance();
     }
 
     public @NotNull Set<Player> getAlivePlayers() {
-        return Collections.unmodifiableSet(Sets.filter(this.getPlayers(), player -> player.getGameMode() == GameMode.ADVENTURE));
+        Set<Player> alivePlayers = ConcurrentHashMap.newKeySet();
+        for (Player player : getPlayers()) {
+            if (player.getGameMode() != GameMode.ADVENTURE) continue;
+            alivePlayers.add(player);
+        }
+        return Collections.unmodifiableSet(alivePlayers);
     }
 
     public boolean hasEnded() {

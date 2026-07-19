@@ -40,7 +40,7 @@ public final class InteractionManager {
     public InteractionManager(@NotNull MinesweeperGame game, @NotNull Board board) {
         this.game = game;
         this.board = board;
-        this.actionBar = new ActionBar(board.getInstance());
+        this.actionBar = new ActionBar(board);
 
         game.getEventNode().addListener(PlayerBlockBreakEvent.class, this::onBreak);
         game.getEventNode().addListener(PlayerBlockInteractEvent.class, this::onClick);

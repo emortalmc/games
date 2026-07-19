@@ -1,8 +1,8 @@
 package dev.emortal.minestom.lobby.gadget.lobber;
 
+import dev.emortal.minestom.core.raycast.RaycastUtil;
 import dev.emortal.minestom.lobby.features.SeatingFeature;
 import dev.emortal.minestom.lobby.gadget.Gadget;
-import dev.emortal.minestom.lobby.raycast.RaycastUtil;
 import dev.emortal.minestom.lobby.util.SphereUtil;
 import dev.emortal.minestom.lobby.util.WorldBlock;
 import net.kyori.adventure.sound.Sound;

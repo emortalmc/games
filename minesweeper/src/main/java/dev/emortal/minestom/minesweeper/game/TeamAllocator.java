@@ -23,7 +23,7 @@ public final class TeamAllocator {
             color = getRandom();
         }
 
-        Team team = MinecraftServer.getTeamManager().createBuilder(UUID.randomUUID().toString()).teamColor(color.color()).build();
+        Team team = MinecraftServer.getTeamManager().createBuilder(UUID.randomUUID().toString()).teamColor(color.teamColor()).build();
         player.setTeam(team);
         player.setTag(PlayerTags.COLOR, color);
     }

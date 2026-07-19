@@ -83,7 +83,7 @@ final class GameTimerTask implements Supplier<TaskSchedule> {
         this.game.sendActionBar(Component.text("You are invulnerable for " + invulnerableSeconds + " seconds"));
 
         if (invulnerableSeconds <= 5) {
-            this.game.playSound(Sound.sound(Key.key("battle.countdown.begin"), Sound.Source.MASTER, 1f, 1f), Sound.Emitter.self());
+            this.game.playSound(Sound.sound(Key.key("battle.countdown.begin"), Sound.Source.MASTER, 0.5f, 1.2f), Sound.Emitter.self());
         }
     }
 

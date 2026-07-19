@@ -1,6 +1,6 @@
 plugins {
     java
-    id("com.gradleup.shadow") version "9.3.1"
+    id("com.gradleup.shadow") version "9.5.1"
 }
 
 group = "dev.emortal.minestom"
@@ -12,11 +12,10 @@ repositories {
             includeModule("net.minestom", "minestom")
         }
     }
+    mavenLocal()
     mavenCentral()
 
     maven("https://maven.draylar.dev/releases")
-    maven("https://repo.emortal.dev/snapshots")
-    maven("https://repo.emortal.dev/releases")
 
     maven("https://jitpack.io")
     maven("https://packages.confluent.io/maven/")
@@ -25,16 +24,12 @@ repositories {
 dependencies {
     implementation(project(":core"))
 
-    implementation("dev.emortal:rayfast:12c6457")
-    implementation("dev.emortal:bbstom:0d24d32")
-    implementation("org.joml:joml:1.10.8")
+    implementation("com.alibaba.fastjson2:fastjson2:2.0.61")
+    implementation("dev.emortal:bbstom:local")
+    implementation("org.joml:joml:1.10.9")
 }
 
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(25))
-    }
-}
+java.toolchain.languageVersion.set(JavaLanguageVersion.of(26))
 
 tasks {
     shadowJar {

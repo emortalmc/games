@@ -2,6 +2,7 @@ package dev.emortal.minestom.minesweeper.map;
 
 import dev.emortal.minestom.minesweeper.board.Board;
 import dev.emortal.minestom.minesweeper.board.BoardReader;
+import dev.emortal.minestom.minesweeper.game.SaveHandler;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.ShadowColor;
@@ -16,9 +17,15 @@ import net.minestom.server.world.DimensionType;
 import net.minestom.server.world.attribute.EnvironmentAttribute;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Collection;
+import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 public final class MapManager {
+    public static final int MAX_LIVES = 3;
     public static final int FLOOR_HEIGHT = 64;
     public static final Pos SPAWN_POSITION = new Pos(0.5F, FLOOR_HEIGHT + 1, 0.5F, -45F, 0F);
 
@@ -61,16 +68,30 @@ public final class MapManager {
         return instance;
     }
 
-    public @NotNull Board createMap() {
+    public @NotNull Board getOrCreateMap(Collection<UUID> uuids) {
+        Path mapPath = SaveHandler.getPathFromUuids(uuids);
+
+        if (!Files.exists(mapPath)) return createRandomMap();
+
+        byte[] bytes;
+        try {
+            bytes = Files.readAllBytes(mapPath);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return createMap(bytes);
+    }
+
+    private @NotNull Board createRandomMap() {
         MapTheme theme = MapTheme.DEFAULT;
         Instance instance = createInstance(theme);
 
         long seed = ThreadLocalRandom.current().nextLong();
 
-        return new Board(seed, instance, theme);
+        return new Board(seed, 0, MAX_LIVES, instance, theme);
     }
 
-    public @NotNull Board createMap(byte[] data) {
+    private @NotNull Board createMap(byte[] data) {
         MapTheme theme = MapTheme.DEFAULT;
         Instance instance = createInstance(theme);
 

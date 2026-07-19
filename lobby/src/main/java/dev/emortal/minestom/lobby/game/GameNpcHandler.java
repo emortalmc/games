@@ -1,9 +1,7 @@
 package dev.emortal.minestom.lobby.game;
 
-import dev.emortal.api.liveconfigparser.configs.ConfigProvider;
-import dev.emortal.api.liveconfigparser.configs.common.ConfigNPC;
-import dev.emortal.api.liveconfigparser.configs.gamemode.GameModeConfig;
-import dev.emortal.api.service.matchmaker.MatchmakerService;
+import dev.emortal.minestom.lobby.config.ConfigNPC;
+import dev.emortal.minestom.lobby.config.GameModeConfig;
 import dev.emortal.minestom.lobby.util.entity.MultilineHologram;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -13,26 +11,21 @@ import net.minestom.server.instance.Instance;
 import net.minestom.server.inventory.click.ClickType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public final class GameNpcHandler {
     private static final Pos CIRCLE_CENTER = new Pos(0.5, 69.0, -29.0);
     private static final Pos LOOKING_POS = CIRCLE_CENTER.add(0, 0, 3);
     private static final double NPC_RADIUS = 5;
 
-    private final @NotNull ConfigProvider<GameModeConfig> configProvider;
-    private final @NotNull MatchmakerService matchmaker;
+    private final @NotNull List<GameModeConfig> configs;
     private final @NotNull Instance instance;
 
     private final Map<String, Entity> npcs = new HashMap<>();
     private final Map<String, MultilineHologram> holograms = new HashMap<>();
 
-    GameNpcHandler(@NotNull ConfigProvider<GameModeConfig> configProvider, @NotNull MatchmakerService matchmaker, @NotNull Instance instance) {
-        this.configProvider = configProvider;
-        this.matchmaker = matchmaker;
+    GameNpcHandler(@NotNull List<GameModeConfig> configs, @NotNull Instance instance) {
+        this.configs = configs;
         this.instance = instance;
 
         // Do the initial render
@@ -42,11 +35,14 @@ public final class GameNpcHandler {
     void renderNpcs() {
         this.removeAllNpcs();
 
-        List<GameModeConfig> sortedConfigs = this.configProvider.allConfigs().stream()
-                .filter(GameModeConfig::enabled)
-                .filter(config -> config.displayNpc() != null)
-                .sorted(Comparator.comparingInt(GameModeConfig::priority))
-                .toList();
+        List<GameModeConfig> sortedConfigs = new ArrayList<>();
+        for (GameModeConfig config : configs) {
+            if (!config.enabled()) continue;
+            if (config.displayNpc() == null) continue;
+            sortedConfigs.add(config);
+        }
+        sortedConfigs.sort(Comparator.comparingInt(GameModeConfig::priority));
+
         long npcCount = sortedConfigs.size();
 
         int i = 0;
@@ -82,9 +78,9 @@ public final class GameNpcHandler {
 
         Entity npc = ConfigNpcConverter.convertNpc(configNpc, this.instance, pos, (player, clickType) -> {
             if (clickType == ClickType.LEFT_CLICK) {
-                QueueGameClickHandler.leftClick(player, config, this.matchmaker);
+                QueueGameClickHandler.leftClick(player, config);
             } else {
-                QueueGameClickHandler.rightClick(player, config, this.matchmaker);
+                QueueGameClickHandler.rightClick(player, config);
             }
         });
         this.npcs.put(config.fleetName(), npc);

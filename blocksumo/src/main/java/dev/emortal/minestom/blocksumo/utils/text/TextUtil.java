@@ -10,7 +10,7 @@ public final class TextUtil {
             'ᴠ', 'ᴡ', 'х', 'ʏ', 'ᴢ', '₀', '₁', '₂', '₃', '₄', '₅', '₆', '₇', '₈', '₉'
     };
 
-    public static @NotNull String convertToSmallFont(@NotNull String input) {
+    public static @NotNull String smallFont(@NotNull String input) {
         StringBuilder builder = new StringBuilder();
         String lowercase = input.toLowerCase(Locale.ROOT);
 

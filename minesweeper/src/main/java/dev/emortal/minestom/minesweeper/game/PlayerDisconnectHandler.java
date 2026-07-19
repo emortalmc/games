@@ -27,6 +27,7 @@ public final class PlayerDisconnectHandler {
         this.playQuitSound();
 
         if (this.game.getPlayers().isEmpty()) {
+            this.game.save();
             this.game.finish();
         }
     }

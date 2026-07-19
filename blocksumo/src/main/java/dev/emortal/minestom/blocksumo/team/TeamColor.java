@@ -6,26 +6,10 @@ import net.kyori.adventure.util.RGBLike;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class TeamColor {
 
-    private static final NamedTextColor[] COLOURS = new NamedTextColor[] {
-            NamedTextColor.BLACK,
-            NamedTextColor.DARK_BLUE,
-            NamedTextColor.DARK_GREEN,
-            NamedTextColor.DARK_RED,
-            NamedTextColor.DARK_PURPLE,
-            NamedTextColor.GOLD,
-            NamedTextColor.GRAY,
-            NamedTextColor.DARK_GRAY,
-            NamedTextColor.BLUE,
-            NamedTextColor.GREEN,
-            NamedTextColor.AQUA,
-            NamedTextColor.DARK_AQUA,
-            NamedTextColor.RED,
-            NamedTextColor.LIGHT_PURPLE,
-            NamedTextColor.YELLOW
-    };
     private static final ItemStack[] ITEM_STACKS = new ItemStack[] {
             ItemStack.of(Material.BLACK_WOOL, 64),
             ItemStack.of(Material.BLUE_WOOL, 64),
@@ -45,13 +29,13 @@ public class TeamColor {
     };
 
     private final RGBLike exactColor;
-    private final NamedTextColor color;
+    private final net.minestom.server.color.TeamColor teamColor;
     private final ItemStack item;
 
     public TeamColor(RGBLike exactColor) {
         this.exactColor = exactColor;
         NamedTextColor nearest = NamedTextColor.nearestTo(TextColor.color(exactColor));
-        this.color = nearest;
+        this.teamColor = getTeamColor(nearest);
         this.item = ITEM_STACKS[colourIndex(nearest)];
     }
 
@@ -68,7 +52,11 @@ public class TeamColor {
     }
 
     public NamedTextColor getNamedTextColor() {
-        return color;
+        return NamedTextColor.nearestTo(teamColor.textColor());
+    }
+
+    public net.minestom.server.color.TeamColor getTeamColor() {
+        return teamColor;
     }
 
     @Override
@@ -77,9 +65,21 @@ public class TeamColor {
         return getTextColor().compareTo(otherCol.getTextColor()) == 0;
     }
 
+    private @Nullable net.minestom.server.color.TeamColor getTeamColor(NamedTextColor color) {
+        net.minestom.server.color.TeamColor[] colours = net.minestom.server.color.TeamColor.values();
+        for (net.minestom.server.color.TeamColor colour : colours) {
+            if (colour.textColor() == color) {
+                return colour;
+            }
+        }
+        return null;
+    }
+
     private int colourIndex(NamedTextColor color) {
-        for (int i = 0; i < COLOURS.length; i++) {
-            if (COLOURS[i].equals(color)) {
+        net.minestom.server.color.TeamColor[] colours = net.minestom.server.color.TeamColor.values();
+
+        for (int i = 0; i < colours.length; i++) {
+            if (colours[i].textColor().equals(color)) {
                 return i;
             }
         }

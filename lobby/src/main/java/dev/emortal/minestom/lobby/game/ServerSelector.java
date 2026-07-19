@@ -1,13 +1,10 @@
 package dev.emortal.minestom.lobby.game;
 
-import dev.emortal.api.liveconfigparser.configs.ConfigProvider;
-import dev.emortal.api.liveconfigparser.configs.ConfigUpdate;
-import dev.emortal.api.liveconfigparser.configs.common.ConfigItem;
-import dev.emortal.api.liveconfigparser.configs.gamemode.GameModeConfig;
-import dev.emortal.api.service.matchmaker.MatchmakerService;
-import dev.emortal.api.service.playertracker.PlayerTrackerService;
+import dev.emortal.messaging.message.OnlinePlayersMessage;
+import dev.emortal.minestom.core.EmortalServer;
 import dev.emortal.minestom.lobby.LobbyEvents;
-import io.grpc.StatusRuntimeException;
+import dev.emortal.minestom.lobby.config.ConfigItem;
+import dev.emortal.minestom.lobby.config.GameModeConfig;
 import net.kyori.adventure.text.Component;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.entity.Player;
@@ -22,35 +19,29 @@ import net.minestom.server.inventory.InventoryType;
 import net.minestom.server.inventory.click.Click;
 import net.minestom.server.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public final class ServerSelector {
     private static final Logger LOGGER = LoggerFactory.getLogger(ServerSelector.class);
 
-    private final @Nullable MatchmakerService matchmaker;
-    private final @Nullable PlayerTrackerService playerTracker;
-    private final @NotNull ConfigProvider<GameModeConfig> configProvider;
+    private final @NotNull List<GameModeConfig> configs;
     private final @NotNull GameNpcHandler npcHandler;
 
     private final Inventory inventory = new Inventory(InventoryType.CHEST_4_ROW, "Pick a game, any game!");
     private final Map<Integer, GameModeConfig> slotToGameMode = new HashMap<>();
 
-    public ServerSelector(@NotNull Instance instance, @Nullable MatchmakerService matchmaker, @Nullable PlayerTrackerService playerTracker,
-                          @NotNull EventNode<Event> eventNode, @NotNull ConfigProvider<GameModeConfig> configProvider) {
-        this.matchmaker = matchmaker;
-        this.playerTracker = playerTracker;
-        this.configProvider = configProvider;
-        this.npcHandler = new GameNpcHandler(configProvider, matchmaker, instance);
+    public ServerSelector(@NotNull Instance instance,
+                          @NotNull EventNode<Event> eventNode, @NotNull List<GameModeConfig> configs) {
+        this.configs = configs;
+        this.npcHandler = new GameNpcHandler(configs, instance);
 
         this.registerListeners(eventNode);
 
-        Collection<GameModeConfig> configs = configProvider.allConfigs();
-        configProvider.addGlobalUpdateListener(this::handleUpdate);
         for (GameModeConfig config : configs) {
             if (!config.enabled()) continue;
 
@@ -65,9 +56,9 @@ public final class ServerSelector {
 
         this.inventory.eventNode().addListener(InventoryPreClickEvent.class, this::handleInventoryClick);
 
-        MinecraftServer.getSchedulerManager().buildTask(this::updatePlayerCounts)
-                .repeat(2, ChronoUnit.SECONDS)
-                .schedule();
+        EmortalServer.getRedis().addMessageHandler(OnlinePlayersMessage.class, (_, msg) -> {
+            this.updatePlayerCounts(msg.online());
+        });
     }
 
     private void handleInventoryClick(@NotNull InventoryPreClickEvent event) {
@@ -80,11 +71,11 @@ public final class ServerSelector {
         if (config == null) return; // clicked empty slot
 
         if (event.getClick() instanceof Click.Left) {
-            QueueGameClickHandler.leftClick(player, config, this.matchmaker);
+            QueueGameClickHandler.leftClick(player, config);
             player.closeInventory();
         }
         if (event.getClick() instanceof Click.Right) {
-            QueueGameClickHandler.rightClick(player, config, this.matchmaker);
+            QueueGameClickHandler.rightClick(player, config);
         }
     }
 
@@ -97,50 +88,7 @@ public final class ServerSelector {
         });
     }
 
-    private void handleUpdate(@NotNull ConfigUpdate<GameModeConfig> update) {
-        switch (update) {
-            case ConfigUpdate.Create(GameModeConfig newConfig) -> this.addGameMode(newConfig);
-            case ConfigUpdate.Delete(GameModeConfig oldConfig) -> this.removeGameMode(oldConfig);
-            case ConfigUpdate.Modify(GameModeConfig oldConfig, GameModeConfig newConfig) ->
-                    this.updateGameMode(oldConfig, newConfig);
-            default -> throw new IllegalStateException("Invalid config update: " + update);
-        }
-    }
-
-    private void addGameMode(@NotNull GameModeConfig config) {
-        if (!config.enabled()) return;
-
-        // Display item
-        this.createDisplayItem(config, 0);
-
-        // NPCs
-        this.npcHandler.renderNpcs();
-    }
-
-    private void removeGameMode(@NotNull GameModeConfig config) {
-        ConfigItem item = config.displayItem();
-        if (item != null) this.removeDisplayItem(item);
-
-        this.npcHandler.renderNpcs();
-    }
-
-    private void updateGameMode(@NotNull GameModeConfig oldConfig, @NotNull GameModeConfig newConfig) {
-        this.updateGameModeDisplayItem(newConfig, oldConfig.displayItem());
-
-        // Re-render NPCs no matter what as game mode might have been disabled
-        this.npcHandler.renderNpcs();
-    }
-
-    private void updateGameModeDisplayItem(@NotNull GameModeConfig newConfig, @Nullable ConfigItem oldItem) {
-        if (oldItem != null) {
-            // We always remove the old item, as we will re-add it if we have a new item, and we won't if we don't
-            this.removeDisplayItem(oldItem);
-        }
-
-        this.createDisplayItem(newConfig, 0);
-    }
-
-    private void createDisplayItem(@NotNull GameModeConfig config, long playerCount) {
+    private void createDisplayItem(@NotNull GameModeConfig config, int playerCount) {
         ConfigItem item = config.displayItem();
         if (item == null) return; // If the item is null we have no item to create
         if (!config.enabled()) return; // If the config isn't enabled then we don't want to create an item
@@ -162,34 +110,11 @@ public final class ServerSelector {
         this.inventory.setItemStack(item.slot(), ItemStack.AIR);
     }
 
-    private void updatePlayerCounts() {
-        if (this.playerTracker == null) return;
-
-        List<String> fleetNames = new ArrayList<>();
-        for (GameModeConfig config : this.configProvider.allConfigs()) {
-            if (!config.enabled()) continue;
-            fleetNames.add(config.fleetName());
-        }
-
-        // GetFleetPlayerCounts has to have the fleet names set, and we may not have any game modes enabled
-        if (fleetNames.isEmpty()) return;
-
-        Map<String, Long> playerCounts;
-        try {
-            playerCounts = this.playerTracker.getFleetPlayerCounts(fleetNames);
-        } catch (StatusRuntimeException exception) {
-            LOGGER.error("Failed to get player counts for fleets", exception);
-            return;
-        }
-
-        this.updatePlayerCounts(playerCounts);
-    }
-
-    private void updatePlayerCounts(@NotNull Map<String, Long> playerCounts) {
-        for (Map.Entry<String, Long> entry : playerCounts.entrySet()) {
+    private void updatePlayerCounts(@NotNull Map<String, Integer> playerCounts) {
+        for (Map.Entry<String, Integer> entry : playerCounts.entrySet()) {
             this.npcHandler.updatePlayerCount(entry.getKey(), entry.getValue());
 
-            for (GameModeConfig config : this.configProvider.allConfigs()) {
+            for (GameModeConfig config : configs) {
                 if (!config.enabled()) continue;
                 if (!config.fleetName().equals(entry.getKey())) continue;
                 if (config.displayItem() == null) continue;

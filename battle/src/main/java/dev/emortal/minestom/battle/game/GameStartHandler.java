@@ -1,12 +1,11 @@
 package dev.emortal.minestom.battle.game;
 
+import com.alibaba.fastjson2.JSONObject;
 import dev.emortal.minestom.battle.chest.ChestUpdateHandler;
 import dev.emortal.minestom.battle.entity.NoPhysicsEntity;
 import dev.emortal.minestom.battle.listeners.ItemListener;
 import dev.emortal.minestom.battle.listeners.PvpListener;
-import dev.emortal.minestom.battle.map.LoadedMap;
-import dev.emortal.minestom.battle.map.MapData;
-import dev.emortal.minestom.gamesdk.MinestomGameServer;
+import dev.emortal.minestom.core.map.LoadedMap;
 import io.github.togar2.pvp.MinestomPvP;
 import io.github.togar2.pvp.damage.combat.CombatManager;
 import io.github.togar2.pvp.feature.CombatFeatures;
@@ -109,12 +108,19 @@ final class GameStartHandler {
     }
 
     private @NotNull Pos findInitialPosition(double circleIndex) {
-        MapData mapData = this.map.data();
+        JSONObject data = this.map.data();
+        JSONObject circleCenterJson = data.getJSONObject("circleCenter");
+        Pos circleCenter = new Pos(
+                circleCenterJson.getDoubleValue("x"),
+                circleCenterJson.getDoubleValue("y"),
+                circleCenterJson.getDoubleValue("z")
+        );
+        double circleRadius = data.getDoubleValue("circleRadius");
 
-        double x = Math.sin(circleIndex) * mapData.circleRadius();
-        double z = Math.cos(circleIndex) * mapData.circleRadius();
+        double x = Math.sin(circleIndex) * circleRadius;
+        double z = Math.cos(circleIndex) * circleRadius;
 
-        return mapData.circleCenter().add(x, 0, z).withLookAt(mapData.circleCenter());
+        return circleCenter.add(x, 0, z).withLookAt(circleCenter);
     }
 
     private void freezePlayer(@NotNull Player player, @NotNull Pos pos) {
@@ -135,7 +141,7 @@ final class GameStartHandler {
         private final @NotNull BattleBossBar bossBar;
         private final @NotNull Set<Entity> freezeEntities;
 
-        private int secondsLeft = MinestomGameServer.TEST_MODE ? 2 : 10;
+        private int secondsLeft = 10;
 
         InitialTimerTask(@NotNull BattleGame game, @NotNull BattleBossBar bossBar, @NotNull Set<Entity> freezeEntities) {
             this.game = game;
@@ -152,7 +158,7 @@ final class GameStartHandler {
 
             this.game.showTitle(Title.title(Component.empty(), Component.text(this.secondsLeft), DEFAULT_TIMES));
             if (this.secondsLeft <= 5) {
-                this.game.playSound(Sound.sound(Key.key("battle.countdown.begin2"), Sound.Source.MASTER, 1f, 1f), Sound.Emitter.self());
+                this.game.playSound(Sound.sound(Key.key("battle.countdown.begin"), Sound.Source.MASTER, 1f, 1f), Sound.Emitter.self());
             }
 
             this.secondsLeft--;

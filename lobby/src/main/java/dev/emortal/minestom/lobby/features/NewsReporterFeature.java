@@ -24,7 +24,7 @@ public final class NewsReporterFeature implements LobbyFeature {
         tvScreen.setTicking(false);
         tvScreen.setPhysics(false);
         tvScreen.editEntityMeta(TextDisplayMeta.class, meta -> {
-            meta.setText(Component.text("\uE01B\uF801\uE01C"));
+            meta.setText(Component.text("\uE01B\uF001\uE01C"));
             meta.setBackgroundColor(0);
             meta.setScale(new Vec(0.9));
         });

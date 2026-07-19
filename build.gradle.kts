@@ -6,27 +6,47 @@ group = "dev.emortal"
 version = "1.0-SNAPSHOT"
 
 allprojects {
+    tasks {
+        withType<AbstractArchiveTask> {
+            isPreserveFileTimestamps = false
+            isReproducibleFileOrder = true
+        }
+        withType<JavaCompile> {
+            options.isDeprecation = true
+            options.encoding = "UTF-8"
+        }
+    }
+
     apply(plugin = "java")
 
     repositories {
-        maven(url = "https://central.sonatype.com/repository/maven-snapshots/") {
-            content { // This filtering is optional, but recommended
-                includeModule("net.minestom", "minestom")
-                includeModule("net.minestom", "testing")
-            }
-        }
         mavenCentral()
     }
 
     dependencies {
-        // Minestom
-        implementation("net.minestom:minestom:26_1-SNAPSHOT")
-        implementation("net.kyori:adventure-text-minimessage:4.25.0")
+        // Logger
+        implementation("ch.qos.logback:logback-classic:1.5.18")
+        implementation("net.logstash.logback:logstash-logback-encoder:8.1")
 
-        implementation("org.apache.kafka:kafka-clients:4.1.1")
-
-        compileOnly("it.unimi.dsi:fastutil:8.5.18")
-        implementation("dev.hollowcube:polar:1.15.0")
+        compileOnly("org.jetbrains:annotations:26.1.0")
     }
+}
+
+tasks.register<Copy>("collectLibs") {
+    dependsOn(subprojects.map { it.tasks.named("build") })
+
+    subprojects.forEach { subproject ->
+        from(subproject.layout.buildDirectory.dir("libs")) {
+            include("*-all.jar")
+            exclude("*-sources.jar")
+        }
+    }
+
+    into(layout.buildDirectory.dir("libs"))
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
+tasks.named("build") {
+    dependsOn("collectLibs")
 }
 

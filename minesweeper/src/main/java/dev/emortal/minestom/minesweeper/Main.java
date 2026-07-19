@@ -1,27 +1,28 @@
 package dev.emortal.minestom.minesweeper;
 
-import dev.emortal.minestom.gamesdk.MinestomGameServer;
-import dev.emortal.minestom.gamesdk.config.GameSdkConfig;
+import dev.emortal.messaging.types.GameInfo;
+import dev.emortal.minestom.core.EmortalServer;
+import dev.emortal.minestom.core.game.config.GameConfig;
 import dev.emortal.minestom.minesweeper.board.Board;
 import dev.emortal.minestom.minesweeper.game.MinesweeperGame;
 import dev.emortal.minestom.minesweeper.map.MapManager;
+
+import java.util.List;
 
 public final class Main {
     private static final int MIN_PLAYERS = 1;
 
     void main() {
-        MinestomGameServer.create(moduleManager -> {
+        EmortalServer.start(() -> {
             MapManager mapManager = new MapManager();
             mapManager.registerDimensions();
 
-            return GameSdkConfig.builder()
-                    .minPlayers(MIN_PLAYERS)
-                    .finishBehaviour(GameSdkConfig.FinishBehaviour.REQUEUE)
-                    .gameCreator(info -> {
-                        Board board = mapManager.createMap();
-                        return new MinesweeperGame(info, board);
-                    })
-                    .build();
+            GameConfig gameConfig = new GameConfig(MIN_PLAYERS, GameConfig.FinishBehaviour.REQUEUE, info -> {
+                Board board = mapManager.getOrCreateMap(info.playerIds());
+                return new MinesweeperGame(info, board);
+            });
+            GameInfo gameInfo = new GameInfo("minesweeper", List.of(), 1, 10, GameInfo.MatchMethod.INSTANT);
+            EmortalServer.registerGame(gameInfo, gameConfig);
         });
     }
 }

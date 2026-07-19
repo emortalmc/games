@@ -1,7 +1,7 @@
 package dev.emortal.minestom.lobby.game;
 
-import dev.emortal.api.liveconfigparser.configs.common.ConfigNPC;
-import dev.emortal.api.liveconfigparser.configs.common.ConfigSkin;
+import dev.emortal.minestom.lobby.config.ConfigNPC;
+import dev.emortal.minestom.lobby.config.ConfigSkin;
 import dev.emortal.minestom.lobby.util.entity.BetterEntity;
 import dev.emortal.minestom.lobby.util.entity.MultilineHologram;
 import dev.emortal.minestom.lobby.util.npc.NpcHandler;

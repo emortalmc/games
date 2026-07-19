@@ -1,34 +1,19 @@
 plugins {
     id("java")
-    id("com.gradleup.shadow") version "9.3.1"
+    id("com.gradleup.shadow") version "9.5.1"
 }
 
 group = "dev.emortal.minestom"
 version = "1.0-SNAPSHOT"
 
-repositories {
-    mavenCentral()
-
-    maven("https://repo.emortal.dev/snapshots")
-    maven("https://repo.emortal.dev/releases")
-
-    maven("https://jitpack.io")
-    maven("https://packages.confluent.io/maven/")
-}
 
 dependencies {
-    implementation(project(":gamesdk"))
+    implementation(project(":core"))
 
-    implementation("org.joml:joml:1.10.8")
-
-    implementation("dev.emortal:rayfast:a4a8041")
+    implementation("org.joml:joml:1.10.9")
 }
 
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(25))
-    }
-}
+java.toolchain.languageVersion.set(JavaLanguageVersion.of(26))
 
 tasks {
     shadowJar {
@@ -41,16 +26,6 @@ tasks {
                 "Multi-Release" to true
             )
         }
-    }
-
-    withType<AbstractArchiveTask> {
-        isPreserveFileTimestamps = false
-        isReproducibleFileOrder = true
-    }
-
-    withType<JavaCompile> {
-        options.encoding = "UTF-8"
-        options.isDeprecation = true
     }
 
     build {

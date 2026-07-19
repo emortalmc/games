@@ -5,7 +5,7 @@ import dev.emortal.minestom.blocksumo.game.PlayerManager;
 import dev.emortal.minestom.blocksumo.game.PlayerTags;
 import dev.emortal.minestom.blocksumo.powerup.item.HotPotato;
 import dev.emortal.minestom.blocksumo.spawning.PlayerRespawnHandler;
-import dev.emortal.minestom.gamesdk.game.GameUpdateRequestEvent;
+import dev.emortal.minestom.core.game.GameUpdateRequestEvent;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;

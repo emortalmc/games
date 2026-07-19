@@ -20,7 +20,6 @@ import net.minestom.server.entity.ItemEntity;
 import net.minestom.server.entity.Player;
 import net.minestom.server.entity.damage.Damage;
 import net.minestom.server.entity.damage.DamageType;
-import net.minestom.server.event.entity.EntityDamageEvent;
 import net.minestom.server.event.player.PlayerTickEvent;
 import net.minestom.server.instance.block.Block;
 import net.minestom.server.item.ItemStack;
@@ -53,23 +52,6 @@ public final class PvpListener {
         game.getEventNode().addListener(FinalDamageEvent.class, this::onFinalDamage);
         game.getEventNode().addListener(EntityPreDeathEvent.class, this::onPreDeath);
         game.getEventNode().addListener(PlayerTickEvent.class, this::onTick);
-        game.getEventNode().addListener(EntityDamageEvent.class, this::onEntityDamage);
-    }
-
-    private void onEntityDamage(@NotNull EntityDamageEvent event) {
-        if (!(event.getEntity() instanceof Player player)) return;
-
-        if (event.getDamage().getType() == DamageType.FALL) { // https://github.com/TogAr2/MinestomPvP/pull/46#issuecomment-2309858332
-            // if the player fell into water, cancel
-            Block blockAt = event.getInstance().getBlock(event.getEntity().getPosition(), Block.Getter.Condition.TYPE);
-            Block blockUnder = event.getInstance().getBlock(event.getEntity().getPosition().sub(0, 1.5, 0), Block.Getter.Condition.TYPE);
-
-            if (blockAt.compare(Block.WATER) || blockUnder.compare(Block.WATER) || (blockUnder.compare(Block.SLIME_BLOCK) && !player.isSneaking())) {
-                event.setCancelled(true);
-                event.setAnimation(false);
-                event.getDamage().setAmount(0);
-            }
-        }
     }
 
     private void onFinalDamage(@NotNull FinalDamageEvent event) {
@@ -83,7 +65,7 @@ public final class PvpListener {
 
         Entity source = event.getEntity();
 
-        float animation = source != null ? source.getPosition().yaw() : -1F;
+        float animation = source.getPosition().yaw();
         this.sendHitAnimation(player, animation);
     }
 

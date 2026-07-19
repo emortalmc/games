@@ -1,7 +1,6 @@
 package dev.emortal.minestom.blocksumo.game;
 
 import dev.emortal.minestom.blocksumo.entity.BetterEntity;
-import dev.emortal.minestom.blocksumo.map.MapData;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -51,7 +50,7 @@ public final class PlayerDiamondBlockHandler {
         Player player = event.getPlayer();
         if (player.getGameMode() != GameMode.SURVIVAL) return false;
 
-        return event.getNewPosition().sameBlock(MapData.CENTER);
+        return event.getNewPosition().sameBlock(BlockSumoGame.CENTER);
     }
 
     private void onPlayerMove(@NotNull PlayerMoveEvent event) {
@@ -162,7 +161,7 @@ public final class PlayerDiamondBlockHandler {
             });
             textEntity.setTicking(false);
             textEntity.setHasCollision(false);
-            textEntity.setInstance(game.getInstance(), MapData.CENTER.add(0, 5, 0));
+            textEntity.setInstance(game.getInstance(), BlockSumoGame.CENTER.add(0, 5, 0));
 
             countdownEntity = new BetterEntity(EntityType.TEXT_DISPLAY);
             countdownEntity.editEntityMeta(TextDisplayMeta.class, meta -> {
@@ -175,7 +174,7 @@ public final class PlayerDiamondBlockHandler {
             });
             countdownEntity.setTicking(false);
             countdownEntity.setHasCollision(false);
-            countdownEntity.setInstance(game.getInstance(), MapData.CENTER.add(0, 3.5, 0));
+            countdownEntity.setInstance(game.getInstance(), BlockSumoGame.CENTER.add(0, 3.5, 0));
         }
 
         private void notifyCountdown() {

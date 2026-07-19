@@ -1,27 +1,18 @@
 package dev.emortal.minestom.blocksumo.game;
 
-import com.google.protobuf.Message;
-import dev.emortal.api.model.gamedata.V1BlockSumoPlayerData;
-import dev.emortal.api.model.gametracker.BlockSumoFinishData;
-import dev.emortal.api.model.gametracker.BlockSumoScoreboard;
-import dev.emortal.api.model.gametracker.BlockSumoUpdateData;
-import dev.emortal.api.model.gametracker.CommonGameFinishWinnerData;
-import dev.emortal.minestom.blocksumo.Main;
+import com.alibaba.fastjson2.JSONObject;
+import dev.emortal.messaging.types.BlockSumoData;
 import dev.emortal.minestom.blocksumo.event.EventManager;
 import dev.emortal.minestom.blocksumo.explosion.ExplosionManager;
-import dev.emortal.minestom.blocksumo.map.LoadedMap;
-import dev.emortal.minestom.blocksumo.map.MapData;
-import dev.emortal.minestom.blocksumo.metrics.BlockSumoMetrics;
 import dev.emortal.minestom.blocksumo.powerup.PowerUpManager;
 import dev.emortal.minestom.blocksumo.scoreboard.ScoreboardManager;
 import dev.emortal.minestom.blocksumo.spawning.InitialSpawnPointSelector;
 import dev.emortal.minestom.blocksumo.spawning.PlayerRespawnHandler;
 import dev.emortal.minestom.blocksumo.spawning.SpawnProtectionManager;
-import dev.emortal.minestom.blocksumo.team.TeamColor;
-import dev.emortal.minestom.gamesdk.config.GameCreationInfo;
-import dev.emortal.minestom.gamesdk.game.Game;
-import dev.emortal.minestom.gamesdk.util.GameWinLoseMessages;
-import io.micrometer.core.instrument.Metrics;
+import dev.emortal.minestom.core.game.Game;
+import dev.emortal.minestom.core.game.config.GameCreationInfo;
+import dev.emortal.minestom.core.game.util.GameWinLoseMessages;
+import dev.emortal.minestom.core.map.LoadedMap;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
@@ -33,15 +24,12 @@ import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.title.Title;
 import net.minestom.server.MinecraftServer;
-import net.minestom.server.component.DataComponents;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.EntityType;
 import net.minestom.server.entity.Player;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.block.Block;
-import net.minestom.server.item.ItemStack;
-import net.minestom.server.item.Material;
 import net.minestom.server.sound.SoundEvent;
 import net.minestom.server.timer.Task;
 import net.minestom.server.timer.TaskSchedule;
@@ -49,18 +37,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 
 public class BlockSumoGame extends Game {
-    public static final int MIN_PLAYERS = 2;
+    public static final @NotNull Pos CENTER = new Pos(0.5, 65, 0.5);
     public static final @NotNull Component TITLE =
             MiniMessage.miniMessage().deserialize("<gradient:blue:aqua><bold>Block Sumo</bold></gradient>");
 
@@ -72,8 +54,7 @@ public class BlockSumoGame extends Game {
     private final @NotNull PowerUpManager powerUpManager;
     private final @NotNull InitialSpawnPointSelector initialSpawnPointSelector;
     private final @NotNull ExplosionManager explosionManager;
-    private final @NotNull LoadedMap map;
-    private final @NotNull Map<UUID, V1BlockSumoPlayerData> playerDataMap;
+    private final @NotNull Map<UUID, BlockSumoData> playerDataMap;
 
     private final AtomicBoolean started = new AtomicBoolean(false);
     private final AtomicBoolean ended = new AtomicBoolean(false);
@@ -82,14 +63,14 @@ public class BlockSumoGame extends Game {
 
     // end of game data used to pass to the game tracker
     private Set<Player> winners;
-    private BlockSumoScoreboard endOfGameScoreboard;
 
-    public BlockSumoGame(@NotNull GameCreationInfo creationInfo, @NotNull LoadedMap map, @NotNull Map<UUID, V1BlockSumoPlayerData> playerData) {
-        super(creationInfo);
-        this.map = map;
+    public BlockSumoGame(@NotNull GameCreationInfo creationInfo, @NotNull LoadedMap map, @NotNull Map<UUID, BlockSumoData> playerData) {
+        super(creationInfo, map);
         this.playerDataMap = playerData;
 
-        this.respawnHandler = new PlayerRespawnHandler(this, this.map.data().spawnRadius());
+        int spawnRadius = map.data().getIntValue("spawnRadius");
+
+        this.respawnHandler = new PlayerRespawnHandler(this, spawnRadius);
 
         this.playerManager = new PlayerManager(this, respawnHandler, new ScoreboardManager(), 49);
         this.spawnProtectionManager = new SpawnProtectionManager();
@@ -100,13 +81,10 @@ public class BlockSumoGame extends Game {
 
         this.powerUpManager = new PowerUpManager(this);
         this.powerUpManager.registerDefaultPowerUps();
-        System.out.printf("Current players (%s): %s%n", creationInfo.playerIds().size(), creationInfo.playerIds()); // Bug: players spawning in middle of map
-        this.initialSpawnPointSelector = new InitialSpawnPointSelector(creationInfo.playerIds().size(), this.map.data().spawnRadius());
+        this.initialSpawnPointSelector = new InitialSpawnPointSelector(creationInfo.playerIds().size(), spawnRadius);
         this.explosionManager = new ExplosionManager(this);
 
         this.playerManager.registerPreGameListeners(super.getEventNode());
-
-        super.meters.addAll(new BlockSumoMetrics(this).register(Metrics.globalRegistry));
     }
 
     @Override
@@ -128,7 +106,7 @@ public class BlockSumoGame extends Game {
 
     @Override
     public void start() {
-        this.countdownTask = this.map.instance().scheduler().submitTask(new Supplier<>() {
+        this.countdownTask = getMap().instance().scheduler().submitTask(new Supplier<>() {
             int i = 5;
 
             @Override
@@ -158,10 +136,7 @@ public class BlockSumoGame extends Game {
         this.removeLockingEntities();
 
         for (Player player : this.getPlayers()) {
-            V1BlockSumoPlayerData playerData = this.playerDataMap.getOrDefault(player.getUuid(), Main.DEFAULT_PLAYER_DATA);
-
-            this.giveWoolAndShears(player, playerData);
-            this.giveColoredChestplate(player);
+            this.respawnHandler.giveItems(player);
             this.setSpawnBlockToWool(player);
         }
 
@@ -189,28 +164,14 @@ public class BlockSumoGame extends Game {
     }
 
     private void removeLockingEntities() {
-        for (Entity entity : this.map.instance().getEntities()) {
+        for (Entity entity : getMap().instance().getEntities()) {
             if (entity.getEntityType() == EntityType.AREA_EFFECT_CLOUD) entity.remove();
         }
     }
 
-    private void giveWoolAndShears(@NotNull Player player, @NotNull V1BlockSumoPlayerData playerData) {
-        TeamColor color = player.getTag(PlayerTags.TEAM_COLOR);
-        player.getInventory().setItemStack(playerData.getShearsSlot(), ItemStack.of(Material.SHEARS, 1));
-        player.getInventory().setItemStack(playerData.getBlockSlot(), color.getWoolItem());
-    }
-
-    private void giveColoredChestplate(@NotNull Player player) {
-        TextColor color = player.getTag(PlayerTags.TEAM_COLOR).getTextColor();
-        ItemStack chestplate = ItemStack.builder(Material.LEATHER_CHESTPLATE)
-                .set(DataComponents.DYED_COLOR, color)
-                .build();
-        player.setChestplate(chestplate);
-    }
-
     private void setSpawnBlockToWool(@NotNull Player player) {
         Pos pos = player.getPosition();
-        this.map.instance().setBlock(pos.blockX(), pos.blockY() - 1, pos.blockZ(), Block.WHITE_WOOL);
+        getMap().instance().setBlock(pos.blockX(), pos.blockY() - 1, pos.blockZ(), Block.WHITE_WOOL);
     }
 
     public void cancelCountdown() {
@@ -221,7 +182,6 @@ public class BlockSumoGame extends Game {
         if (this.hasEnded()) return;
         this.ended.set(true);
         this.winners = winners;
-        this.endOfGameScoreboard = this.createScoreboard();
 
         Sound victorySound = Sound.sound(SoundEvent.ENTITY_VILLAGER_CELEBRATE, Sound.Source.MASTER, 1f, 1f);
         Sound victorySound2 = Sound.sound(SoundEvent.ENTITY_PLAYER_LEVELUP, Sound.Source.MASTER, 1f, 1f);
@@ -253,47 +213,7 @@ public class BlockSumoGame extends Game {
 
         getEventManager().getRandomEventHandler().stopRandomEventTask();
 
-        this.map.instance().scheduler().buildTask(this::finish).delay(TaskSchedule.seconds(6)).schedule();
-    }
-
-    @Override
-    public @NotNull List<? extends Message> createGameUpdateExtraData() {
-        return List.of(
-                BlockSumoUpdateData.newBuilder()
-                        .setScoreboard(this.createScoreboard())
-                        .build()
-        );
-    }
-
-    @Override
-    public @NotNull List<? extends Message> createGameFinishExtraData() {
-        return List.of(
-                BlockSumoFinishData.newBuilder().setScoreboard(this.endOfGameScoreboard).build(),
-                CommonGameFinishWinnerData.newBuilder()
-                        .addAllWinnerIds(this.winners.stream().map(Player::getUuid).map(UUID::toString).toList())
-                        .addAllLoserIds(this.getPlayers().stream().filter(player -> !this.winners.contains(player))
-                                .map(Player::getUuid).map(UUID::toString).toList())
-                        .build()
-        );
-    }
-
-    private @NotNull BlockSumoScoreboard createScoreboard() {
-        Map<String, BlockSumoScoreboard.Entry> entries = new LinkedHashMap<>();
-
-        // Copy the players and sort them by remaining lives (descending)
-        List<Player> playersCopy = new ArrayList<>(this.getPlayers());
-        playersCopy.sort(Comparator.comparingInt(player -> -player.getTag(PlayerTags.LIVES)));
-
-        for (Player player : playersCopy) {
-            entries.put(player.getUuid().toString(), BlockSumoScoreboard.Entry.newBuilder()
-                    .setKills(player.getTag(PlayerTags.KILLS))
-                    .setFinalKills(player.getTag(PlayerTags.FINAL_KILLS))
-                    .setRemainingLives(player.getTag(PlayerTags.LIVES))
-                    .build()
-            );
-        }
-
-        return BlockSumoScoreboard.newBuilder().putAllEntries(entries).build();
+        getMap().instance().scheduler().buildTask(this::finish).delay(TaskSchedule.seconds(6)).schedule();
     }
 
     private Component createVictoryMessage(@NotNull Set<Player> winners) {
@@ -343,20 +263,20 @@ public class BlockSumoGame extends Game {
 
     @Override
     public void cleanUp() {
-        this.map.instance().scheduleNextTick(MinecraftServer.getInstanceManager()::unregisterInstance);
+        getMap().instance().scheduleNextTick(MinecraftServer.getInstanceManager()::unregisterInstance);
         this.playerManager.cleanUp();
     }
 
     @Override
     public @NotNull Instance getSpawningInstance(@NotNull Player player) {
-        return this.map.instance();
+        return getMap().instance();
     }
 
     public @NotNull Instance getInstance() {
-        return this.map.instance();
+        return getMap().instance();
     }
 
-    public @NotNull Map<UUID, V1BlockSumoPlayerData> getPlayerDataMap() {
+    public @NotNull Map<UUID, BlockSumoData> getPlayerDataMap() {
         return this.playerDataMap;
     }
 
@@ -380,8 +300,8 @@ public class BlockSumoGame extends Game {
         return this.spawnProtectionManager;
     }
 
-    public @NotNull MapData mapData() {
-        return this.map.data();
+    public @NotNull JSONObject mapData() {
+        return getMap().data();
     }
 
     public boolean hasEnded() {

@@ -32,26 +32,32 @@ public final class Board {
     private final int height;
     private final boolean infinite;
     private final long seed;
+    private final long startingTicks;
+    private int lives;
     private final @NotNull Instance instance;
     private final @NotNull MapTheme theme;
 
     private final @NotNull Set<Vec2> solvedChunks = new HashSet<>();
     private final @NotNull Set<Vec2> touchedChunks = new HashSet<>();
 
-    public Board(long seed, @NotNull Instance instance, @NotNull MapTheme theme) {
+    public Board(long seed, long startingTicks, int lives, @NotNull Instance instance, @NotNull MapTheme theme) {
         this.width = 0;
         this.height = 0;
         this.infinite = true;
         this.seed = seed;
+        this.startingTicks = startingTicks;
+        this.lives = lives;
         this.instance = instance;
         this.theme = theme;
     }
 
-    public Board(int width, int height, long seed, @NotNull Instance instance, @NotNull MapTheme theme) {
+    public Board(int width, int height, long seed, long startingTicks, int lives, @NotNull Instance instance, @NotNull MapTheme theme) {
         this.infinite = false;
         this.width = width;
         this.height = height;
         this.seed = seed;
+        this.startingTicks = startingTicks;
+        this.lives = lives;
         this.instance = instance;
         this.theme = theme;
     }
@@ -275,6 +281,22 @@ public final class Board {
 
     public long getSeed() {
         return seed;
+    }
+
+    public long getTicks() {
+        return this.startingTicks + instance.getWorldAge();
+    }
+
+    public long getStartingTicks() {
+        return startingTicks;
+    }
+
+    public int getLives() {
+        return lives;
+    }
+
+    public void setLives(int lives) {
+        this.lives = lives;
     }
 
     public boolean isInfinite() {
