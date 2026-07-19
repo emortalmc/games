@@ -69,7 +69,9 @@ public final class MarathonGameRunner extends Game {
 
     @Override
     public void onLeave(@NotNull Player player) {
-        // Do nothing - game SDK will check if player count is 0 and end the game
+        MarathonGame game = this.games.get(player.getUuid());
+        if (game == null) return;
+        game.onLeave(player);
     }
 
     @Override

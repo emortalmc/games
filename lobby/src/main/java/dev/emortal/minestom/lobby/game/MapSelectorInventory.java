@@ -2,6 +2,7 @@ package dev.emortal.minestom.lobby.game;
 
 import dev.emortal.messaging.message.Channel;
 import dev.emortal.messaging.message.MapVoteMessage;
+import dev.emortal.messaging.message.MatchmakeMessage;
 import dev.emortal.minestom.core.EmortalServer;
 import dev.emortal.minestom.lobby.config.ConfigItem;
 import dev.emortal.minestom.lobby.config.ConfigMap;
@@ -20,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public final class MapSelectorInventory extends Inventory {
@@ -40,7 +42,7 @@ public final class MapSelectorInventory extends Inventory {
      * @param isQueued   if queued, instead of queueing for a map it will modify the current queue's selection.
      */
     public MapSelectorInventory(@NotNull GameModeConfig mode, boolean isQueued) {
-        super(InventoryType.CHEST_3_ROW, MINI_MESSAGE.deserialize(TITLE_FORMAT, Placeholder.unparsed("mode", mode.displayItem().name())));
+        super(InventoryType.CHEST_3_ROW, MINI_MESSAGE.deserialize(TITLE_FORMAT, Placeholder.parsed("mode", mode.displayItem().name())));
 
         this.isQueued = isQueued;
         this.mode = mode;
@@ -73,6 +75,7 @@ public final class MapSelectorInventory extends Inventory {
         ConfigMap map = this.slotMaps.get(slot);
         if (map == null) return; // nothing in slot
 
+        EmortalServer.getRedis().sendMessage(Channel.PROXY, new MatchmakeMessage(mode.id(), List.of(player.getUuid())));
         EmortalServer.getRedis().sendMessage(Channel.PROXY, new MapVoteMessage(player.getUuid(), map.id()));
 
         player.closeInventory();

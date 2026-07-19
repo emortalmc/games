@@ -1,5 +1,6 @@
 package dev.emortal.minestom.marathon.leaderboard;
 
+import dev.emortal.messaging.types.MarathonData;
 import net.minestom.server.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
@@ -62,6 +63,7 @@ public class LeaderboardDB {
 
 //        deleteLeaderboardTable();
         createLeaderboardTable();
+        createSettingsTable();
 
         LOGGER.info("Created SQL tables");
     }
@@ -88,6 +90,65 @@ public class LeaderboardDB {
                         )""";
         try (var statement = getConnection().createStatement()) {
             statement.execute(sql);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void createSettingsTable() {
+        String sql = """
+                        CREATE TABLE IF NOT EXISTS marathon_settings (
+                        uuid UUID not null primary key,
+                        time TEXT not null,
+                        palette TEXT not null,
+                        animation TEXT not null
+                        )""";
+        try (var statement = getConnection().createStatement()) {
+            statement.execute(sql);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void setSettings(Player player, MarathonData settings) {
+        String sql = """
+                        INSERT INTO marathon_settings (uuid, time, palette, animation) VALUES (?, ?, ?, ?)
+                        ON DUPLICATE KEY UPDATE
+                        time = VALUES(time),
+                        palette = VALUES(palette),
+                        animation = VALUES(animation)
+                        """;
+
+        try (var statement = getConnection().prepareStatement(sql)) {
+            statement.setString(1, player.getUuid().toString());
+            statement.setString(2, settings.time());
+            statement.setString(3, settings.blockPalette());
+            statement.setString(4, settings.animation());
+            int result = statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public @Nullable MarathonData getSettings(UUID player) {
+        String sql = """
+                        SELECT time, palette, animation FROM marathon_settings
+                        WHERE uuid = ?
+                        """;
+
+        try (var statement = getConnection().prepareStatement(sql)) {
+            statement.setString(1, player.toString());
+            ResultSet result = statement.executeQuery();
+
+            if (result.next()) {
+                return new MarathonData(
+                        result.getString("time"),
+                        result.getString("palette"),
+                        result.getString("animation")
+                );
+            } else {
+                return null;
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -184,7 +245,7 @@ public class LeaderboardDB {
         }
     }
 
-    public LeaderboardEntry getScore(UUID uuid) {
+    public @Nullable LeaderboardEntry getScore(UUID uuid) {
         String sql = """
                         SELECT uuid, name, score, ticks, submitted_at, rn AS position
                         FROM (

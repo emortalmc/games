@@ -192,6 +192,8 @@ public class Matchmaker {
 
     // TODO: maybe multi queue? although its kinda incompatible with map voting
     public void addPlayer(UUID player, String wantedGameId) {
+        removePlayer(player);
+
         GameInfo gameInfo = plugin.getGameInfo(wantedGameId);
         if (gameInfo == null) {
             LOGGER.error("Tried adding player to queue but no info for game: {}", wantedGameId);

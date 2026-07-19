@@ -94,6 +94,7 @@ public final class MarathonGame {
 
         this.instance = MinecraftServer.getInstanceManager().createInstanceContainer(dimension);
         this.instance.setTime(this.time.getTime());
+        this.instance.defaultClock().pause();
         this.instance.eventNode().addListener(PlayerChunkUnloadEvent.class, event -> {
             Chunk chunk = this.instance.getChunk(event.getChunkX(), event.getChunkZ());
             if (chunk == null) return;
@@ -139,8 +140,11 @@ public final class MarathonGame {
 
             this.playClickSound();
             this.refreshInventory();
-            this.produceDataUpdate();
         });
+    }
+
+    public void onLeave(@NotNull Player player) {
+        this.produceDataUpdate();
     }
 
     private CompletableFuture<Void> retrieveLeaderboardEntry() {
@@ -150,9 +154,12 @@ public final class MarathonGame {
         }, Executors.newVirtualThreadPerTaskExecutor());
     }
 
-    private void produceDataUpdate() {
-//        MarathonData newData = new MarathonData(this.time.name(), this.palette.name(), this.animation.name());
-        // TODO: update marathondata in db
+    private CompletableFuture<Void> produceDataUpdate() {
+        if (Main.getLeaderboardDB() == null) return CompletableFuture.completedFuture(null);
+        MarathonData newData = new MarathonData(this.time.name(), this.palette.name(), this.animation.name());
+        return CompletableFuture.runAsync(() -> {
+            Main.getLeaderboardDB().setSettings(player, newData);
+        }, Executors.newVirtualThreadPerTaskExecutor());
     }
 
     void cleanUp() {
@@ -197,8 +204,10 @@ public final class MarathonGame {
 
         if (this.startTicks != -1 && !isRunInvalidated()) { // reset due to player falling, not due to game start
             submitScore().thenRun(() -> {
+                int prevLeaderboardScore = this.leaderboardEntry == null ? -1 : this.leaderboardEntry.score();
                 retrieveLeaderboardEntry().thenRun(() -> {
                     if (leaderboardEntry == null) return;
+                    if (prevLeaderboardScore == this.leaderboardEntry.score()) return; // score has not changed
                     sendNewHighscoreMessage(leaderboardEntry.score(), leaderboardEntry.position());
                 });
             });

@@ -30,7 +30,6 @@ public class ServerPingListener {
             "you should join",
             "stop scrolling, click here!",
             "Lunar client users: Beware!",
-            "using 3 server softwares!",
             "gradient lover",
             "emortal is watching",
             "emortal says 2 + 2 = 5",
@@ -38,6 +37,7 @@ public class ServerPingListener {
             "Chuck Norris doesn't join, the server joins him",
             "private lobbies when?",
             "This server is certified aladeen!",
+            "Bumboclat",
             "Also try Minehub!"
     };
 

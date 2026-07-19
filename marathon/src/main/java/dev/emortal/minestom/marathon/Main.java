@@ -49,7 +49,10 @@ public final class Main {
             GameConfig gameConfig = new GameConfig(1, GameConfig.FinishBehaviour.LOBBY, info -> {
                 Map<UUID, MarathonData> playerData = new HashMap<>();
                 for (UUID uuid : info.playerIds()) {
-                    playerData.put(uuid, DEFAULT_PLAYER_DATA); // TODO: this
+                    MarathonData data = null;
+                    if (DB != null) data = DB.getSettings(uuid);
+                    if (data == null) data = DEFAULT_PLAYER_DATA;
+                    playerData.put(uuid, data);
                 }
 
                 return new MarathonGameRunner(info, dimension, playerData);
