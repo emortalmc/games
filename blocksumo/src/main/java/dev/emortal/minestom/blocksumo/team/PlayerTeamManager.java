@@ -1,5 +1,6 @@
 package dev.emortal.minestom.blocksumo.team;
 
+import dev.emortal.minestom.blocksumo.game.PlayerManager;
 import dev.emortal.minestom.blocksumo.game.PlayerTags;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -19,7 +20,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public final class PlayerTeamManager {
 
-    private static final int STARTING_LIVES = 5;
     private final List<Integer> teamColours = new ArrayList<>();
 
     public void allocateTeam(@NotNull Player player) {
@@ -42,7 +42,7 @@ public final class PlayerTeamManager {
                 .updateTeamPacket()
                 .build();
 
-        this.updateTeamLives(minestomTeam, STARTING_LIVES);
+        this.updateTeamLives(minestomTeam, PlayerManager.STARTING_LIVES);
 
         player.setTeam(minestomTeam);
     }
@@ -55,7 +55,7 @@ public final class PlayerTeamManager {
     public void updateTeamLives(@NotNull Team team, int lives) {
         String emptyFont = "\uE01D";
         String fullFont = "\uE01E";
-        int emptyHearts = STARTING_LIVES - lives;
+        int emptyHearts = PlayerManager.STARTING_LIVES - lives;
 
         TextComponent.Builder builder = Component.text()
                 .append(Component.text(" • ", NamedTextColor.GRAY));

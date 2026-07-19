@@ -19,6 +19,8 @@ import org.jetbrains.annotations.NotNull;
 
 public final class PlayerManager {
 
+    public static final int STARTING_LIVES = 5;
+
     private final @NotNull BlockSumoGame game;
     private final @NotNull PlayerRespawnHandler respawnHandler;
     private final @NotNull ScoreboardManager scoreboardManager;
@@ -85,7 +87,7 @@ public final class PlayerManager {
 
     public void addInitialTags(@NotNull Player player) {
         player.setTag(PlayerTags.LAST_DAMAGE_TIME, 0L);
-        player.setTag(PlayerTags.LIVES, (byte) 5);
+        player.setTag(PlayerTags.LIVES, (byte) STARTING_LIVES);
         player.setTag(PlayerTags.KILLS, 0);
         player.setTag(PlayerTags.FINAL_KILLS, 0);
         player.setTag(PlayerTags.CAN_BE_HIT, true);
@@ -101,13 +103,13 @@ public final class PlayerManager {
     }
 
     public void cleanUpPlayer(@NotNull Player player) {
+        this.scoreboardManager.removeViewer(player);
+        this.scoreboardManager.updateScoreboard();
+
         player.removeTag(PlayerTags.TEAM_COLOR);
         player.removeTag(PlayerTags.LIVES);
         player.removeTag(PlayerTags.LAST_DAMAGE_TIME);
         player.removeTag(PlayerTags.CAN_BE_HIT);
-
-        this.scoreboardManager.removeViewer(player);
-        this.scoreboardManager.updateScoreboard();
     }
 
     public void removeDeadPlayer() {

@@ -1,6 +1,7 @@
 package dev.emortal.minestom.blocksumo.scoreboard;
 
 import dev.emortal.minestom.blocksumo.game.BlockSumoGame;
+import dev.emortal.minestom.blocksumo.game.PlayerManager;
 import dev.emortal.minestom.blocksumo.game.PlayerTags;
 import dev.emortal.minestom.blocksumo.utils.text.TextUtil;
 import net.kyori.adventure.text.Component;
@@ -70,12 +71,12 @@ public final class ScoreboardManager implements Viewable {
 
     private @NotNull Component createScoreboardComponent(@NotNull Player player, byte lives) {
         TextColor livesColor;
-        if (lives == 5) {
+        if (lives == PlayerManager.STARTING_LIVES) {
             livesColor = NamedTextColor.GREEN;
         } else {
             livesColor = TextColor.lerp((lives - 1) / 4F, NamedTextColor.RED, NamedTextColor.GREEN);
         }
-        if (lives > 5) {
+        if (lives > PlayerManager.STARTING_LIVES) {
             livesColor = NamedTextColor.LIGHT_PURPLE;
         }
 
