@@ -5,6 +5,7 @@ import dev.emortal.minestom.marathon.animator.BlockAnimator;
 import dev.emortal.minestom.marathon.generator.DefaultGenerator;
 import dev.emortal.minestom.marathon.generator.Generator;
 import dev.emortal.minestom.marathon.leaderboard.LeaderboardDB;
+import dev.emortal.minestom.marathon.leaderboard.LeaderboardEntry;
 import dev.emortal.minestom.marathon.options.BlockAnimation;
 import dev.emortal.minestom.marathon.options.BlockPalette;
 import dev.emortal.minestom.marathon.options.Time;
@@ -13,6 +14,7 @@ import dev.emortal.minestom.marathon.util.EnumLore;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.ShadowColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.minestom.server.MinecraftServer;
@@ -72,6 +74,7 @@ public final class MarathonGame {
 
     private final ArrayDeque<Point> blocks = new ArrayDeque<>(NEXT_BLOCKS_COUNT + 1);
 
+    private @Nullable LeaderboardEntry leaderboardEntry;
     private int score;
     private int combo;
     //    private int targetX;
@@ -101,6 +104,8 @@ public final class MarathonGame {
         this.player = player;
         this.generator = DefaultGenerator.INSTANCE;
         this.animator = this.animation.createAnimator();
+
+        retrieveLeaderboardEntry();
 
         this.startRefreshDisplaysTask();
         this.reset();
@@ -138,6 +143,13 @@ public final class MarathonGame {
         });
     }
 
+    private CompletableFuture<Void> retrieveLeaderboardEntry() {
+        if (Main.getLeaderboardDB() == null) return CompletableFuture.completedFuture(null);
+        return CompletableFuture.runAsync(() -> {
+            this.leaderboardEntry = Main.getLeaderboardDB().getScore(player.getUuid());
+        }, Executors.newVirtualThreadPerTaskExecutor());
+    }
+
     private void produceDataUpdate() {
 //        MarathonData newData = new MarathonData(this.time.name(), this.palette.name(), this.animation.name());
         // TODO: update marathondata in db
@@ -165,14 +177,14 @@ public final class MarathonGame {
         this.player.getInventory().setItemStack(MarathonGame.ANIMATOR_SLOT, animatorItem);
     }
 
-    private void submitScore() {
+    private CompletableFuture<Void> submitScore() {
         int submitScore = this.score; // copy
-        if (submitScore == 0) return;
+        if (submitScore == 0) return CompletableFuture.completedFuture(null);
         LeaderboardDB leaderboardDB = Main.getLeaderboardDB();
-        if (leaderboardDB == null) return;
+        if (leaderboardDB == null) return CompletableFuture.completedFuture(null);
         long submitStartTicks = this.startTicks; // copy
         long submitWorldAge = instance.getWorldAge(); // copy
-        CompletableFuture.runAsync(() -> {
+        return CompletableFuture.runAsync(() -> {
             leaderboardDB.addScore(this.player, submitScore, submitWorldAge - submitStartTicks);
         }, Executors.newVirtualThreadPerTaskExecutor());
     }
@@ -183,8 +195,13 @@ public final class MarathonGame {
             this.breakingTask = null;
         }
 
-        if (this.startTicks != -1) { // reset due to player falling, not due to game start
-            submitScore();
+        if (this.startTicks != -1 && !isRunInvalidated()) { // reset due to player falling, not due to game start
+            submitScore().thenRun(() -> {
+                retrieveLeaderboardEntry().thenRun(() -> {
+                    if (leaderboardEntry == null) return;
+                    sendNewHighscoreMessage(leaderboardEntry.score(), leaderboardEntry.position());
+                });
+            });
         }
 
         this.score = 0;
@@ -233,9 +250,9 @@ public final class MarathonGame {
 
         Component message = Component.text()
                 .append(Component.text(this.score, TextColor.fromHexString("#ff00a6"), TextDecoration.BOLD))
-                .append(Component.text(" | ", NamedTextColor.DARK_GRAY))
+                .append(Component.text(" | ", NamedTextColor.DARK_GRAY).shadowColor(ShadowColor.none()))
                 .append(Component.text(formattedTime, NamedTextColor.GRAY))
-                .append(Component.text(" | ", NamedTextColor.DARK_GRAY))
+                .append(Component.text(" | ", NamedTextColor.DARK_GRAY).shadowColor(ShadowColor.none()))
                 .append(Component.text(scorePerSecond + "bps", NamedTextColor.GRAY))
                 .build();
 
@@ -311,7 +328,9 @@ public final class MarathonGame {
             this.playSound(this.combo);
             this.createBreakingTask();
 
-            // TODO: Reached highscore notification
+            if (this.leaderboardEntry != null && this.score == (this.leaderboardEntry.score() + 1)) {
+                sendReachHighscoreMessage();
+            }
 
             this.refreshDisplays();
         }
@@ -323,6 +342,25 @@ public final class MarathonGame {
         float pitch = 0.9f + (combo - 1) * 0.05f;
         Sound comboSound = Sound.sound(SoundEvent.BLOCK_NOTE_BLOCK_BASS, Sound.Source.MASTER, 1f, pitch);
         this.player.playSound(comboSound, Sound.Emitter.self());
+    }
+
+    private void sendReachHighscoreMessage() {
+        this.player.sendMessage(Component.text()
+                .append(Component.text("You passed your previous highscore!", NamedTextColor.YELLOW))
+                .build());
+        this.player.playSound(Sound.sound(SoundEvent.BLOCK_AMETHYST_BLOCK_RESONATE, Sound.Source.MASTER, 1f, 2f), Sound.Emitter.self());
+    }
+
+    private void sendNewHighscoreMessage(int highscore, int newPosition) {
+        this.player.sendMessage(Component.text()
+                .append(Component.text("You reached a new highscore of ", NamedTextColor.YELLOW))
+                .append(Component.text(highscore, NamedTextColor.GOLD, TextDecoration.BOLD))
+                .append(Component.text("!", NamedTextColor.YELLOW))
+                .appendNewline()
+                .append(Component.text("This puts you at position: ", NamedTextColor.GRAY))
+                .append(Component.text(newPosition, NamedTextColor.YELLOW))
+                .build());
+        this.player.playSound(Sound.sound(SoundEvent.BLOCK_AMETHYST_BLOCK_RESONATE, Sound.Source.MASTER, 1f, 1f), Sound.Emitter.self());
     }
 
     private void createBreakingTask() {

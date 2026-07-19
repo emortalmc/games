@@ -120,9 +120,12 @@ public class LeaderboardDB {
 
     public List<LeaderboardEntry> getTopScores(int top) {
         String sql = """
-                        SELECT uuid, name, score, ticks, submitted_at
-                        FROM marathon
-                        ORDER BY score DESC, ticks ASC
+                        SELECT uuid, name, score, ticks, submitted_at, rn AS position
+                        FROM (
+                            SELECT uuid, name, score, ticks, submitted_at,
+                                   ROW_NUMBER() OVER (ORDER BY score DESC, ticks ASC) AS rn
+                            FROM marathon
+                        ) ranked
                         LIMIT ?""";
 
         List<LeaderboardEntry> results = new ArrayList<>();
@@ -134,6 +137,7 @@ public class LeaderboardDB {
                 results.add(new LeaderboardEntry(
                         UUID.fromString(result.getString("uuid")),
                         result.getString("name"),
+                        result.getInt("position"),
                         result.getInt("score"),
                         result.getLong("ticks"),
                         result.getTimestamp("submitted_at").getTime()
@@ -148,10 +152,13 @@ public class LeaderboardDB {
 
     public List<LeaderboardEntry> getTopScores(int top, int days) {
         String sql = """
-                        SELECT uuid, name, score, ticks, submitted_at
-                        FROM marathon
-                        WHERE submitted_at >= NOW() - INTERVAL ? DAY
-                        ORDER BY score DESC, ticks ASC
+                        SELECT uuid, name, score, ticks, submitted_at, rn AS position
+                        FROM (
+                            SELECT uuid, name, score, ticks, submitted_at,
+                                   ROW_NUMBER() OVER (ORDER BY score DESC, ticks ASC) AS rn
+                            FROM marathon
+                            WHERE submitted_at >= NOW() - INTERVAL ? DAY
+                        ) ranked
                         LIMIT ?""";
 
         List<LeaderboardEntry> results = new ArrayList<>();
@@ -164,6 +171,7 @@ public class LeaderboardDB {
                 results.add(new LeaderboardEntry(
                         UUID.fromString(result.getString("uuid")),
                         result.getString("name"),
+                        result.getInt("position"),
                         result.getInt("score"),
                         result.getLong("ticks"),
                         result.getTimestamp("submitted_at").getTime()
@@ -178,8 +186,12 @@ public class LeaderboardDB {
 
     public LeaderboardEntry getScore(UUID uuid) {
         String sql = """
-                        SELECT uuid, name, score, ticks, submitted_at
-                        FROM marathon
+                        SELECT uuid, name, score, ticks, submitted_at, rn AS position
+                        FROM (
+                            SELECT uuid, name, score, ticks, submitted_at,
+                                   ROW_NUMBER() OVER (ORDER BY score DESC, ticks ASC) AS rn
+                            FROM marathon
+                        ) ranked
                         WHERE uuid = ?
                         LIMIT 1""";
 
@@ -191,6 +203,7 @@ public class LeaderboardDB {
                 return new LeaderboardEntry(
                         UUID.fromString(result.getString("uuid")),
                         result.getString("name"),
+                        result.getInt("position"),
                         result.getInt("score"),
                         result.getLong("ticks"),
                         result.getTimestamp("submitted_at").getTime()
@@ -198,6 +211,27 @@ public class LeaderboardDB {
             } else {
                 return null;
             }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public int getHypotheticalPlacement(int score, int days) {
+        String sql = """
+                        SELECT COUNT(*) + 1 AS position
+                        FROM marathon
+                        WHERE submitted_at >= NOW() - INTERVAL ? DAY
+                          AND score > ?""";
+        try (var statement = getConnection().prepareStatement(sql)) {
+            statement.setInt(1, days);
+            statement.setInt(2, score);
+            ResultSet result = statement.executeQuery();
+
+            if (result.next()) {
+                return result.getInt(1);
+            }
+
+            return 1;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
