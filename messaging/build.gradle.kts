@@ -5,10 +5,6 @@ plugins {
 group = "dev.emortal"
 version = "1.0-SNAPSHOT"
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     implementation("io.lettuce:lettuce-core:7.6.0.RELEASE")
     implementation("com.alibaba.fastjson2:fastjson2:2.0.61")

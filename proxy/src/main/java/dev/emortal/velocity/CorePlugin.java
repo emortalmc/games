@@ -5,6 +5,7 @@ import com.velocitypowered.api.command.CommandManager;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
+import com.velocitypowered.api.plugin.Dependency;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.proxy.ConnectionRequestBuilder;
 import com.velocitypowered.api.proxy.Player;
@@ -30,7 +31,7 @@ import java.net.InetSocketAddress;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-@Plugin(id = "core", name = "Core")
+@Plugin(id = "core", name = "Core", dependencies = { @Dependency(id = "luckperms") })
 public final class CorePlugin {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CorePlugin.class);
@@ -63,6 +64,7 @@ public final class CorePlugin {
         this.proxy.getEventManager().register(this, new ServerPingListener());
         this.proxy.getEventManager().register(this, new LunarListener());
         this.proxy.getEventManager().register(this, new ServerListener(this, this.proxy));
+        this.proxy.getEventManager().register(this, new PermissionsListener(this));
 
         this.redis.listenForChannel(Channel.PROXY);
         this.redis.sendMessage(Channel.ALL, new ProxyOnlineMessage());

@@ -6,17 +6,6 @@ plugins {
 group = "dev.emortal"
 version = "1.0-SNAPSHOT"
 
-repositories {
-    mavenCentral()
-    mavenLocal()
-
-    maven("https://repo.emortal.dev/snapshots")
-    maven("https://repo.emortal.dev/releases")
-
-    maven("https://jitpack.io")
-    maven("https://packages.confluent.io/maven/")
-}
-
 dependencies {
     implementation(project(":core"))
     implementation("com.github.luben:zstd-jni:1.5.7-4")

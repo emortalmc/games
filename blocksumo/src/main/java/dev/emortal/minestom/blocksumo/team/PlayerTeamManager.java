@@ -61,11 +61,11 @@ public final class PlayerTeamManager {
                 .append(Component.text(" • ", NamedTextColor.GRAY));
 
         for (int i = 0; i < lives; i++) {
-            builder.append(Component.translatable("space.-1"));
+            builder.append(Component.translatable("space.-2"));
             builder.append(Component.text(fullFont, NamedTextColor.WHITE).shadowColor(ShadowColor.none()));
         }
         for (int i = 0; i < emptyHearts; i++) {
-            builder.append(Component.translatable("space.-1"));
+            builder.append(Component.translatable("space.-2"));
             builder.append(Component.text(emptyFont, NamedTextColor.WHITE).shadowColor(ShadowColor.none()));
         }
 

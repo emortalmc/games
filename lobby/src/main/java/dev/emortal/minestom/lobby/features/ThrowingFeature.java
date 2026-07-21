@@ -17,7 +17,7 @@ public final class ThrowingFeature implements LobbyFeature {
             if (!(event.getTarget() instanceof Player target)) return;
             Player player = event.getPlayer();
 
-            if (!ExtraConditions.hasPermission(target, "lobby.throw_players")) return;
+            if (!ExtraConditions.hasPermission(player, "lobby.throw_players")) return;
 
             if (player.isSneaking()) player.addPassenger(target);
         });

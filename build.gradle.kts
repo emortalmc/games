@@ -6,6 +6,8 @@ group = "dev.emortal"
 version = "1.0-SNAPSHOT"
 
 allprojects {
+    apply(plugin = "java")
+
     tasks {
         withType<AbstractArchiveTask> {
             isPreserveFileTimestamps = false
@@ -17,10 +19,11 @@ allprojects {
         }
     }
 
-    apply(plugin = "java")
-
     repositories {
         mavenCentral()
+        maven("https://repo.hypera.dev/snapshots/") // spark-minestom
+        maven("https://repo.lucko.me/") // spark-common
+        maven("https://oss.sonatype.org/content/repositories/snapshots/") // spark-common's dependencies
     }
 
     dependencies {
@@ -39,6 +42,7 @@ tasks.register<Copy>("collectLibs") {
         from(subproject.layout.buildDirectory.dir("libs")) {
             include("*-all.jar")
             exclude("*-sources.jar")
+            rename({ a -> a.replace("-1.0-SNAPSHOT-all", "") })
         }
     }
 
@@ -49,4 +53,6 @@ tasks.register<Copy>("collectLibs") {
 tasks.named("build") {
     dependsOn("collectLibs")
 }
+
+tasks.jar { enabled = false }
 

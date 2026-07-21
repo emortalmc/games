@@ -1,8 +1,10 @@
 package dev.emortal.minestom.core.utils.command;
 
+import dev.emortal.minestom.core.EmortalServer;
 import net.minestom.server.command.CommandSender;
 import net.minestom.server.command.ConsoleSender;
 import net.minestom.server.command.builder.condition.CommandCondition;
+import net.minestom.server.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public final class ExtraConditions {
@@ -13,8 +15,8 @@ public final class ExtraConditions {
 
     public static boolean hasPermission(@NotNull CommandSender sender, @NotNull String permission) {
         if (sender instanceof ConsoleSender) return true;
-        // TODO: permission system
-        return false;
+        if (!(sender instanceof Player player)) return false;
+        return EmortalServer.hasPermission(player, permission);
     }
 
     private ExtraConditions() {

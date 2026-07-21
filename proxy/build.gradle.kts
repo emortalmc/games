@@ -8,7 +8,6 @@ group = "dev.emortal"
 version = "1.0-SNAPSHOT"
 
 repositories {
-    mavenCentral()
     maven("https://repo.papermc.io/repository/maven-public/")
 }
 
@@ -18,6 +17,7 @@ dependencies {
     compileOnly("com.velocitypowered:velocity-api:4.1.0-SNAPSHOT")
     annotationProcessor("com.velocitypowered:velocity-api:4.1.0-SNAPSHOT")
 //    compileOnly("com.velocitypowered:velocity-proxy:4.1.0-SNAPSHOT")
+    compileOnly("net.luckperms:api:5.5")
 
     testImplementation(platform("org.junit:junit-bom:6.0.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")

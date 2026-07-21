@@ -7,10 +7,7 @@ group = "dev.emortal.minestom.battle"
 version = "1.0-SNAPSHOT"
 
 repositories {
-    mavenCentral()
-
     maven("https://jitpack.io")
-    maven("https://packages.confluent.io/maven/")
 }
 
 dependencies {

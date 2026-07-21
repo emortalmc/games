@@ -25,6 +25,7 @@ public class SaveHandler {
         MAPS_PATH.toFile().mkdirs();
     }
 
+    private boolean enableSave = true;
     private final Board board;
     private final Collection<UUID> uuids;
     private @Nullable Task autosaveTask = null;
@@ -41,6 +42,7 @@ public class SaveHandler {
     }
 
     public void save() {
+        if (!enableSave) return;
         byte[] data = BoardWriter.write(board);
         try {
             Files.write(getPathFromUuids(uuids), data);
@@ -56,6 +58,10 @@ public class SaveHandler {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void setEnableSave(boolean enableSave) {
+        this.enableSave = enableSave;
     }
 
     public static Path getPathFromUuids(Collection<UUID> uuids) {

@@ -6,14 +6,6 @@ plugins {
 group = "dev.emortal.minestom.blocksumo"
 version = "1.0-SNAPSHOT"
 
-repositories {
-    mavenCentral()
-    mavenLocal()
-
-    maven("https://jitpack.io")
-    maven("https://packages.confluent.io/maven/")
-}
-
 dependencies {
     implementation(project(":core"))
 }

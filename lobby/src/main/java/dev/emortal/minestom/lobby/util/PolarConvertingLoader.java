@@ -33,9 +33,11 @@ public final class PolarConvertingLoader {
     public @NotNull CompletableFuture<InstanceContainer> load() {
         Path polarFile = Path.of(this.path + ".polar");
 
-        CompletableFuture<Void> loader = this.loadFromPolar(polarFile);;
+        CompletableFuture<Void> loader = this.loadFromPolar(polarFile);
 
-        return loader.thenApply(ignored -> this.instance);
+        this.instance.enableAutoChunkLoad(false);
+
+        return loader.thenApply(_ -> this.instance);
     }
 
     private @NotNull CompletableFuture<Void> loadFromPolar(@NotNull Path file) {

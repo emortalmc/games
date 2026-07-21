@@ -7,18 +7,7 @@ group = "dev.emortal.minestom"
 version = "1.0-SNAPSHOT"
 
 repositories {
-    maven(url = "https://central.sonatype.com/repository/maven-snapshots/") {
-        content {
-            includeModule("net.minestom", "minestom")
-        }
-    }
     mavenLocal()
-    mavenCentral()
-
-    maven("https://maven.draylar.dev/releases")
-
-    maven("https://jitpack.io")
-    maven("https://packages.confluent.io/maven/")
 }
 
 dependencies {

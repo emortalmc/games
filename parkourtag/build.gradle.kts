@@ -6,13 +6,6 @@ plugins {
 group = "dev.emortal.minestom.parkourtag"
 version = "1.0-SNAPSHOT"
 
-repositories {
-    mavenCentral()
-
-    maven("https://jitpack.io")
-    maven("https://packages.confluent.io/maven/")
-}
-
 dependencies {
     implementation(project(":core"))
 

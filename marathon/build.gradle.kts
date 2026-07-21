@@ -9,16 +9,6 @@ group = "dev.emortal.minestom"
 version = "1.0-SNAPSHOT"
 application.mainClass = "dev.emortal.minestom.marathon.Main"
 
-repositories {
-    mavenCentral()
-
-    maven("https://repo.emortal.dev/snapshots")
-    maven("https://repo.emortal.dev/releases")
-
-    maven("https://jitpack.io")
-    maven("https://packages.confluent.io/maven/")
-}
-
 dependencies {
     implementation(project(":core"))
     implementation("org.mariadb.jdbc:mariadb-java-client:3.5.9")

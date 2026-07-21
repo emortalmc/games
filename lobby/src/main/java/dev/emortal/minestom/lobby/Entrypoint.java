@@ -43,17 +43,6 @@ public final class Entrypoint {
 
     static void main() {
         EmortalServer.start(() -> {
-            String publicAddress = getValue("publicAddress", "localhost");
-            int port = Integer.parseInt(getValue("port", "25565"));
-            GameInfo gameInfo = new GameInfo("lobby", List.of(), 1, 50, GameInfo.MatchMethod.INSTANT);
-            ServerOnlineMessage onlineMessage = new ServerOnlineMessage(EmortalServer.getServerUuid(), publicAddress, port, List.of(gameInfo));
-            EmortalServer.getRedis().sendMessage(Channel.PROXY, onlineMessage);
-
-            EmortalServer.getRedis().addMessageHandler(ProxyOnlineMessage.class, (_, _) -> {
-                EmortalServer.getRedis().sendMessage(Channel.PROXY, onlineMessage);
-                LOGGER.info("Proxy online, sent online message");
-            });
-
             registerSignHandlers();
             Emote.init(MinecraftServer.getGlobalEventHandler());
 
@@ -93,6 +82,18 @@ public final class Entrypoint {
 
             new ServerSelector(instance, eventNode, gameModesConfig.gamemodes());
         });
+
+        String publicAddress = getValue("publicAddress", "localhost");
+        int port = Integer.parseInt(getValue("port", "25565"));
+        GameInfo gameInfo = new GameInfo("lobby", List.of(), 1, 50, GameInfo.MatchMethod.INSTANT);
+        ServerOnlineMessage onlineMessage = new ServerOnlineMessage(EmortalServer.getServerUuid(), publicAddress, port, List.of(gameInfo));
+        EmortalServer.getRedis().sendMessage(Channel.PROXY, onlineMessage);
+
+        EmortalServer.getRedis().addMessageHandler(ProxyOnlineMessage.class, (_, _) -> {
+            EmortalServer.getRedis().sendMessage(Channel.PROXY, onlineMessage);
+            LOGGER.info("Proxy online, sent online message");
+        });
+
     }
 
     private static @NotNull String getValue(@NotNull String key, @NotNull String defaultValue) {

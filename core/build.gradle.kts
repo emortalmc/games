@@ -5,10 +5,6 @@ plugins {
 group = "dev.emortal.minestom"
 version = "1.0-SNAPSHOT"
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     api(project(":messaging"))
 
@@ -21,6 +17,8 @@ dependencies {
     implementation("org.jline:jline:4.3.1")
 
     api("com.alibaba.fastjson2:fastjson2:2.0.61")
+
+    implementation("dev.lu15:spark-minestom:1.10-SNAPSHOT")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.0")

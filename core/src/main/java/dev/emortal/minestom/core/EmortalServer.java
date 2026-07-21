@@ -9,14 +9,18 @@ import dev.emortal.minestom.core.game.GameManager;
 import dev.emortal.minestom.core.game.PreGameInitializer;
 import dev.emortal.minestom.core.game.config.GameConfig;
 import dev.emortal.minestom.core.game.config.GameCreationInfo;
+import dev.emortal.minestom.core.utils.command.ExtraConditions;
+import me.lucko.spark.minestom.SparkMinestom;
 import net.minestom.server.Auth;
 import net.minestom.server.MinecraftServer;
+import net.minestom.server.entity.Player;
 import net.minestom.server.timer.TaskSchedule;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -33,6 +37,8 @@ public final class EmortalServer {
     private static final UUID SERVER_UUID = UUID.randomUUID();
 
     private static RedisMessenger REDIS;
+    private static PermissionHandler PERMISSIONS;
+    private static SparkMinestom SPARK;
 
     private static final Map<String, GameConfig> GAME_MAP = new HashMap<>();
     private static final Map<String, GameInfo> GAME_INFO_MAP = new HashMap<>();
@@ -73,11 +79,21 @@ public final class EmortalServer {
 
         MinecraftServer server = MinecraftServer.init(auth);
 
+        PERMISSIONS = new PermissionHandler(REDIS, MinecraftServer.getGlobalEventHandler());
+
         runnable.run();
+
+        Path directory = Path.of("spark");
+        SPARK = SparkMinestom.builder(directory)
+                .commands(true)
+                .permissionHandler(ExtraConditions::hasPermission)
+                .enable();
 
         MinecraftServer.getCommandManager().register(new StopCommand());
 
         MinestomTerminal.start();
+
+        server.start(address, port);
 
         if (!GAME_MAP.isEmpty()) {
             ServerOnlineMessage onlineMessage = new ServerOnlineMessage(SERVER_UUID, publicAddress, port, GAME_INFO_MAP.values());
@@ -110,11 +126,11 @@ public final class EmortalServer {
                 REDIS.sendMessage(Channel.PROXY, new GameReadyMessage(SERVER_UUID));
             });
         }
-
-        server.start(address, port);
     }
 
     public static void stop() {
+        SPARK.shutdown();
+
         LOGGER.info("Finishing all games");
         for (GameManager value : GAME_MANAGER_MAP.values()) {
             for (Game game : value.getGames()) {
@@ -131,6 +147,10 @@ public final class EmortalServer {
 
     public static RedisMessenger getRedis() {
         return REDIS;
+    }
+
+    public static boolean hasPermission(Player player, String permission) {
+        return PERMISSIONS.hasPermission(player, permission);
     }
 
     public static UUID getServerUuid() {

@@ -33,12 +33,12 @@ public class RedisMessenger {
         pubSub.subscribe(uuid.toString());
     }
 
-    public void sendMessage(Channel channel, RedisMessage message) {
-        pubSub.publish(channel.name().toLowerCase(Locale.ROOT), MessageRegistry.encode(message));
+    public CompletableFuture<Long> sendMessage(Channel channel, RedisMessage message) {
+        return pubSub.publish(channel.name().toLowerCase(Locale.ROOT), MessageRegistry.encode(message)).toCompletableFuture();
     }
 
-    public void sendServerMessage(UUID uuid, RedisMessage message) {
-        pubSub.publish(uuid.toString(), MessageRegistry.encode(message));
+    public CompletableFuture<Long> sendServerMessage(UUID uuid, RedisMessage message) {
+        return pubSub.publish(uuid.toString(), MessageRegistry.encode(message)).toCompletableFuture();
     }
 
     public <T extends RedisMessage> void addMessageHandler(Class<T> clazz, MessageConsumer<T> consumer) {

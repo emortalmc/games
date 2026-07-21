@@ -17,6 +17,7 @@ public class MessageRegistry {
         put("online_players", OnlinePlayersMessage.class);
         put("matchmake", MatchmakeMessage.class);
         put("map_vote", MapVoteMessage.class);
+        put("permissions", PermissionsMessage.class);
     }};
 
     private static final Map<Class<?>, String> IDS = TYPES.entrySet().stream()

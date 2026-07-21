@@ -107,6 +107,7 @@ public final class MinesweeperGame extends Game {
 
         this.board.revealMines();
 
+        this.saveHandler.setEnableSave(false);
         this.saveHandler.delete();
 
         this.board.getInstance().scheduler().buildTask(this::finish).delay(TaskSchedule.seconds(10)).schedule();

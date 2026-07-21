@@ -34,13 +34,15 @@ public final class InteractionManager {
 
     private int solvedChunks;
 
-    private boolean firstClick = true;
+    private boolean firstClick;
     private boolean finished;
 
     public InteractionManager(@NotNull MinesweeperGame game, @NotNull Board board) {
         this.game = game;
         this.board = board;
         this.actionBar = new ActionBar(board);
+
+        this.firstClick = this.board.getStartingTicks() == 0; // only give first click protection if board is brand new
 
         game.getEventNode().addListener(PlayerBlockBreakEvent.class, this::onBreak);
         game.getEventNode().addListener(PlayerBlockInteractEvent.class, this::onClick);

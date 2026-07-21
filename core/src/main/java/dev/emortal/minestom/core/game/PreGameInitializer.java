@@ -28,7 +28,7 @@ public final class PreGameInitializer {
     private final @NotNull Game game;
 
     private final @NotNull EventNode<Event> preGameNode;
-    private final @Nullable Task startTimeOutTask; // called if not all players have joined and determines whether to start the game or cancel it.
+    private @Nullable Task startTimeOutTask = null; // called if not all players have joined and determines whether to start the game or cancel it.
 
     private final AtomicInteger playerCount = new AtomicInteger();
 
@@ -65,6 +65,7 @@ public final class PreGameInitializer {
             if (newCount != creationInfo.playerIds().size()) return;
 
             gameManager.startGame(game);
+            if (this.startTimeOutTask != null) this.startTimeOutTask.cancel();
         });
 
         this.preGameNode.addListener(GameFinishedEvent.class, event -> {

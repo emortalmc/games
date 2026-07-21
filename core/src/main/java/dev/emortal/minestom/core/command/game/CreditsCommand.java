@@ -33,7 +33,7 @@ public final class CreditsCommand extends Command {
         if (game.getMap() == null) return;
 
         List<String> mapUsernames = game.getMap().data().getList("credits", String.class);
-        if (mapUsernames.isEmpty()) {
+        if (mapUsernames == null || mapUsernames.isEmpty()) {
             sender.sendMessage(UNKNOWN_MESSAGE);
             return;
         }

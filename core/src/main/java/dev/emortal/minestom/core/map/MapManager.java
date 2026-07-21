@@ -77,12 +77,7 @@ public final class MapManager {
 
             PolarLoader.streamLoad(instance, Channels.newChannel(new ByteArrayInputStream(polarBytes)), polarBytes.length, null, null, true).join();
 
-            // Do some preloading!
-            for (int x = -CHUNK_LOADING_RADIUS; x < CHUNK_LOADING_RADIUS; x++) {
-                for (int z = -CHUNK_LOADING_RADIUS; z < CHUNK_LOADING_RADIUS; z++) {
-                    instance.loadChunk(x, z);
-                }
-            }
+            instance.enableAutoChunkLoad(false);
 
             return new LoadedMap(instance, jsonObject);
         } catch (IOException exception) {
