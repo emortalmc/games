@@ -2,6 +2,7 @@ package dev.emortal.velocity;
 
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.DisconnectEvent;
+import com.velocitypowered.api.event.player.KickedFromServerEvent;
 import com.velocitypowered.api.event.player.PlayerChooseInitialServerEvent;
 import com.velocitypowered.api.event.player.ServerPostConnectEvent;
 import com.velocitypowered.api.proxy.ProxyServer;
@@ -40,6 +41,12 @@ public class ServerListener {
         }
 
         event.setInitialServer(lobby);
+    }
+
+    @Subscribe
+    void kicked(KickedFromServerEvent event) {
+        RegisteredServer lobby = plugin.getServer("lobby");
+        event.setResult(KickedFromServerEvent.RedirectPlayer.create(lobby, null));
     }
 
     @Subscribe

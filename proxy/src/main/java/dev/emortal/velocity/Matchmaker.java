@@ -17,10 +17,13 @@ import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.title.Title;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -133,23 +136,40 @@ public class Matchmaker {
 
         LOGGER.info("Sending players: {}", players);
 
+        // black wipe transition
+        int transitionTime = 400;
+
         for (UUID playerUUID : players) {
             Player player = plugin.getProxy().getPlayer(playerUUID).orElse(null);
             if (player == null) {
                 LOGGER.warn("Could not find player {}", playerUUID);
                 continue;
             }
-
-            removePlayer(player.getUniqueId());
-
-            ConnectionRequestBuilder connectionRequest = player.createConnectionRequest(server);
-            connectionRequest.fireAndForget();
-//            connectionRequest.connect()
-//                    .thenAccept(result -> {
-//                        LOGGER.info("Sent player {} with result {}", player.getUniqueId(), result);
-//                    });
+            player.showTitle(Title.title(
+                    Component.text("\uE000", TextColor.color(100, 36, 44)),
+                    Component.empty(),
+                    Title.Times.times(Duration.ofMillis(transitionTime), Duration.ofSeconds(4), Duration.ofMillis(400))
+            ));
         }
 
+        plugin.getProxy().getScheduler().buildTask(plugin, () -> {
+            for (UUID playerUUID : players) {
+                Player player = plugin.getProxy().getPlayer(playerUUID).orElse(null);
+                if (player == null) {
+                    LOGGER.warn("Could not find player {}", playerUUID);
+                    continue;
+                }
+
+                removePlayer(player.getUniqueId());
+
+                ConnectionRequestBuilder connectionRequest = player.createConnectionRequest(server);
+                connectionRequest.connect()
+                        .thenAccept(result -> {
+                            LOGGER.info("Sent player {} with result {}", player.getUniqueId(), result);
+                        })
+                        .join();
+            }
+        }).delay(transitionTime + 50, TimeUnit.MILLISECONDS).schedule();
     }
 
     private void handleMatchmake(MatchmakeMessage msg) { // TODO: should ensure players in the same MatchmakeMessage go into the same game, currently it is first come first serve
@@ -289,7 +309,10 @@ public class Matchmaker {
                 @Override
                 public void accept(ScheduledTask task) {
                     if (seconds == 0) {
-                        if (bossBar != null) bossBar.name(createBossbarWaitingComponent());
+                        if (bossBar != null) for (Player player : getPlayers()) {
+                            player.hideBossBar(bossBar);
+                        }
+
                         createGame(gameInfo.gameId(), new HashSet<>(players));
                         task.cancel();
                         return;
@@ -321,12 +344,6 @@ public class Matchmaker {
                     .append(Component.text(" in "))
                     .append(Component.text(seconds))
                     .append(Component.text("s"))
-                    .build();
-        }
-
-        private Component createBossbarWaitingComponent() {
-            return Component.text()
-                    .append(Component.text("Waiting for server..."))
                     .build();
         }
 

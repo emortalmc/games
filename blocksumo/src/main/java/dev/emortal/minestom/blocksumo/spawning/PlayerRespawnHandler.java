@@ -3,6 +3,7 @@ package dev.emortal.minestom.blocksumo.spawning;
 import dev.emortal.messaging.types.BlockSumoData;
 import dev.emortal.minestom.blocksumo.BlockSumoModule;
 import dev.emortal.minestom.blocksumo.game.BlockSumoGame;
+import dev.emortal.minestom.blocksumo.game.PlayerManager;
 import dev.emortal.minestom.blocksumo.game.PlayerTags;
 import dev.emortal.minestom.blocksumo.team.TeamColor;
 import net.kyori.adventure.sound.Sound;
@@ -189,8 +190,8 @@ public final class PlayerRespawnHandler {
             int lives = this.player.getTag(PlayerTags.LIVES);
             float health = lives * 2;
 
-            this.player.getAttribute(Attribute.MAX_HEALTH).setBaseValue(health);
-            this.player.heal();
+            player.getAttribute(Attribute.MAX_HEALTH).setBaseValue(PlayerManager.STARTING_LIVES * 2);
+            player.setHealth(health);
         }
 
         private void playRespawnSound() {

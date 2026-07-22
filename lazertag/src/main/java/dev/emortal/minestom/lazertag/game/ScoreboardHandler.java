@@ -27,7 +27,7 @@ public final class ScoreboardHandler {
 
         int lines = 8;
         for (int i = 0; i < lines; i++) {
-            this.sidebar.createLine(new Sidebar.ScoreboardLine("kills" + i, Component.empty(), lines - i));
+            this.sidebar.createLine(new Sidebar.ScoreboardLine("kills" + i, Component.empty(), lines - i, Sidebar.NumberFormat.blank()));
         }
 
         this.sidebar.updateLineContent("kills0", Component.text("Be the first to kill!", NamedTextColor.GOLD));

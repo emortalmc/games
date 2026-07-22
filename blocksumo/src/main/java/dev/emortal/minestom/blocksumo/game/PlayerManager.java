@@ -67,8 +67,8 @@ public final class PlayerManager {
         int lives = player.getTag(PlayerTags.LIVES);
         float health = lives * 2;
 
-        player.getAttribute(Attribute.MAX_HEALTH).setBaseValue(health);
-        player.heal();
+        player.getAttribute(Attribute.MAX_HEALTH).setBaseValue(STARTING_LIVES * 2);
+        player.setHealth(health);
     }
 
     private void prepareInitialSpawn(@NotNull Player player, @NotNull Pos pos) {

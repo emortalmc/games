@@ -147,9 +147,9 @@ public class BlockSumoGame extends Game {
     private void showCountdown(final int countdown) {
         this.playSound(Sound.sound(Key.key("battle.countdown.begin"), Sound.Source.MASTER, 1F, 1F), Sound.Emitter.self());
         this.showTitle(Title.title(
-                Component.text(countdown, NamedTextColor.GREEN, TextDecoration.BOLD),
+                Component.text(countdown, TextColor.color(100, 36, 56), TextDecoration.BOLD),
                 Component.empty(),
-                Title.Times.times(Duration.ZERO, Duration.ofMillis(1500), Duration.ofMillis(500))
+                Title.Times.times(Duration.ofMillis(600), Duration.ofMillis(1500), Duration.ZERO)
         ));
     }
 

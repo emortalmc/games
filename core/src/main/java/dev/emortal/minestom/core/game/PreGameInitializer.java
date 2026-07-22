@@ -3,6 +3,9 @@ package dev.emortal.minestom.core.game;
 import dev.emortal.messaging.types.GameInfo;
 import dev.emortal.minestom.core.game.config.GameCreationInfo;
 import dev.emortal.minestom.core.game.util.GameEventPredicates;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.title.Title;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.event.Event;
 import net.minestom.server.event.EventFilter;
@@ -16,6 +19,7 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -59,6 +63,12 @@ public final class PreGameInitializer {
         });
 
         this.preGameNode.addListener(PlayerSpawnEvent.class, event -> {
+            event.getPlayer().showTitle(Title.title(
+                    Component.text("\uE000", TextColor.color(100, 36, 48)),
+                    Component.empty(),
+                    Title.Times.times(Duration.ZERO, Duration.ofMillis(200), Duration.ofMillis(400))
+            ));
+
             game.onJoin(event.getPlayer());
 
             int newCount = this.playerCount.incrementAndGet();

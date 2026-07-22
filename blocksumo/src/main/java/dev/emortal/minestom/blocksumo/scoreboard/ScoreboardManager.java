@@ -31,10 +31,9 @@ public final class ScoreboardManager implements Viewable {
     private Set<Player> scores = Set.of();
 
     public ScoreboardManager() {
-
-        this.sidebar.createLine(new Sidebar.ScoreboardLine("header_spacer", Component.empty(), 99));
-        this.sidebar.createLine(new Sidebar.ScoreboardLine("footer_spacer", Component.empty(), -8));
-        this.sidebar.createLine(new Sidebar.ScoreboardLine("footer", FOOTER, -9));
+        this.sidebar.createLine(new Sidebar.ScoreboardLine("header_spacer", Component.empty(), 99, Sidebar.NumberFormat.blank()));
+        this.sidebar.createLine(new Sidebar.ScoreboardLine("footer_spacer", Component.empty(), -8, Sidebar.NumberFormat.blank()));
+        this.sidebar.createLine(new Sidebar.ScoreboardLine("footer", FOOTER, -9, Sidebar.NumberFormat.blank()));
     }
 
     public void updateScoreboard() {
@@ -65,7 +64,7 @@ public final class ScoreboardManager implements Viewable {
             this.sidebar.updateLineContent(lineId, createScoreboardComponent(player, lives));
             this.sidebar.updateLineScore(lineId, lives);
         } else { // line does not exist, create
-            this.sidebar.createLine(new Sidebar.ScoreboardLine(lineId, createScoreboardComponent(player, lives), lives));
+            this.sidebar.createLine(new Sidebar.ScoreboardLine(lineId, createScoreboardComponent(player, lives), lives, Sidebar.NumberFormat.blank()));
         }
     }
 
