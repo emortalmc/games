@@ -1,0 +1,606 @@
+{
+  "reflection": [
+    {
+      "type": "com.alibaba.fastjson2.JSONObject[]"
+    },
+    {
+      "type": "com.alibaba.fastjson2.reader.ORG_10_9_GameModeConfig",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.Class",
+            "java.lang.String",
+            "java.lang.String",
+            "long",
+            "java.util.function.Function",
+            "java.util.List",
+            "java.lang.String[]",
+            "com.alibaba.fastjson2.reader.FieldReader[]",
+            "com.alibaba.fastjson2.reader.FieldReader[]",
+            "java.lang.Class[]",
+            "java.lang.String[]"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.alibaba.fastjson2.reader.ORG_11_4_ConfigItem",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.Class",
+            "java.lang.String",
+            "java.lang.String",
+            "long",
+            "java.util.function.Function",
+            "java.util.List",
+            "java.lang.String[]",
+            "com.alibaba.fastjson2.reader.FieldReader[]",
+            "com.alibaba.fastjson2.reader.FieldReader[]",
+            "java.lang.Class[]",
+            "java.lang.String[]"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.alibaba.fastjson2.reader.ORG_12_3_ConfigNPC",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.Class",
+            "java.lang.String",
+            "java.lang.String",
+            "long",
+            "java.util.function.Function",
+            "java.util.List",
+            "java.lang.String[]",
+            "com.alibaba.fastjson2.reader.FieldReader[]",
+            "com.alibaba.fastjson2.reader.FieldReader[]",
+            "java.lang.Class[]",
+            "java.lang.String[]"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.alibaba.fastjson2.reader.ORG_13_2_ConfigSkin",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.Class",
+            "java.lang.String",
+            "java.lang.String",
+            "long",
+            "java.util.function.Function",
+            "java.util.List",
+            "java.lang.String[]",
+            "com.alibaba.fastjson2.reader.FieldReader[]",
+            "com.alibaba.fastjson2.reader.FieldReader[]",
+            "java.lang.Class[]",
+            "java.lang.String[]"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.alibaba.fastjson2.reader.ORG_14_5_ConfigMap",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.Class",
+            "java.lang.String",
+            "java.lang.String",
+            "long",
+            "java.util.function.Function",
+            "java.util.List",
+            "java.lang.String[]",
+            "com.alibaba.fastjson2.reader.FieldReader[]",
+            "com.alibaba.fastjson2.reader.FieldReader[]",
+            "java.lang.Class[]",
+            "java.lang.String[]"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.alibaba.fastjson2.reader.ORG_1_6_BBModel",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.Class",
+            "java.lang.String",
+            "java.lang.String",
+            "long",
+            "java.util.function.Function",
+            "java.util.List",
+            "java.lang.String[]",
+            "com.alibaba.fastjson2.reader.FieldReader[]",
+            "com.alibaba.fastjson2.reader.FieldReader[]",
+            "java.lang.Class[]",
+            "java.lang.String[]"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.alibaba.fastjson2.reader.ORG_2_3_BBMeta",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.Class",
+            "java.lang.String",
+            "java.lang.String",
+            "long",
+            "java.util.function.Function",
+            "java.util.List",
+            "java.lang.String[]",
+            "com.alibaba.fastjson2.reader.FieldReader[]",
+            "com.alibaba.fastjson2.reader.FieldReader[]",
+            "java.lang.Class[]",
+            "java.lang.String[]"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.alibaba.fastjson2.reader.ORG_3_4_BBElement",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.Class",
+            "java.lang.String",
+            "java.lang.String",
+            "long",
+            "java.util.function.Function",
+            "java.util.List",
+            "java.lang.String[]",
+            "com.alibaba.fastjson2.reader.FieldReader[]",
+            "com.alibaba.fastjson2.reader.FieldReader[]",
+            "java.lang.Class[]",
+            "java.lang.String[]"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.alibaba.fastjson2.reader.ORG_4_4_BBGroup",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.Class",
+            "java.lang.String",
+            "java.lang.String",
+            "long",
+            "java.util.function.Function",
+            "java.util.List",
+            "java.lang.String[]",
+            "com.alibaba.fastjson2.reader.FieldReader[]",
+            "com.alibaba.fastjson2.reader.FieldReader[]",
+            "java.lang.Class[]",
+            "java.lang.String[]"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.alibaba.fastjson2.reader.ORG_5_10_BBAnimation",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.Class",
+            "java.lang.String",
+            "java.lang.String",
+            "long",
+            "java.util.function.Function",
+            "java.util.List",
+            "java.lang.String[]",
+            "com.alibaba.fastjson2.reader.FieldReader[]",
+            "com.alibaba.fastjson2.reader.FieldReader[]",
+            "java.lang.Class[]",
+            "java.lang.String[]"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.alibaba.fastjson2.reader.ORG_6_3_BBAnimator",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.Class",
+            "java.lang.String",
+            "java.lang.String",
+            "long",
+            "java.util.function.Function",
+            "java.util.List",
+            "java.lang.String[]",
+            "com.alibaba.fastjson2.reader.FieldReader[]",
+            "com.alibaba.fastjson2.reader.FieldReader[]",
+            "java.lang.Class[]",
+            "java.lang.String[]"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.alibaba.fastjson2.reader.ORG_7_9_BBKeyframe",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.Class",
+            "java.lang.String",
+            "java.lang.String",
+            "long",
+            "java.util.function.Function",
+            "java.util.List",
+            "java.lang.String[]",
+            "com.alibaba.fastjson2.reader.FieldReader[]",
+            "com.alibaba.fastjson2.reader.FieldReader[]",
+            "java.lang.Class[]",
+            "java.lang.String[]"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.alibaba.fastjson2.reader.ORG_8_3_BBDataPoint",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.Class",
+            "java.lang.String",
+            "java.lang.String",
+            "long",
+            "java.util.function.Function",
+            "java.util.List",
+            "java.lang.String[]",
+            "com.alibaba.fastjson2.reader.FieldReader[]",
+            "com.alibaba.fastjson2.reader.FieldReader[]",
+            "java.lang.Class[]",
+            "java.lang.String[]"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.alibaba.fastjson2.reader.ORG_9_1_GameModesConfig",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.Class",
+            "java.lang.String",
+            "java.lang.String",
+            "long",
+            "java.util.function.Function",
+            "java.util.List",
+            "java.lang.String[]",
+            "com.alibaba.fastjson2.reader.FieldReader[]",
+            "com.alibaba.fastjson2.reader.FieldReader[]",
+            "java.lang.Class[]",
+            "java.lang.String[]"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.alibaba.fastjson2.writer.OWG_1_4_ServerOnlineMessage",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.Class",
+            "java.lang.String",
+            "java.lang.String",
+            "long",
+            "java.util.List"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.alibaba.fastjson2.writer.OWG_2_5_GameInfo",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.Class",
+            "java.lang.String",
+            "java.lang.String",
+            "long",
+            "java.util.List"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "dev.emortal.bbstom.BBAnimation",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "dev.emortal.bbstom.BBAnimation[]"
+    },
+    {
+      "type": "dev.emortal.bbstom.BBAnimator",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "dev.emortal.bbstom.BBDataPoint",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "dev.emortal.bbstom.BBDataPoint[]"
+    },
+    {
+      "type": "dev.emortal.bbstom.BBKeyframe",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "dev.emortal.bbstom.BBKeyframe[]"
+    },
+    {
+      "type": "dev.emortal.bbstom.BBModel",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "dev.emortal.bbstom.BBModel$BBElement",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "dev.emortal.bbstom.BBModel$BBElement[]"
+    },
+    {
+      "type": "dev.emortal.bbstom.BBModel$BBGroup",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "dev.emortal.bbstom.BBModel$BBGroup[]"
+    },
+    {
+      "type": "dev.emortal.bbstom.BBModel$BBMeta",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "dev.emortal.minestom.lobby.config.ConfigItem",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "dev.emortal.minestom.lobby.config.ConfigMap",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "dev.emortal.minestom.lobby.config.ConfigNPC",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "dev.emortal.minestom.lobby.config.ConfigSkin",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "dev.emortal.minestom.lobby.config.GameModeConfig",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "dev.emortal.minestom.lobby.config.GameModesConfig",
+      "allDeclaredConstructors": true,
+      "allDeclaredFields": true,
+      "allDeclaredMethods": true
+    },
+    {
+      "type": "java.sql.Timestamp"
+    },
+    {
+      "type": "java.util.HashMap"
+    },
+    {
+      "type": "net.minestom.server.adventure.provider.MinestomGsonComponentSerializerProvider"
+    },
+    {
+      "type": "net.minestom.server.entity.EntityView$Option"
+    },
+    {
+      "type": "net.minestom.server.entity.MetadataDef"
+    },
+    {
+      "type": "net.minestom.server.entity.MetadataDef$AgeableMob"
+    },
+    {
+      "type": "net.minestom.server.entity.MetadataDef$ArmorStand"
+    },
+    {
+      "type": "net.minestom.server.entity.MetadataDef$Avatar"
+    },
+    {
+      "type": "net.minestom.server.entity.MetadataDef$BlockDisplay"
+    },
+    {
+      "type": "net.minestom.server.entity.MetadataDef$Display"
+    },
+    {
+      "type": "net.minestom.server.entity.MetadataDef$Interaction"
+    },
+    {
+      "type": "net.minestom.server.entity.MetadataDef$ItemDisplay"
+    },
+    {
+      "type": "net.minestom.server.entity.MetadataDef$LivingEntity"
+    },
+    {
+      "type": "net.minestom.server.entity.MetadataDef$Mannequin"
+    },
+    {
+      "type": "net.minestom.server.entity.MetadataDef$Mob"
+    },
+    {
+      "type": "net.minestom.server.entity.MetadataDef$TextDisplay"
+    },
+    {
+      "type": "net.minestom.server.entity.MetadataHolder",
+      "fields": [
+        {
+          "name": "notifyAboutChanges"
+        }
+      ]
+    },
+    {
+      "type": "net.minestom.server.event.EventNodeLazyImpl",
+      "fields": [
+        {
+          "name": "mapped"
+        }
+      ]
+    },
+    {
+      "type": "net.minestom.server.instance.Chunk",
+      "methods": [
+        {
+          "name": "onLoad",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "net.minestom.server.instance.DynamicChunk",
+      "fields": [
+        {
+          "name": "entries"
+        },
+        {
+          "name": "needsCompleteHeightmapRefresh"
+        },
+        {
+          "name": "tickableMap"
+        }
+      ]
+    },
+    {
+      "type": "net.minestom.server.instance.InstanceContainer",
+      "methods": [
+        {
+          "name": "cacheChunk",
+          "parameterTypes": [
+            "net.minestom.server.instance.Chunk"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "net.minestom.server.instance.light.BlockLight",
+      "fields": [
+        {
+          "name": "content"
+        },
+        {
+          "name": "contentPropagation"
+        },
+        {
+          "name": "isValidBorders"
+        },
+        {
+          "name": "needsSend"
+        }
+      ]
+    },
+    {
+      "type": "net.minestom.server.instance.light.SkyLight",
+      "fields": [
+        {
+          "name": "content"
+        },
+        {
+          "name": "contentPropagation"
+        },
+        {
+          "name": "isValidBorders"
+        },
+        {
+          "name": "needsSend"
+        }
+      ]
+    },
+    {
+      "type": "org.osgi.framework.BundleEvent"
+    },
+    {
+      "type": "space.vectrix.flare.fastutil.Int2ObjectSyncMapImpl$ExpungingEntryImpl"
+    },
+    {
+      "type": "space.vectrix.flare.fastutil.Long2ObjectSyncMapImpl$ExpungingEntryImpl"
+    }
+  ],
+  "resources": [
+    {
+      "glob": "META-INF/services/net.kyori.adventure.text.minimessage.MiniMessage$Provider"
+    },
+    {
+      "glob": "META-INF/services/net.kyori.adventure.text.serializer.gson.GsonComponentSerializer$Provider"
+    },
+    {
+      "glob": "dev/emortal/bbstom/BBAnimator.class"
+    },
+    {
+      "glob": "dev/emortal/bbstom/BBDataPoint.class"
+    },
+    {
+      "glob": "dev/emortal/bbstom/BBKeyframe.class"
+    },
+    {
+      "glob": "dev/emortal/bbstom/BBModel$BBElement.class"
+    },
+    {
+      "glob": "dev/emortal/bbstom/BBModel$BBGroup.class"
+    },
+    {
+      "glob": "dev/emortal/bbstom/BBModel.class"
+    },
+    {
+      "glob": "linux/amd64/libzstd-jni-1.5.7-7.so"
+    },
+    {
+      "glob": "net/minestom/data/tags/villager_profession.json"
+    },
+    {
+      "glob": "net/minestom/data/villager_profession.json"
+    }
+  ]
+}
