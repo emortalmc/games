@@ -73,12 +73,12 @@ public final class BlockChucker extends Gun {
             List<Block> blocks = new ArrayList<>();
 
             for (Block value : Block.values()) {
-                if (!value.isSolid()) continue;
+                if (!value.solid()) continue;
 
-                Shape shape = value.registry().collisionShape();
+                Shape shape = value.collisionShape();
                 if (!shape.relativeStart().samePoint(0, 0, 0) || !shape.relativeEnd().samePoint(1, 1, 1)) continue;
 
-                if (value.isAir()) continue;
+                if (value.air()) continue;
                 if (value.compare(Block.BARRIER)) continue;
 
                 blocks.add(value);
@@ -102,7 +102,7 @@ public final class BlockChucker extends Gun {
             spinSpeed2 = random.nextFloat(-0.3f, 0.3f);
 
             editEntityMeta(ItemDisplayMeta.class, meta -> {
-                meta.setItemStack(ItemStack.of(getRandomBlock().registry().material()));
+                meta.setItemStack(ItemStack.of(getRandomBlock().material()));
                 meta.setPosRotInterpolationDuration(2);
                 meta.setTransformationInterpolationDuration(2);
                 meta.setTransformationInterpolationStartDelta(0);

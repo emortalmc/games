@@ -46,7 +46,7 @@ public final class LightningRod extends BlockChangingGadget {
         bolt.setInstance(instance, hitPos);
         bolt.scheduleRemove(3 * 20, TimeUnit.SERVER_TICK);
 
-        List<WorldBlock> blocks = SphereUtil.getNearbyBlocks(hitPos, BLOCKS_IN_SPHERE, instance, block -> !block.isAir());
+        List<WorldBlock> blocks = SphereUtil.getNearbyBlocks(hitPos, BLOCKS_IN_SPHERE, instance, block -> !block.air());
 
         this.explodeBlocks(instance, blocks);
         user.sendPacket(new ExplosionPacket(hitPos, 2f, 0, null, Particle.EXPLOSION_EMITTER, SoundEvent.ENTITY_GENERIC_EXPLODE, WeightedList.of()));

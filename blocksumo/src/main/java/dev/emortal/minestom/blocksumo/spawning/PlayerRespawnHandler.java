@@ -205,7 +205,7 @@ public final class PlayerRespawnHandler {
 
             Instance instance = PlayerRespawnHandler.this.game.getInstance();
             MinecraftServer.getSchedulerManager()
-                    .buildTask(() -> instance.setBlock(pos.blockX(), pos.blockY() - 1, pos.blockZ(), replacedBlock.isAir() ? Block.WHITE_WOOL : replacedBlock))
+                    .buildTask(() -> instance.setBlock(pos.blockX(), pos.blockY() - 1, pos.blockZ(), replacedBlock.air() ? Block.WHITE_WOOL : replacedBlock))
                     .delay(TaskSchedule.tick(restoreDelay * ServerFlag.SERVER_TICKS_PER_SECOND))
                     .schedule();
         }

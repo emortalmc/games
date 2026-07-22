@@ -106,7 +106,7 @@ public final class BlockLobber extends Gadget {
     }
 
     private @Nullable Point getRandomNearbyBlock(@NotNull Point pos, @NotNull Instance instance) {
-        List<WorldBlock> blocks = SphereUtil.getNearbyBlocks(pos, BLOCKS_IN_SPHERE, instance, block -> !block.isAir());
+        List<WorldBlock> blocks = SphereUtil.getNearbyBlocks(pos, BLOCKS_IN_SPHERE, instance, block -> !block.air());
         if (blocks.isEmpty()) return null;
 
         ThreadLocalRandom random = ThreadLocalRandom.current();

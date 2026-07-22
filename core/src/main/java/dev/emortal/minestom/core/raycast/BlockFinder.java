@@ -35,7 +35,7 @@ public record BlockFinder(
      * A hitbox getter that finds a block's collision hitboxes.
      */
     public static final Function<Block, Collection<BoundingBox>> SOLID_BLOCK_HITBOXES =
-            block -> List.of(new BoundingBox(block.registry().collisionShape().relativeStart().asVec(), block.registry().collisionShape().relativeEnd().asVec()));
+            block -> List.of(new BoundingBox(block.collisionShape().relativeStart().asVec(), block.collisionShape().relativeEnd().asVec()));
 
     /**
      * A 1x1x1 block hitbox.
@@ -46,13 +46,13 @@ public record BlockFinder(
      * A hitbox getter that returns a cube if the block has any solid collision.
      */
     public static final Function<Block, Collection<BoundingBox>> SOLID_CUBE_HITBOXES =
-            block -> (block.isSolid() ? CUBE : List.of());
+            block -> (block.solid() ? CUBE : List.of());
 
     /**
      * A hitbox getter that returns a cube if the block is not air.
      */
     public static final Function<Block, Collection<BoundingBox>> CUBE_HITBOXES =
-            block -> (!block.isAir() ? CUBE : List.of());
+            block -> (!block.air() ? CUBE : List.of());
 
     @Override
     public boolean hasNext() {

@@ -46,7 +46,7 @@ public final class PortAFort extends PowerUp {
             return;
         }
 
-        Block woolBlock = player.getTag(PlayerTags.TEAM_COLOR).getWoolItem().material().registry().block();
+        Block woolBlock = player.getTag(PlayerTags.TEAM_COLOR).getWoolItem().material().block();
 
         var middleLayers = 4;
 

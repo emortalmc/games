@@ -67,7 +67,7 @@ public final class Fireball extends BlockChangingGadget {
         if (entity.getEntityType() != EntityType.FIREBALL) return;
 
         Point pos = entity.getPosition();
-        List<WorldBlock> blocks = SphereUtil.getNearbyBlocks(pos, BLOCKS_IN_SPHERE, instance, block -> !block.isAir());
+        List<WorldBlock> blocks = SphereUtil.getNearbyBlocks(pos, BLOCKS_IN_SPHERE, instance, block -> !block.air());
         this.explodeBlocks(instance, blocks);
 
         super.regenerateInstanceBlocks(instance, blocks);

@@ -131,7 +131,7 @@ public final class ExplosionManager {
 
     private boolean canExplodeBlock(@NotNull Block block) {
         // We can only explode wool blocks and air. This avoids us exploding bedrock, the diamond block, or any of the actual map.
-        return block.name().toLowerCase(Locale.ROOT).contains("wool") || block.isAir();
+        return block.name().toLowerCase(Locale.ROOT).contains("wool") || block.air();
     }
 
     private static @NotNull List<Point> getBlocksInSphere(int radius) {

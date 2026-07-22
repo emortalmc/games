@@ -50,7 +50,7 @@ public final class PlayerBlockHandler {
         Point pos = event.getBlockPosition();
 
         // Fixes replacement of non-solid blocks like stairs
-        if (event.getInstance().getBlock(pos, Block.Getter.Condition.TYPE).isSolid()) {
+        if (event.getInstance().getBlock(pos, Block.Getter.Condition.TYPE).solid()) {
             event.setCancelled(true);
             return;
         }

@@ -92,7 +92,7 @@ public final class InkBlaster extends BlockChangingGadget {
         Block block = BLOCK_COLORS[markerTag];
 
         List<WorldBlock> nearbyBlocks = SphereUtil.getNearbyBlocks(entity.getPosition(), BLOCKS_IN_SPHERE, instance,
-                b -> b.isSolid() && !b.compare(Block.OAK_WALL_SIGN));
+                b -> b.solid() && !b.compare(Block.OAK_WALL_SIGN));
 
         for (WorldBlock nearbyBlock : nearbyBlocks) {
             BlockChangePacket packet = new BlockChangePacket(nearbyBlock.position(), block);
