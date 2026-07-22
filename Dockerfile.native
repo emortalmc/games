@@ -1,0 +1,8 @@
+FROM debian:trixie-slim
+
+WORKDIR /app
+
+COPY build/native/nativeCompile/server /app/server
+COPY run/ /app/
+
+ENTRYPOINT ["/app/server"]
