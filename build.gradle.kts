@@ -1,5 +1,6 @@
 plugins {
     id("java")
+    id("org.graalvm.buildtools.native") version "0.11.1" apply false
 }
 
 group = "dev.emortal"
@@ -32,6 +33,28 @@ allprojects {
         implementation("net.logstash.logback:logstash-logback-encoder:8.1")
 
         compileOnly("org.jetbrains:annotations:26.1.0")
+    }
+}
+
+subprojects {
+    plugins.withId("org.graalvm.buildtools.native") {
+        extensions.configure<org.graalvm.buildtools.gradle.dsl.GraalVMExtension>("graalvmNative") {
+            binaries.named("main") {
+                javaLauncher = javaToolchains.launcherFor {
+                    languageVersion = JavaLanguageVersion.of(25)
+                    nativeImageCapable = true
+                }
+
+                buildArgs.add("--enable-url-protocols=http,https")
+                buildArgs.add("--initialize-at-build-time=com.alibaba.fastjson2")
+                buildArgs.add("--enable-native-access=ALL-UNNAMED")
+                buildArgs.add("-H:+UnlockExperimentalVMOptions")
+                buildArgs.add("-H:+ReportExceptionStackTraces")
+
+                quickBuild = providers.gradleProperty("nativeQuickBuild").isPresent
+                fallback = false
+            }
+        }
     }
 }
 
