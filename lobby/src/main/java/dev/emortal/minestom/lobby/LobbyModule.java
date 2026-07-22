@@ -133,7 +133,7 @@ public class LobbyModule implements Module {
         new GregoryFeature().register(instance);
         new HotelReceptionistFeature().register(instance);
         new HotelLiftFeature().register(instance);
-        new NewsReporterFeature().register(instance);
+        new TVFeature().register(instance);
 //        new SadMattFeature().register(instance);
         new RavenousFeature().register(instance);
         new SecretLeverFeature().register(instance);

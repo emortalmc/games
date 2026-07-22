@@ -53,6 +53,8 @@ public final class EmortalServer {
     }
 
     public static void start(Collection<Module> modules) {
+        System.setProperty("minestom.new-socket-write-lock", "true");
+
         String address = getValue("address", DEFAULT_ADDRESS);
         String publicAddress = getValue("publicAddress", DEFAULT_ADDRESS);
         String velocitySecret = getValue("velocitySecret", "");
