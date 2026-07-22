@@ -1,0 +1,18 @@
+{
+  "reflection": [
+    { "type": "dev.emortal.messaging.message.CreateGameMessage", "allDeclaredFields": true, "allDeclaredMethods": true, "allDeclaredConstructors": true },
+    { "type": "dev.emortal.messaging.message.GameReadyMessage", "allDeclaredFields": true, "allDeclaredMethods": true, "allDeclaredConstructors": true },
+    { "type": "dev.emortal.messaging.message.MapVoteMessage", "allDeclaredFields": true, "allDeclaredMethods": true, "allDeclaredConstructors": true },
+    { "type": "dev.emortal.messaging.message.MatchmakeMessage", "allDeclaredFields": true, "allDeclaredMethods": true, "allDeclaredConstructors": true },
+    { "type": "dev.emortal.messaging.message.OnlinePlayersMessage", "allDeclaredFields": true, "allDeclaredMethods": true, "allDeclaredConstructors": true },
+    { "type": "dev.emortal.messaging.message.PermissionsMessage", "allDeclaredFields": true, "allDeclaredMethods": true, "allDeclaredConstructors": true },
+    { "type": "dev.emortal.messaging.message.ProxyOnlineMessage", "allDeclaredFields": true, "allDeclaredMethods": true, "allDeclaredConstructors": true },
+    { "type": "dev.emortal.messaging.message.RedisMessage", "allDeclaredMethods": true },
+    { "type": "dev.emortal.messaging.message.SendLobbyMessage", "allDeclaredFields": true, "allDeclaredMethods": true, "allDeclaredConstructors": true },
+    { "type": "dev.emortal.messaging.message.ServerOnlineMessage", "allDeclaredFields": true, "allDeclaredMethods": true, "allDeclaredConstructors": true },
+    { "type": "dev.emortal.messaging.types.BlockSumoData", "allDeclaredFields": true, "allDeclaredMethods": true, "allDeclaredConstructors": true },
+    { "type": "dev.emortal.messaging.types.GameInfo", "allDeclaredFields": true, "allDeclaredMethods": true, "allDeclaredConstructors": true },
+    { "type": "dev.emortal.messaging.types.GameInfo$MatchMethod", "allDeclaredFields": true, "allDeclaredMethods": true, "allDeclaredConstructors": true },
+    { "type": "dev.emortal.messaging.types.MarathonData", "allDeclaredFields": true, "allDeclaredMethods": true, "allDeclaredConstructors": true }
+  ]
+}
