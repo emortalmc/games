@@ -50,6 +50,7 @@ subprojects {
                 buildArgs.add("--enable-native-access=ALL-UNNAMED")
                 buildArgs.add("-H:+UnlockExperimentalVMOptions")
                 buildArgs.add("-H:+ReportExceptionStackTraces")
+                buildArgs.add("-H:+SharedArenaSupport")
 
                 quickBuild = providers.gradleProperty("nativeQuickBuild").isPresent
                 fallback = false
