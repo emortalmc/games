@@ -15,7 +15,7 @@ public final class Minigun extends Gun {
             ItemRarity.RARE,
 
             0.75f,
-            50.0,
+            200,
             3,
             70,
 

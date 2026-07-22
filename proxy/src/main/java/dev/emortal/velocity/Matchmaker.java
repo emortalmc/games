@@ -101,7 +101,8 @@ public class Matchmaker {
             return;
         }
 
-        waitingPlayersMap.put(uuid, players);
+        Set<UUID> waitingUUIDs = waitingPlayersMap.computeIfAbsent(uuid, _ -> new HashSet<>());
+        waitingUUIDs.addAll(players);
 
         redis.sendServerMessage(uuid, new CreateGameMessage(id, map, players));
     }
@@ -278,8 +279,8 @@ public class Matchmaker {
         private final GameInfo gameInfo;
         private @Nullable BossBar bossBar = null;
         private final ScheduledTask task;
-        public Match(Set<UUID> players, GameInfo gameInfo) {
-            this.players = new HashSet<>(players);
+        public Match(Set<UUID> uuids, GameInfo gameInfo) {
+            this.players = new HashSet<>(uuids);
             this.gameInfo = gameInfo;
 
             this.task = plugin.getProxy().getScheduler().buildTask(plugin, new Consumer<>() {

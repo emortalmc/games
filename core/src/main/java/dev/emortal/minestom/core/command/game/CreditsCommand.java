@@ -1,7 +1,8 @@
 package dev.emortal.minestom.core.command.game;
 
+import dev.emortal.minestom.core.EmortalServer;
 import dev.emortal.minestom.core.game.Game;
-import dev.emortal.minestom.core.game.GameProvider;
+import dev.emortal.minestom.core.game.GameManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -17,20 +18,19 @@ import java.util.List;
 public final class CreditsCommand extends Command {
     private static final @NotNull Component UNKNOWN_MESSAGE = Component.text("We're not sure who made this map", NamedTextColor.RED);
 
-    private final @NotNull GameProvider gameProvider;
-
-    public CreditsCommand(@NotNull GameProvider gameProvider) {
+    public CreditsCommand() {
         super("credits");
-        this.gameProvider = gameProvider;
 
         super.setCondition(Conditions::playerOnly);
         super.setDefaultExecutor(this::execute);
     }
 
     private void execute(@NotNull CommandSender sender, @NotNull CommandContext context) {
-        Game game = this.gameProvider.findGame((Player) sender);
+        GameManager gameManager = EmortalServer.getGameManager();
+        Game game = gameManager.findGame((Player) sender);
         if (game == null) return;
         if (game.getMap() == null) return;
+        if (game.getMap().data() == null) return;
 
         List<String> mapUsernames = game.getMap().data().getList("credits", String.class);
         if (mapUsernames == null || mapUsernames.isEmpty()) {

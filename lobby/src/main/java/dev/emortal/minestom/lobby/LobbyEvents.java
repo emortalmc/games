@@ -125,13 +125,13 @@ public final class LobbyEvents {
 
     private static void onLogin(@NotNull AsyncPlayerConfigurationEvent event, @NotNull Instance spawnInstance) {
         event.setSpawningInstance(spawnInstance);
-        event.getPlayer().setRespawnPoint(Entrypoint.SPAWN_POINT);
+        event.getPlayer().setRespawnPoint(LobbyModule.SPAWN_POINT);
     }
 
     private static void onMove(@NotNull PlayerMoveEvent event) {
         Player player = event.getPlayer();
         if (player.getPosition().y() < -10) {
-            player.teleport(Entrypoint.SPAWN_POINT);
+            player.teleport(LobbyModule.SPAWN_POINT);
         }
     }
 

@@ -1,5 +1,7 @@
 package dev.emortal.minestom.minesweeper.map;
 
+import dev.emortal.minestom.core.map.LoadedMap;
+import dev.emortal.minestom.core.map.MapManager;
 import dev.emortal.minestom.minesweeper.board.Board;
 import dev.emortal.minestom.minesweeper.board.BoardReader;
 import dev.emortal.minestom.minesweeper.game.SaveHandler;
@@ -11,6 +13,7 @@ import net.minestom.server.color.Color;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.instance.Chunk;
 import net.minestom.server.instance.Instance;
+import net.minestom.server.instance.InstanceContainer;
 import net.minestom.server.instance.block.Block;
 import net.minestom.server.registry.DynamicRegistry;
 import net.minestom.server.world.DimensionType;
@@ -21,10 +24,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
-public final class MapManager {
+public final class MinesweeperMapManager implements MapManager {
     public static final int MAX_LIVES = 3;
     public static final int FLOOR_HEIGHT = 64;
     public static final Pos SPAWN_POSITION = new Pos(0.5F, FLOOR_HEIGHT + 1, 0.5F, -45F, 0F);
@@ -45,9 +49,9 @@ public final class MapManager {
         MinecraftServer.getDimensionTypeRegistry().register("emortalmc:fullbright", dimensionTypeFB);
     }
 
-    private Instance createInstance(MapTheme theme) {
+    private InstanceContainer createInstance(MapTheme theme) {
         DynamicRegistry<DimensionType> dimRegistry = MinecraftServer.getDimensionTypeRegistry();
-        Instance instance = MinecraftServer.getInstanceManager().createInstanceContainer(dimRegistry.getKey(Key.key("emortalmc:fullbright")));
+        InstanceContainer instance = MinecraftServer.getInstanceManager().createInstanceContainer(dimRegistry.getKey(Key.key("emortalmc:fullbright")));
 
         instance.setGenerator(unit -> {
             unit.modifier().fillHeight(60, 64, Block.SMOOTH_QUARTZ);
@@ -60,7 +64,7 @@ public final class MapManager {
                     boolean alternate = (x + z) % 2 == 0;
                     boolean alternateChunk = (chunkX + chunkZ) % 2 == 0;
                     Block block = alternate ? alternateChunk ? theme.unrevealedAlt() : theme.unrevealedAlt3() : alternateChunk ? theme.unrevealed() : theme.unrevealedAlt2();
-                    unit.modifier().setBlock(unit.absoluteStart().add(x, 0, z).withY(MapManager.FLOOR_HEIGHT), block);
+                    unit.modifier().setBlock(unit.absoluteStart().add(x, 0, z).withY(MinesweeperMapManager.FLOOR_HEIGHT), block);
                 }
             }
         });
@@ -98,4 +102,19 @@ public final class MapManager {
         return BoardReader.read(data, instance);
     }
 
+    @Override
+    public @NotNull LoadedMap loadMap(@NotNull String mapName) {
+        return loadRandomMap();
+    }
+
+    @Override
+    public @NotNull LoadedMap loadRandomMap() {
+        InstanceContainer instance = createInstance(MapTheme.DEFAULT);
+        return new LoadedMap(instance, null);
+    }
+
+    @Override
+    public @NotNull Set<String> getMaps() {
+        return Set.of();
+    }
 }

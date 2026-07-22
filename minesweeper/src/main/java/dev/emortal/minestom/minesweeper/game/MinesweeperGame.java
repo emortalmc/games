@@ -4,7 +4,7 @@ import dev.emortal.minestom.core.game.Game;
 import dev.emortal.minestom.core.game.config.GameCreationInfo;
 import dev.emortal.minestom.core.game.util.GameWinLoseMessages;
 import dev.emortal.minestom.minesweeper.board.Board;
-import dev.emortal.minestom.minesweeper.map.MapManager;
+import dev.emortal.minestom.minesweeper.map.MinesweeperMapManager;
 import dev.emortal.minestom.minesweeper.util.MinesweeperLoseMessages;
 import dev.emortal.minestom.minesweeper.view.InteractionManager;
 import net.kyori.adventure.text.Component;
@@ -58,7 +58,7 @@ public final class MinesweeperGame extends Game {
 
     @Override
     public void onPreJoin(@NotNull Player player) {
-        player.setRespawnPoint(MapManager.SPAWN_POSITION);
+        player.setRespawnPoint(MinesweeperMapManager.SPAWN_POSITION);
     }
 
     @Override

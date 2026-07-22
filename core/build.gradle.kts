@@ -9,7 +9,7 @@ dependencies {
     api(project(":messaging"))
 
     // Minestom
-    api("net.minestom:minestom:2026.07.12-26.2")
+    api("net.minestom:minestom:2026.07.22-26.2")
     api("net.kyori:adventure-text-minimessage:5.2.0")
     compileOnlyApi("it.unimi.dsi:fastutil:8.5.18")
     api("dev.hollowcube:polar:1.16.0")
@@ -26,14 +26,10 @@ dependencies {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(26))
+        languageVersion.set(JavaLanguageVersion.of(25))
     }
 
     withSourcesJar()
-}
-
-tasks.withType<JavaCompile> {
-    options.isDeprecation = true
 }
 
 tasks {

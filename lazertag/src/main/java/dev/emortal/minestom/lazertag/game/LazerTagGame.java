@@ -5,6 +5,8 @@ import dev.emortal.minestom.core.game.config.GameCreationInfo;
 import dev.emortal.minestom.core.game.util.GameWinLoseMessages;
 import dev.emortal.minestom.core.map.LoadedMap;
 import dev.emortal.minestom.lazertag.gun.GunManager;
+import dev.emortal.minestom.lazertag.ping.PingCompensator;
+import dev.emortal.minestom.lazertag.ping.PlayerPinger;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -21,12 +23,18 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public final class LazerTagGame extends Game {
     private static final Pos WAITING_SPAWN_POINT = new Pos(0, 64, 0);
     private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
 
     public static final int KILLS_TO_WIN = 20;
+
+    private final PingCompensator pingCompensator = new PingCompensator();
+    private final Map<UUID, PlayerPinger> pingerMap = new HashMap<>();
 
     private final @NotNull GunManager gunManager;
     private final @NotNull DamageHandler damageHandler;
@@ -47,6 +55,8 @@ public final class LazerTagGame extends Game {
 
     @Override
     public void onJoin(@NotNull Player player) {
+        pingCompensator.recordPositions(player);
+        pingerMap.put(player.getUuid(), new PlayerPinger(player));
         player.scheduleNextTick((p) -> {
             player.setFlying(false);
             player.setAllowFlying(false);
@@ -158,4 +168,15 @@ public final class LazerTagGame extends Game {
     public @NotNull ScoreboardHandler getScoreboardHandler() {
         return this.scoreboardHandler;
     }
+
+    public PingCompensator getPingCompensator() {
+        return this.pingCompensator;
+    }
+
+    public int getPlayerPing(Player player) {
+        PlayerPinger playerPinger = pingerMap.get(player.getUuid());
+        if (playerPinger == null) return 0;
+        return playerPinger.getPing();
+    }
+
 }

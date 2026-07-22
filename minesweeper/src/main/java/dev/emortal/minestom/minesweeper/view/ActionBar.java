@@ -1,7 +1,7 @@
 package dev.emortal.minestom.minesweeper.view;
 
 import dev.emortal.minestom.minesweeper.board.Board;
-import dev.emortal.minestom.minesweeper.map.MapManager;
+import dev.emortal.minestom.minesweeper.map.MinesweeperMapManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.minestom.server.timer.TaskSchedule;
@@ -25,7 +25,7 @@ public final class ActionBar {
     }
 
     public void incrementLives() {
-        if (this.board.getLives() < MapManager.MAX_LIVES) {
+        if (this.board.getLives() < MinesweeperMapManager.MAX_LIVES) {
             this.board.setLives(this.board.getLives() + 1);
             this.update();
         }

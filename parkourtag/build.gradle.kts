@@ -36,17 +36,7 @@ tasks {
         }
     }
 
-    withType<AbstractArchiveTask> {
-        isPreserveFileTimestamps = false
-        isReproducibleFileOrder = true
-    }
-
     build {
         dependsOn(shadowJar)
-    }
-
-    withType<JavaCompile> {
-        options.encoding = "UTF-8"
-        options.isDeprecation = true
     }
 }

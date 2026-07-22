@@ -2,7 +2,6 @@ plugins {
     java
     application
     id("com.gradleup.shadow") version "9.5.1"
-//    id("org.graalvm.buildtools.native") version "0.11.0"
 }
 
 group = "dev.emortal.minestom"
@@ -32,38 +31,7 @@ tasks {
         }
     }
 
-    withType<JavaCompile> {
-        options.encoding = "UTF-8"
-        options.isDeprecation = true
-    }
-
-    withType<AbstractArchiveTask> {
-        isPreserveFileTimestamps = false
-        isReproducibleFileOrder = true
-    }
-
     build {
         dependsOn(shadowJar)
     }
 }
-
-//graalvmNative {
-//    binaries {
-//        named("main") {
-//            imageName.set("marathon")
-//            mainClass.set(application.mainClass)
-//
-////            buildArgs.add("-march=native")
-//            quickBuild.set(true)
-//            buildArgs.add("--enable-url-protocols=https")
-//            buildArgs.add("--gc=G1")
-//
-//            verbose.set(true)
-//            fallback.set(false)
-//        }
-//
-//        all {
-//            resources.autodetect()
-//        }
-//    }
-//}

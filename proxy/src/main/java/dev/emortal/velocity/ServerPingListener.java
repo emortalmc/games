@@ -11,6 +11,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -45,10 +46,11 @@ public class ServerPingListener {
     void onServerPing(@NotNull ProxyPingEvent event) {
         ServerPing ping;
         try {
-            ping = event.getPing().asBuilder()
-                    .description(createMessage())
-                    .favicon(Favicon.create(Path.of("icon.png")))
-                    .build();
+            ServerPing.Builder builder = event.getPing().asBuilder()
+                    .description(createMessage());
+            Path iconPath = Path.of("icon.png");
+            if (Files.exists(iconPath)) builder.favicon(Favicon.create(iconPath));
+            ping = builder.build();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

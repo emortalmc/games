@@ -216,8 +216,8 @@
             "name": "<aqua><bold>Ice</bold></aqua>"
           }
         },
-        "ruinsbs": {
-          "id": "ruinsbs",
+        "ruins": {
+          "id": "ruins",
           "enabled": true,
           "friendlyName": "Ruins",
           "priority": 100,

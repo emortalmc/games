@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 public class SaveHandler {
 
-    private static final Path MAPS_PATH = Path.of("maps");
+    private static final Path MAPS_PATH = Path.of("maps/minesweeper");
     private static final int SAVE_INTERVAL_TICKS = 20 * 60 * 15; // 15 minutes
     static {
         MAPS_PATH.toFile().mkdirs();

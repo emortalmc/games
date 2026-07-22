@@ -66,6 +66,7 @@ public final class MarathonGame {
     private final @NotNull Instance instance;
     private final @NotNull Player player;
     private final @NotNull Generator generator;
+    private final @Nullable LeaderboardDB leaderboardDB;
 
     private @NotNull BlockAnimation animation;
     private @NotNull BlockAnimator animator;
@@ -87,10 +88,14 @@ public final class MarathonGame {
     private @Nullable Task breakingTask;
 
     MarathonGame(@NotNull RegistryKey<DimensionType> dimension,
-                 @NotNull Player player, MarathonData playerData) {
+                 @NotNull Player player, @NotNull MarathonData playerData,
+                 @Nullable LeaderboardDB leaderboardDB) {
         this.time = Time.valueOf(playerData.time());
         this.palette = BlockPalette.valueOf(playerData.blockPalette());
         this.animation = BlockAnimation.valueOf(playerData.animation());
+
+        this.leaderboardDB = leaderboardDB;
+        retrieveLeaderboardEntry();
 
         this.instance = MinecraftServer.getInstanceManager().createInstanceContainer(dimension);
         this.instance.setTime(this.time.getTime());
@@ -105,8 +110,6 @@ public final class MarathonGame {
         this.player = player;
         this.generator = DefaultGenerator.INSTANCE;
         this.animator = this.animation.createAnimator();
-
-        retrieveLeaderboardEntry();
 
         this.startRefreshDisplaysTask();
         this.reset();
@@ -144,21 +147,21 @@ public final class MarathonGame {
     }
 
     public void onLeave(@NotNull Player player) {
-        this.produceDataUpdate();
+        this.updateSettings();
     }
 
     private CompletableFuture<Void> retrieveLeaderboardEntry() {
-        if (Main.getLeaderboardDB() == null) return CompletableFuture.completedFuture(null);
+        if (leaderboardDB == null) return CompletableFuture.completedFuture(null);
         return CompletableFuture.runAsync(() -> {
-            this.leaderboardEntry = Main.getLeaderboardDB().getScore(player.getUuid());
+            this.leaderboardEntry = leaderboardDB.getScore(player.getUuid());
         }, Executors.newVirtualThreadPerTaskExecutor());
     }
 
-    private CompletableFuture<Void> produceDataUpdate() {
-        if (Main.getLeaderboardDB() == null) return CompletableFuture.completedFuture(null);
+    private CompletableFuture<Void> updateSettings() {
+        if (leaderboardDB == null) return CompletableFuture.completedFuture(null);
         MarathonData newData = new MarathonData(this.time.name(), this.palette.name(), this.animation.name());
         return CompletableFuture.runAsync(() -> {
-            Main.getLeaderboardDB().setSettings(player, newData);
+            leaderboardDB.setSettings(player, newData);
         }, Executors.newVirtualThreadPerTaskExecutor());
     }
 
@@ -187,7 +190,6 @@ public final class MarathonGame {
     private CompletableFuture<Void> submitScore() {
         int submitScore = this.score; // copy
         if (submitScore == 0) return CompletableFuture.completedFuture(null);
-        LeaderboardDB leaderboardDB = Main.getLeaderboardDB();
         if (leaderboardDB == null) return CompletableFuture.completedFuture(null);
         long submitStartTicks = this.startTicks; // copy
         long submitWorldAge = instance.getWorldAge(); // copy
@@ -203,10 +205,11 @@ public final class MarathonGame {
         }
 
         if (this.startTicks != -1 && !isRunInvalidated()) { // reset due to player falling, not due to game start
+            int prevLeaderboardScore = this.leaderboardEntry == null ? -1 : this.leaderboardEntry.score();
             submitScore().thenRun(() -> {
-                int prevLeaderboardScore = this.leaderboardEntry == null ? -1 : this.leaderboardEntry.score();
                 retrieveLeaderboardEntry().thenRun(() -> {
                     if (leaderboardEntry == null) return;
+                    if (prevLeaderboardScore == -1) return;
                     if (prevLeaderboardScore == this.leaderboardEntry.score()) return; // score has not changed
                     sendNewHighscoreMessage(leaderboardEntry.score(), leaderboardEntry.position());
                 });

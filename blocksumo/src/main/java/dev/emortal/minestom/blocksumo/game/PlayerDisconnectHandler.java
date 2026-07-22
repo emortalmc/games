@@ -1,6 +1,6 @@
 package dev.emortal.minestom.blocksumo.game;
 
-import dev.emortal.minestom.blocksumo.Main;
+import dev.emortal.minestom.blocksumo.BlockSumoModule;
 import dev.emortal.minestom.blocksumo.spawning.PlayerRespawnHandler;
 import dev.emortal.minestom.blocksumo.spawning.SpawnProtectionManager;
 import net.kyori.adventure.sound.Sound;
@@ -61,7 +61,7 @@ public final class PlayerDisconnectHandler {
     }
 
     private void cancelCountdownIfNeeded() {
-        if (this.game.getPlayers().size() >= Main.MIN_PLAYERS) return;
+        if (this.game.getPlayers().size() >= BlockSumoModule.MIN_PLAYERS) return;
         this.game.cancelCountdown();
     }
 

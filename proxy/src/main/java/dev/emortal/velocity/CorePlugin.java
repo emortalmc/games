@@ -7,15 +7,12 @@ import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 import com.velocitypowered.api.plugin.Dependency;
 import com.velocitypowered.api.plugin.Plugin;
-import com.velocitypowered.api.proxy.ConnectionRequestBuilder;
-import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import com.velocitypowered.api.proxy.server.ServerInfo;
 import dev.emortal.messaging.RedisMessenger;
 import dev.emortal.messaging.message.Channel;
 import dev.emortal.messaging.message.ProxyOnlineMessage;
-import dev.emortal.messaging.message.SendLobbyMessage;
 import dev.emortal.messaging.message.ServerOnlineMessage;
 import dev.emortal.messaging.types.GameInfo;
 import dev.emortal.velocity.command.DiscordCommand;
@@ -80,18 +77,6 @@ public final class CorePlugin {
             LOGGER.info("Registered server " + msg.serverId());
         });
 
-        this.redis.addMessageHandler(SendLobbyMessage.class, (channel, msg) -> {
-            RegisteredServer lobbyServer = getServer("lobby");
-            if (lobbyServer == null) {
-                LOGGER.error("Tried sending players to lobby, but no lobby server could be found");
-                return;
-            }
-
-            for (UUID uuid : msg.players()) {
-                sendToLobby(uuid);
-            }
-        });
-
         // automatically unregister offline servers
         this.proxy.getScheduler().buildTask(this, () -> {
             for (RegisteredServer allServer : proxy.getAllServers()) {
@@ -126,24 +111,12 @@ public final class CorePlugin {
         return redis;
     }
 
+    public Matchmaker getMatchmaker() {
+        return matchmaker;
+    }
+
     public Map<UUID, Collection<GameInfo>> getSupportedGamesMap() {
         return supportedGamesMap;
-    }
-
-    public void sendToLobby(Player player) {
-        RegisteredServer lobbyServer = getServer("lobby");
-        ConnectionRequestBuilder connRequest = player.createConnectionRequest(lobbyServer);
-        connRequest.connect().thenAccept(result -> {
-            if (!result.isSuccessful()) {
-                LOGGER.warn("Failed to send player to lobby");
-            }
-        });
-    }
-
-    public void sendToLobby(UUID uuid) {
-        Player player = proxy.getPlayer(uuid).orElse(null);
-        if (player == null) return;
-        sendToLobby(player);
     }
 
     public @Nullable UUID getServerUUID(String gameId) {

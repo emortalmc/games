@@ -49,7 +49,7 @@ public record MapTheme(@NotNull Block unrevealed, @NotNull Block unrevealedAlt, 
                 meta.setWidth(0.3f);
                 meta.setScale(new Vec(3));
             });
-            number.setInstance(instance, new Pos(x + 0.47, MapManager.FLOOR_HEIGHT + 1 + Vec.EPSILON, y + 0.92, 0F, -90F));
+            number.setInstance(instance, new Pos(x + 0.47, MinesweeperMapManager.FLOOR_HEIGHT + 1 + Vec.EPSILON, y + 0.92, 0F, -90F));
         };
 
         void revealSquare(@NotNull Board map, int x, int y, int surroundingCount);
@@ -67,6 +67,6 @@ public record MapTheme(@NotNull Block unrevealed, @NotNull Block unrevealedAlt, 
             meta.setViewRange(3f);
             meta.setScale(new Vec(Chunk.CHUNK_SIZE_X));
         });
-        number.setInstance(chunk.getInstance(), new Pos(x, MapManager.FLOOR_HEIGHT - 14.92, z));
+        number.setInstance(chunk.getInstance(), new Pos(x, MinesweeperMapManager.FLOOR_HEIGHT - 14.92, z));
     }
 }

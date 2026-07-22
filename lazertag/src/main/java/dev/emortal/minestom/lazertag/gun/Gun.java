@@ -1,7 +1,10 @@
 package dev.emortal.minestom.lazertag.gun;
 
+import dev.emortal.minestom.core.raycast.BlockFinder;
 import dev.emortal.minestom.core.raycast.Ray;
+import dev.emortal.minestom.lazertag.command.PingCompensationCommand;
 import dev.emortal.minestom.lazertag.game.LazerTagGame;
+import dev.emortal.minestom.lazertag.ping.PingCompensator;
 import dev.emortal.minestom.lazertag.util.DisplayEntityUtil;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
@@ -17,6 +20,7 @@ import net.minestom.server.coordinate.Vec;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.GameMode;
 import net.minestom.server.entity.Player;
+import net.minestom.server.instance.block.Block;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
 import net.minestom.server.sound.SoundEvent;
@@ -25,6 +29,7 @@ import net.minestom.server.timer.TaskSchedule;
 import net.minestom.server.utils.WeightedList;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Supplier;
@@ -48,31 +53,52 @@ public abstract class Gun {
     }
 
     public void shoot(@NotNull Player shooter, int ammo) {
+        int ping = game.getPlayerPing(shooter);
+
         for (int i = 0; i < this.itemInfo.bullets(); i++) {
             Vec shootDir = spread(shooter.getPosition().direction(), this.itemInfo.spread());
             Pos eyePos = shooter.getPosition().add(0, shooter.getEyeHeight(), 0);
 
-
             Ray ray = new Ray(eyePos, shootDir.mul(this.itemInfo.distance()));
-            List<Ray.Intersection<Entity>> hit = ray.entities(shooter.getInstance().getEntities());
+            BlockFinder blocks = ray.findBlocks(shooter.getInstance());
+            Ray.Intersection<Block> closestBlockIntersection = blocks.nextClosest();
+            Point blockHitPos = closestBlockIntersection == null ? null : closestBlockIntersection.point();
+            double blockHitDist = blockHitPos == null ? Double.MAX_VALUE : blockHitPos.distanceSquared(eyePos);
 
-            if (hit.isEmpty()) {
-                Point hitPoint = eyePos.add(shootDir.mul(this.itemInfo.distance()));
-                renderBulletTrail(eyePos, shootDir, hitPoint);
-                return;
+            List<Ray.Intersection<Entity>> hit = new ArrayList<>();
+
+            for (Player player : shooter.getInstance().getPlayers()) {
+                if (player == shooter) continue;
+                if (player.getGameMode() != GameMode.ADVENTURE) continue;
+
+                PingCompensator pingCompensator = game.getPingCompensator();
+                Pos historicalNpcPos = pingCompensator.getPosition(player.getUuid(), ping + PingCompensationCommand.TICKS).asPos();
+                Ray.Intersection<Entity> cast = ray.cast(player, historicalNpcPos);
+                hit.add(cast);
             }
 
             // TODO: hit block animation
+            boolean anyHit = false;
+
             for (Ray.Intersection<Entity> intersection : hit) {
+                if (intersection == null) continue;
                 Entity entity = intersection.object();
-                if (entity == shooter) continue;
                 if (!(entity instanceof Player player)) continue;
-                if (player.getGameMode() != GameMode.ADVENTURE) continue;
 
                 Point hitPoint = intersection.point();
+                if (hitPoint.distanceSquared(eyePos) > blockHitDist) continue;
+
+                anyHit = true;
+
                 this.game.getDamageHandler().damage(player, shooter, shooter.getPosition(), this.itemInfo.damage());
 
                 renderBulletTrail(eyePos, shootDir, hitPoint);
+            }
+
+            if (!anyHit) {
+                Point hitPoint = eyePos.add(shootDir.mul(this.itemInfo.distance()));
+                renderBulletTrail(eyePos, shootDir, hitPoint);
+                return;
             }
         }
     }

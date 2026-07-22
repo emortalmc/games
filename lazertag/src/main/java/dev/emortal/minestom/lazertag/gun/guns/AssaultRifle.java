@@ -15,7 +15,7 @@ public final class AssaultRifle extends Gun {
             ItemRarity.RARE,
 
             3.5f,
-            45.0,
+            200.0,
             2,
             40,
 

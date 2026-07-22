@@ -31,6 +31,10 @@ tasks {
 
     runVelocity {
         velocityVersion("4.1.0-SNAPSHOT")
+
+        downloadPlugins {
+            modrinth("LuckPerms", "v5.5.53-velocity")
+        }
     }
 
     shadowJar {
@@ -45,17 +49,7 @@ tasks {
         }
     }
 
-    withType<AbstractArchiveTask> {
-        isPreserveFileTimestamps = false
-        isReproducibleFileOrder = true
-    }
-
     build {
         dependsOn(shadowJar)
-    }
-
-    withType<JavaCompile> {
-        options.encoding = "UTF-8"
-        options.isDeprecation = true
     }
 }

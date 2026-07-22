@@ -1,6 +1,6 @@
 package dev.emortal.minestom.core.game;
 
-import dev.emortal.minestom.core.game.config.GameConfig;
+import dev.emortal.messaging.types.GameInfo;
 import dev.emortal.minestom.core.game.config.GameCreationInfo;
 import dev.emortal.minestom.core.game.util.GameEventPredicates;
 import net.minestom.server.MinecraftServer;
@@ -24,7 +24,7 @@ public final class PreGameInitializer {
 
     private final @NotNull GameManager gameManager;
 
-    private final @NotNull GameConfig config;
+    private final @NotNull GameInfo info;
     private final @NotNull Game game;
 
     private final @NotNull EventNode<Event> preGameNode;
@@ -32,9 +32,9 @@ public final class PreGameInitializer {
 
     private final AtomicInteger playerCount = new AtomicInteger();
 
-    public PreGameInitializer(@NotNull GameManager gameManager, @NotNull GameConfig config, @NotNull Game game) {
+    public PreGameInitializer(@NotNull GameManager gameManager, @NotNull GameInfo info, @NotNull Game game) {
         this.gameManager = gameManager;
-        this.config = config;
+        this.info = info;
         this.game = game;
 
         GameCreationInfo creationInfo = game.getCreationInfo();
@@ -78,7 +78,7 @@ public final class PreGameInitializer {
 
     private void timeOut() {
         int actualPlayerCount = this.game.getPlayers().size();
-        if (actualPlayerCount >= this.config.minPlayers()) {
+        if (actualPlayerCount >= this.info.minPlayers()) {
             this.gameManager.startGame(this.game);
         } else {
             if (this.startTimeOutTask != null) this.startTimeOutTask.cancel();

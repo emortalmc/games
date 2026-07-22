@@ -5,6 +5,7 @@ import dev.emortal.minestom.lazertag.gun.Gun;
 import dev.emortal.minestom.lazertag.gun.GunItemInfo;
 import dev.emortal.minestom.lazertag.gun.ItemRarity;
 import net.kyori.adventure.sound.Sound;
+import net.minestom.server.ServerFlag;
 import net.minestom.server.entity.Player;
 import net.minestom.server.item.Material;
 import net.minestom.server.sound.SoundEvent;
@@ -17,7 +18,7 @@ public final class Shotgun extends Gun {
             ItemRarity.LEGENDARY,
 
             1.25f,
-            25.0,
+            200,
             1,
             6,
 
@@ -43,6 +44,6 @@ public final class Shotgun extends Gun {
                 .delay(TaskSchedule.tick(6))
                 .schedule();
 
-        shooter.setVelocity(shooter.getPosition().direction().mul(-15));
+        shooter.setVelocity(shooter.getPosition().direction().mul(-0.75 * ServerFlag.SERVER_TICKS_PER_SECOND));
     }
 }

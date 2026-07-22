@@ -1,10 +1,11 @@
 package dev.emortal.minestom.core.game;
 
 import dev.emortal.messaging.message.Channel;
-import dev.emortal.messaging.message.SendLobbyMessage;
+import dev.emortal.messaging.message.MatchmakeMessage;
 import dev.emortal.minestom.core.EmortalServer;
 import dev.emortal.minestom.core.game.config.GameConfig;
 import dev.emortal.minestom.core.game.config.GameCreationInfo;
+import dev.emortal.minestom.core.map.LoadedMap;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.minestom.server.MinecraftServer;
@@ -21,18 +22,25 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class GameManager implements GameProvider {
     private static final Logger LOGGER = LoggerFactory.getLogger(GameManager.class);
 
-    private final @NotNull GameConfig config;
-
     private final Set<Game> games = ConcurrentHashMap.newKeySet();
 
-    public GameManager(@NotNull GameConfig config) {
-        this.config = config;
-
+    public GameManager() {
         GameEventNodes.GAME_MANAGER.addListener(GameFinishedEvent.class, this::onGameFinish);
     }
 
-    public @NotNull Game createGame(@NotNull GameCreationInfo creationInfo) {
-        Game game = this.config.gameCreator().createGame(creationInfo);
+    public @NotNull Game createGame(@NotNull GameCreationInfo info) {
+        GameConfig config = EmortalServer.getGameConfig(info.gameId());
+        if (config == null) {
+            throw new IllegalArgumentException("No game config for game id " + info.gameId());
+        }
+
+        LoadedMap map;
+        if (info.map() == null) {
+            map = config.mapManager().loadRandomMap();
+        } else {
+            map = config.mapManager().loadMap(info.map());
+        }
+        Game game = config.gameCreator().createGame(info, map);
         this.registerGame(game);
         return game;
     }
@@ -75,7 +83,8 @@ public final class GameManager implements GameProvider {
 //            case LOBBY -> Entrypoint.getRedis().sendToLobby(playersToUuids(game.getPlayers()));
 //            case REQUEUE -> {} // TODO: this
 //        }
-        EmortalServer.getRedis().sendMessage(Channel.PROXY, new SendLobbyMessage(playersToUuids(game.getPlayers())));
+
+        EmortalServer.getRedis().sendMessage(Channel.PROXY, new MatchmakeMessage("lobby", playersToUuids(game.getPlayers())));
 
         MinecraftServer.getSchedulerManager().buildTask(() -> this.cleanUpGame(game))
                 .delay(TaskSchedule.tick(20 * 5))

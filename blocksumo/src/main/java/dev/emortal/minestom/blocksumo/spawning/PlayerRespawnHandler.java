@@ -1,7 +1,7 @@
 package dev.emortal.minestom.blocksumo.spawning;
 
 import dev.emortal.messaging.types.BlockSumoData;
-import dev.emortal.minestom.blocksumo.Main;
+import dev.emortal.minestom.blocksumo.BlockSumoModule;
 import dev.emortal.minestom.blocksumo.game.BlockSumoGame;
 import dev.emortal.minestom.blocksumo.game.PlayerTags;
 import dev.emortal.minestom.blocksumo.team.TeamColor;
@@ -217,7 +217,7 @@ public final class PlayerRespawnHandler {
     }
 
     public void giveWoolAndShears(Player player) {
-        BlockSumoData playerData = PlayerRespawnHandler.this.game.getPlayerDataMap().getOrDefault(player.getUuid(), Main.DEFAULT_PLAYER_DATA);
+        BlockSumoData playerData = PlayerRespawnHandler.this.game.getPlayerDataMap().getOrDefault(player.getUuid(), BlockSumoModule.DEFAULT_PLAYER_DATA);
         TeamColor color = player.getTag(PlayerTags.TEAM_COLOR);
 
         player.getInventory().setItemStack(playerData.shearsSlot(), ItemStack.of(Material.SHEARS, 1));

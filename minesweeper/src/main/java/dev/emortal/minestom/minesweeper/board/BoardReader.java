@@ -1,8 +1,8 @@
 package dev.emortal.minestom.minesweeper.board;
 
 import com.github.luben.zstd.Zstd;
-import dev.emortal.minestom.minesweeper.map.MapManager;
 import dev.emortal.minestom.minesweeper.map.MapTheme;
+import dev.emortal.minestom.minesweeper.map.MinesweeperMapManager;
 import dev.emortal.minestom.minesweeper.util.Flag;
 import dev.emortal.minestom.minesweeper.util.TeamColor;
 import dev.emortal.minestom.minesweeper.util.Vec2;
@@ -95,7 +95,7 @@ public class BoardReader {
             Integer flagY = buffer.read(INT);
             TeamColor color = TeamColor.values()[buffer.read(INT)];
             flags.add(new Flag(new Vec2(flagX, flagY), color));
-            chunk.setBlock(flagX, MapManager.FLOOR_HEIGHT + 1, flagY, Block.RED_CARPET);
+            chunk.setBlock(flagX, MinesweeperMapManager.FLOOR_HEIGHT + 1, flagY, Block.RED_CARPET);
         }
         chunk.setTag(Board.FLAGS_TAG, flags);
     }

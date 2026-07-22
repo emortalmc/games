@@ -3,7 +3,7 @@ package dev.emortal.minestom.minesweeper.view;
 import dev.emortal.minestom.minesweeper.board.Board;
 import dev.emortal.minestom.minesweeper.game.MinesweeperGame;
 import dev.emortal.minestom.minesweeper.game.PlayerTags;
-import dev.emortal.minestom.minesweeper.map.MapManager;
+import dev.emortal.minestom.minesweeper.map.MinesweeperMapManager;
 import dev.emortal.minestom.minesweeper.util.Flag;
 import dev.emortal.minestom.minesweeper.util.Vec2;
 import net.kyori.adventure.audience.Audience;
@@ -69,7 +69,7 @@ public final class InteractionManager {
         if (this.board.isMine(x, z)) {
             if (this.firstClick) {
                 // make sure first click is not bomb
-                this.board.getInstance().setBlock(x, MapManager.FLOOR_HEIGHT, z, this.board.getTheme().nothing());
+                this.board.getInstance().setBlock(x, MinesweeperMapManager.FLOOR_HEIGHT, z, this.board.getTheme().nothing());
             } else {
                 this.damage(player, x, z);
                 return;
@@ -173,7 +173,7 @@ public final class InteractionManager {
 
     private void damage(@NotNull Player player, int x, int z) {
         int lives = this.actionBar.decrementLives();
-        Chunk chunk = player.getInstance().getChunkAt(new Pos(x, MapManager.FLOOR_HEIGHT, z));
+        Chunk chunk = player.getInstance().getChunkAt(new Pos(x, MinesweeperMapManager.FLOOR_HEIGHT, z));
 
         this.board.addFlag(new Flag(new Vec2(x, z), player.getTag(PlayerTags.COLOR)), Block.BLACK_CARPET, chunk);
 
@@ -205,7 +205,7 @@ public final class InteractionManager {
 
     private boolean isOutsideBoard(int x, int y, int z) {
         if (this.board.isOutOfBounds(x, z)) return true;
-        return y != MapManager.FLOOR_HEIGHT;
+        return y != MinesweeperMapManager.FLOOR_HEIGHT;
     }
 
     private void playRevealSound(@NotNull Audience audience) {

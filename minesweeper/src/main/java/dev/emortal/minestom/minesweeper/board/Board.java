@@ -1,7 +1,7 @@
 package dev.emortal.minestom.minesweeper.board;
 
-import dev.emortal.minestom.minesweeper.map.MapManager;
 import dev.emortal.minestom.minesweeper.map.MapTheme;
+import dev.emortal.minestom.minesweeper.map.MinesweeperMapManager;
 import dev.emortal.minestom.minesweeper.util.Direction8;
 import dev.emortal.minestom.minesweeper.util.Flag;
 import dev.emortal.minestom.minesweeper.util.TeamColor;
@@ -65,14 +65,14 @@ public final class Board {
     public boolean isMine(int x, int y) {
         Chunk chunk = this.instance.getChunkAt(x, y);
         if (chunk == null) {
-            chunk = this.instance.loadChunk(new Vec(x, MapManager.FLOOR_HEIGHT, y)).join();
+            chunk = this.instance.loadChunk(new Vec(x, MinesweeperMapManager.FLOOR_HEIGHT, y)).join();
         }
 
         if (!chunk.hasTag(POPULATED_TAG)) {
             populateWithMines(chunk);
         }
 
-        return isMine(this.instance.getBlock(x, MapManager.FLOOR_HEIGHT, y));
+        return isMine(this.instance.getBlock(x, MinesweeperMapManager.FLOOR_HEIGHT, y));
     }
 
     public boolean isMine(Block block) {
@@ -80,7 +80,7 @@ public final class Board {
     }
 
     public boolean isRevealed(int x, int y) {
-        Block block = this.instance.getBlock(x, MapManager.FLOOR_HEIGHT, y, Block.Getter.Condition.TYPE);
+        Block block = this.instance.getBlock(x, MinesweeperMapManager.FLOOR_HEIGHT, y, Block.Getter.Condition.TYPE);
         if (block == null) return false;
 
         return isRevealed(block);
@@ -91,11 +91,11 @@ public final class Board {
     }
 
     public Block getFlag(int x, int y) {
-        return this.instance.getBlock(x, MapManager.FLOOR_HEIGHT + 1, y);
+        return this.instance.getBlock(x, MinesweeperMapManager.FLOOR_HEIGHT + 1, y);
     }
 
     public boolean isFlagged(int x, int y) {
-        Block block = this.instance.getBlock(x, MapManager.FLOOR_HEIGHT + 1, y, Block.Getter.Condition.TYPE);
+        Block block = this.instance.getBlock(x, MinesweeperMapManager.FLOOR_HEIGHT + 1, y, Block.Getter.Condition.TYPE);
         if (block == null) return false;
         return isFlagged(block);
     }
@@ -120,7 +120,7 @@ public final class Board {
 
         for (int x = 0; x < Chunk.CHUNK_SIZE_X; x++) {
             for (int y = 0; y < Chunk.CHUNK_SIZE_Z; y++) {
-                Block block = chunk.getBlock(x, MapManager.FLOOR_HEIGHT, y);
+                Block block = chunk.getBlock(x, MinesweeperMapManager.FLOOR_HEIGHT, y);
 
                 if (!isRevealed(block) && !isMine(block)) {
                     return false;
@@ -148,8 +148,8 @@ public final class Board {
     }
 
     private void addMine(int x, int y) {
-        Block prevBlock = this.instance.getBlock(x, MapManager.FLOOR_HEIGHT, y);
-        this.instance.setBlock(x, MapManager.FLOOR_HEIGHT, y, prevBlock.withTag(MINE_TAG, true));
+        Block prevBlock = this.instance.getBlock(x, MinesweeperMapManager.FLOOR_HEIGHT, y);
+        this.instance.setBlock(x, MinesweeperMapManager.FLOOR_HEIGHT, y, prevBlock.withTag(MINE_TAG, true));
     }
 
     public byte getMinesAround(int x, int y) {
@@ -172,7 +172,7 @@ public final class Board {
         boolean mine = isMine(x, y);
         if (mine) return;
 
-        blockSetter.setBlock(x, MapManager.FLOOR_HEIGHT, y, this.theme.nothing());
+        blockSetter.setBlock(x, MinesweeperMapManager.FLOOR_HEIGHT, y, this.theme.nothing());
 
         int mines = getMinesAround(x, y);
         if (mines > 0) {
@@ -262,7 +262,7 @@ public final class Board {
 
                         if (isOutOfBounds(x, y)) continue;
                         if (!isMine(x, y)) continue;
-                        batch.setBlock(x, MapManager.FLOOR_HEIGHT, y, this.theme.mine());
+                        batch.setBlock(x, MinesweeperMapManager.FLOOR_HEIGHT, y, this.theme.mine());
                     }
                 }
             }
@@ -325,7 +325,7 @@ public final class Board {
         if (flags.stream().anyMatch(f -> f.pos().equals(flag.pos()))) {
             return;
         }
-        chunk.setBlock(flag.pos().x(), MapManager.FLOOR_HEIGHT + 1, flag.pos().y(), flag.color().carpet());
+        chunk.setBlock(flag.pos().x(), MinesweeperMapManager.FLOOR_HEIGHT + 1, flag.pos().y(), flag.color().carpet());
         chunk.sendChunk();
 
         flags.add(flag);
@@ -342,14 +342,14 @@ public final class Board {
         if (flags.stream().anyMatch(f -> f.pos().equals(flag.pos()))) {
             return;
         }
-        chunk.setBlock(flag.pos().x(), MapManager.FLOOR_HEIGHT + 1, flag.pos().y(), block);
+        chunk.setBlock(flag.pos().x(), MinesweeperMapManager.FLOOR_HEIGHT + 1, flag.pos().y(), block);
         chunk.sendChunk();
 
         flags.add(flag);
     }
 
     public void removeFlag(Flag flag, Chunk chunk) {
-        chunk.setBlock(flag.pos().x(), MapManager.FLOOR_HEIGHT + 1, flag.pos().y(), Block.AIR);
+        chunk.setBlock(flag.pos().x(), MinesweeperMapManager.FLOOR_HEIGHT + 1, flag.pos().y(), Block.AIR);
         chunk.sendChunk();
 
         Set<Flag> flags = chunk.getTag(FLAGS_TAG);

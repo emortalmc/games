@@ -1,6 +1,7 @@
 package dev.emortal.minestom.blocksumo.command;
 
 import dev.emortal.messaging.types.BlockSumoData;
+import dev.emortal.minestom.blocksumo.BlockSumoModule;
 import dev.emortal.minestom.blocksumo.game.BlockSumoGame;
 import dev.emortal.minestom.core.game.GameProvider;
 import net.kyori.adventure.text.Component;
@@ -31,7 +32,7 @@ public class SaveLoadoutCommand extends Command {
                 return;
             }
 
-            BlockSumoData playerData = game.getPlayerDataMap().get(player.getUuid());
+            BlockSumoData playerData = game.getPlayerDataMap().getOrDefault(player.getUuid(), BlockSumoModule.DEFAULT_PLAYER_DATA);
             if (playerData.blockSlot() == blockSlot && playerData.shearsSlot() == shearsSlot) { // loadout hasn't changed
                 player.sendMessage(Component.text("Loadout saved!", NamedTextColor.GREEN));
                 return;

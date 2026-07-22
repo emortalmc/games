@@ -1,12 +1,13 @@
 package dev.emortal.minestom.lobby.features;
 
-import dev.emortal.minestom.lobby.util.PolarConvertingLoader;
+import dev.emortal.minestom.core.utils.PolarUtil;
 import dev.emortal.minestom.lobby.util.entity.BetterEntity;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.title.Title;
+import net.minestom.server.MinecraftServer;
 import net.minestom.server.color.Color;
 import net.minestom.server.component.DataComponents;
 import net.minestom.server.coordinate.Pos;
@@ -17,6 +18,7 @@ import net.minestom.server.entity.metadata.display.ItemDisplayMeta;
 import net.minestom.server.entity.metadata.display.TextDisplayMeta;
 import net.minestom.server.event.player.PlayerMoveEvent;
 import net.minestom.server.instance.Instance;
+import net.minestom.server.instance.InstanceContainer;
 import net.minestom.server.instance.block.Block;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
@@ -27,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.file.Path;
 import java.time.Duration;
 
 public final class ABSSecretFeature implements LobbyFeature {
@@ -65,18 +68,12 @@ public final class ABSSecretFeature implements LobbyFeature {
     }
 
     private static final class SecretWorld {
-        private final Instance instance;
+        private final InstanceContainer instance;
 
         public SecretWorld() {
-            PolarConvertingLoader loader = new PolarConvertingLoader("absworld");
-            instance = loader.load().join();
-
+            instance = MinecraftServer.getInstanceManager().createInstanceContainer();
             instance.enableAutoChunkLoad(false);
-            for (int x = -2; x < 2; x++) {
-                for (int y = -2; y < 2; y++) {
-                    instance.loadChunk(x, y);
-                }
-            }
+            PolarUtil.stream(instance, Path.of("absworld.polar")).join();
 
             BetterEntity textEntity = new BetterEntity(EntityType.TEXT_DISPLAY);
             textEntity.setTicking(false);

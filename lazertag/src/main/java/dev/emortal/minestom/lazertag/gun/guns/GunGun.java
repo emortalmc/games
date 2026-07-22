@@ -18,7 +18,7 @@ public final class GunGun extends Gun {
             ItemRarity.RARE,
 
             7f,
-            80,
+            200,
             0,
             15,
 

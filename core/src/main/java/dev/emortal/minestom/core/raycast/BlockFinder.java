@@ -64,7 +64,13 @@ public record BlockFinder(
         ArrayList<Ray.Intersection<Block>> results = new ArrayList<>();
         if (blockIterator.hasNext()) {
             Point p = blockIterator.next();
-            Block b = blockGetter.getBlock(p);
+            Block b;
+            try {
+                b = blockGetter.getBlock(p, Block.Getter.Condition.TYPE);
+            } catch (NullPointerException _) {
+                // unloaded chunk
+                b = Block.AIR;
+            }
             Collection<BoundingBox> hitboxes = hitboxGetter.apply(b);
             if (!hitboxes.isEmpty()) {
                 for (BoundingBox h : hitboxes) {

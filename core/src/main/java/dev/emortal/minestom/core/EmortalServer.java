@@ -3,6 +3,7 @@ package dev.emortal.minestom.core;
 import dev.emortal.messaging.RedisMessenger;
 import dev.emortal.messaging.message.*;
 import dev.emortal.messaging.types.GameInfo;
+import dev.emortal.minestom.core.command.game.CreditsCommand;
 import dev.emortal.minestom.core.command.game.StopCommand;
 import dev.emortal.minestom.core.game.Game;
 import dev.emortal.minestom.core.game.GameManager;
@@ -21,10 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public final class EmortalServer {
 
@@ -36,24 +34,25 @@ public final class EmortalServer {
 
     private static final UUID SERVER_UUID = UUID.randomUUID();
 
+    private static GameManager GAME_MANAGER;
     private static RedisMessenger REDIS;
     private static PermissionHandler PERMISSIONS;
     private static SparkMinestom SPARK;
 
     private static final Map<String, GameConfig> GAME_MAP = new HashMap<>();
     private static final Map<String, GameInfo> GAME_INFO_MAP = new HashMap<>();
-    private static final Map<String, GameManager> GAME_MANAGER_MAP = new HashMap<>();
 
-    public static GameManager registerGame(GameInfo gameInfo, GameConfig config) {
+    public static void registerGame(GameInfo gameInfo, GameConfig config) {
         String id = gameInfo.gameId();
-        GameManager gameManager = new GameManager(config);
         GAME_MAP.put(id, config);
         GAME_INFO_MAP.put(id, gameInfo);
-        GAME_MANAGER_MAP.put(id, gameManager);
-        return gameManager;
     }
 
-    public static void start(Runnable runnable) {
+    public static void start(Module... modules) {
+        start(List.of(modules));
+    }
+
+    public static void start(Collection<Module> modules) {
         String address = getValue("address", DEFAULT_ADDRESS);
         String publicAddress = getValue("publicAddress", DEFAULT_ADDRESS);
         String velocitySecret = getValue("velocitySecret", "");
@@ -79,9 +78,12 @@ public final class EmortalServer {
 
         MinecraftServer server = MinecraftServer.init(auth);
 
+        GAME_MANAGER = new GameManager();
         PERMISSIONS = new PermissionHandler(REDIS, MinecraftServer.getGlobalEventHandler());
 
-        runnable.run();
+        for (Module module : modules) {
+            module.register();
+        }
 
         Path directory = Path.of("spark");
         SPARK = SparkMinestom.builder(directory)
@@ -90,6 +92,7 @@ public final class EmortalServer {
                 .enable();
 
         MinecraftServer.getCommandManager().register(new StopCommand());
+        MinecraftServer.getCommandManager().register(new CreditsCommand());
 
         MinestomTerminal.start();
 
@@ -102,26 +105,21 @@ public final class EmortalServer {
 
             REDIS.addMessageHandler(ProxyOnlineMessage.class, (_, _) -> {
                 REDIS.sendMessage(Channel.PROXY, onlineMessage);
-                LOGGER.info("Proxy online, sent online message");
+                LOGGER.info("Proxy back online, sent online message");
             });
 
             REDIS.addMessageHandler(CreateGameMessage.class, (channel, msg) -> {
-                GameManager gameManager = getGameManager(msg.gameId());
-                if (gameManager == null) {
-                    LOGGER.error("No game manager for game " + msg.gameId());
+                GameManager gameManager = getGameManager();
+
+                GameInfo gameInfo = getGameInfo(msg.gameId());
+                if (gameInfo == null) {
+                    LOGGER.error("No game info for game " + msg.gameId());
                     return;
                 }
 
-                GameConfig gameConfig = getGameConfig(msg.gameId());
-                if (gameConfig == null) {
-                    LOGGER.error("No game config for game " + msg.gameId());
-                    return;
-                }
+                Game game = gameManager.createGame(new GameCreationInfo(msg.gameId(), msg.map(), new HashSet<>(msg.players())));
 
-                UUID gameId = UUID.randomUUID();
-                Game game = gameManager.createGame(new GameCreationInfo(gameId, msg.map(), new HashSet<>(msg.players())));
-
-                new PreGameInitializer(gameManager, gameConfig, game);
+                new PreGameInitializer(gameManager, gameInfo, game);
 
                 REDIS.sendMessage(Channel.PROXY, new GameReadyMessage(SERVER_UUID));
             });
@@ -132,10 +130,8 @@ public final class EmortalServer {
         SPARK.shutdown();
 
         LOGGER.info("Finishing all games");
-        for (GameManager value : GAME_MANAGER_MAP.values()) {
-            for (Game game : value.getGames()) {
-                game.finish();
-            }
+        for (Game game : GAME_MANAGER.getGames()) {
+            game.finish();
         }
 
         MinecraftServer.getSchedulerManager().buildTask(() -> {
@@ -157,14 +153,17 @@ public final class EmortalServer {
         return SERVER_UUID;
     }
 
-    public static @Nullable GameManager getGameManager(String gameId) {
-        return GAME_MANAGER_MAP.get(gameId);
+    public static @NotNull GameManager getGameManager() {
+        return GAME_MANAGER;
     }
     public static @Nullable GameConfig getGameConfig(String gameId) {
         return GAME_MAP.get(gameId);
     }
+    public static @Nullable GameInfo getGameInfo(String gameId) {
+        return GAME_INFO_MAP.get(gameId);
+    }
 
-    private static @NotNull String getValue(@NotNull String key, @NotNull String defaultValue) {
+    public static @NotNull String getValue(@NotNull String key, @NotNull String defaultValue) {
         String value = System.getProperty(key);
         if (value != null && !value.isEmpty()) return value;
 

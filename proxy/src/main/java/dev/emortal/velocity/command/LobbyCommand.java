@@ -16,7 +16,7 @@ public class LobbyCommand {
                 .executes(ctx -> {
                     if (!(ctx.getSource() instanceof Player player)) return Command.SINGLE_SUCCESS;
 
-                    plugin.sendToLobby(player);
+                    plugin.getMatchmaker().addPlayer(player.getUniqueId(), "lobby");
 
                     return Command.SINGLE_SUCCESS;
                 }).build();

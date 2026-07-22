@@ -37,11 +37,6 @@ tasks {
         }
     }
 
-    withType<AbstractArchiveTask> {
-        isPreserveFileTimestamps = false
-        isReproducibleFileOrder = true
-    }
-
     build {
         dependsOn(shadowJar)
     }
