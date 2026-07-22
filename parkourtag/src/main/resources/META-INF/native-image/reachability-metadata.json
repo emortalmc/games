@@ -1,0 +1,127 @@
+{
+  "reflection": [
+    {
+      "type": "com.alibaba.fastjson2.writer.OWG_1_4_ServerOnlineMessage",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.Class",
+            "java.lang.String",
+            "java.lang.String",
+            "long",
+            "java.util.List"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.alibaba.fastjson2.writer.OWG_2_5_GameInfo",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.Class",
+            "java.lang.String",
+            "java.lang.String",
+            "long",
+            "java.util.List"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "java.lang.foreign.AddressLayout",
+      "methods": [
+        {
+          "name": "byteSize",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "java.lang.foreign.FunctionDescriptor",
+      "methods": [
+        {
+          "name": "of",
+          "parameterTypes": [
+            "java.lang.foreign.MemoryLayout",
+            "java.lang.foreign.MemoryLayout[]"
+          ]
+        },
+        {
+          "name": "ofVoid",
+          "parameterTypes": [
+            "java.lang.foreign.MemoryLayout[]"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "java.lang.foreign.Linker",
+      "methods": [
+        {
+          "name": "defaultLookup",
+          "parameterTypes": []
+        },
+        {
+          "name": "downcallHandle",
+          "parameterTypes": [
+            "java.lang.foreign.MemorySegment",
+            "java.lang.foreign.FunctionDescriptor",
+            "java.lang.foreign.Linker$Option[]"
+          ]
+        },
+        {
+          "name": "nativeLinker",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "java.lang.foreign.Linker$Option"
+    },
+    {
+      "type": "java.lang.foreign.Linker$Option[]"
+    },
+    {
+      "type": "java.lang.foreign.MemoryLayout"
+    },
+    {
+      "type": "java.lang.foreign.MemoryLayout[]"
+    },
+    {
+      "type": "java.lang.foreign.SymbolLookup",
+      "methods": [
+        {
+          "name": "findOrThrow",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "java.lang.foreign.ValueLayout",
+      "fields": [
+        {
+          "name": "ADDRESS"
+        },
+        {
+          "name": "JAVA_LONG"
+        }
+      ]
+    },
+    {
+      "type": "java.lang.foreign.ValueLayout$OfLong"
+    },
+    {
+      "type": "java.sql.Timestamp"
+    }
+  ],
+  "resources": [
+    {
+      "glob": "linux/x86-64/com/github/stephengold/libjoltjni.so"
+    }
+  ]
+}
