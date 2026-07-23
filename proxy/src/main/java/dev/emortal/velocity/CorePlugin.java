@@ -11,9 +11,7 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import com.velocitypowered.api.proxy.server.ServerInfo;
 import dev.emortal.messaging.RedisMessenger;
-import dev.emortal.messaging.message.Channel;
-import dev.emortal.messaging.message.ProxyOnlineMessage;
-import dev.emortal.messaging.message.ServerOnlineMessage;
+import dev.emortal.messaging.message.*;
 import dev.emortal.messaging.types.GameInfo;
 import dev.emortal.velocity.command.DiscordCommand;
 import dev.emortal.velocity.command.LobbyCommand;
@@ -34,7 +32,7 @@ public final class CorePlugin {
     private static final Logger LOGGER = LoggerFactory.getLogger(CorePlugin.class);
 
     private final Map<String, List<UUID>> gameIdMap = new HashMap<>();
-    private final Map<UUID, Collection<GameInfo>> supportedGamesMap = new HashMap<>();
+    private final Map<UUID, Map<String, Integer>> gameOnlinePlayers = new HashMap<>();
     private final Map<String, GameInfo> gameInfoMap = new HashMap<>();
 
     private final @NotNull ProxyServer proxy;
@@ -65,16 +63,20 @@ public final class CorePlugin {
 
         this.redis.listenForChannel(Channel.PROXY);
         this.redis.sendMessage(Channel.ALL, new ProxyOnlineMessage());
-        this.redis.addMessageHandler(ServerOnlineMessage.class, (channel, msg) -> {
+        this.redis.addMessageHandler(ServerOnlineMessage.class, (_, msg) -> {
             for (GameInfo gameInfo : msg.games()) {
                 List<UUID> uuids = gameIdMap.computeIfAbsent(gameInfo.gameId(), _ -> new ArrayList<>());
                 uuids.add(msg.serverId());
                 gameInfoMap.put(gameInfo.gameId(), gameInfo);
             }
-            supportedGamesMap.put(msg.serverId(), msg.games());
 
             this.proxy.registerServer(new ServerInfo(msg.serverId().toString(), new InetSocketAddress(msg.address(), msg.port())));
-            LOGGER.info("Registered server " + msg.serverId());
+            LOGGER.info("Registered server {}", msg.serverId());
+        });
+        this.redis.addMessageHandler(GameNumPlayersMessage.class, (_, msg) -> {
+            gameOnlinePlayers.put(msg.serverUUID(), msg.online());
+            Map<String, Integer> onlineSum = sumOnlinePlayers();
+            this.redis.sendMessage(Channel.ALL, new NumPlayersMessage(onlineSum));
         });
 
         // automatically unregister offline servers
@@ -99,7 +101,7 @@ public final class CorePlugin {
         for (List<UUID> value : gameIdMap.values()) {
             value.remove(uuid);
         }
-        supportedGamesMap.remove(uuid);
+        gameOnlinePlayers.remove(uuid);
     }
 
 
@@ -113,10 +115,6 @@ public final class CorePlugin {
 
     public Matchmaker getMatchmaker() {
         return matchmaker;
-    }
-
-    public Map<UUID, Collection<GameInfo>> getSupportedGamesMap() {
-        return supportedGamesMap;
     }
 
     public @Nullable UUID getServerUUID(String gameId) {
@@ -151,6 +149,18 @@ public final class CorePlugin {
         DiscordCommand.registerCommand(this, commandManager);
         LobbyCommand.registerCommand(this, commandManager);
         UpdateResourcePack.registerCommand(this, commandManager, rpSender);
+    }
+
+    public Map<String, Integer> sumOnlinePlayers() {
+        Map<String, Integer> onlinePlayers = new HashMap<>();
+
+        for (Map<String, Integer> value : gameOnlinePlayers.values()) {
+            for (Map.Entry<String, Integer> entry : value.entrySet()) {
+                onlinePlayers.compute(entry.getKey(), (_, b) -> (b == null ? 0 : b) + entry.getValue()); // add to map
+            }
+        }
+
+        return onlinePlayers;
     }
 
     private static @NotNull String getValue(@NotNull String key, @NotNull String defaultValue) {

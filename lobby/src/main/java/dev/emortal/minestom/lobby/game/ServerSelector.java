@@ -1,6 +1,6 @@
 package dev.emortal.minestom.lobby.game;
 
-import dev.emortal.messaging.message.OnlinePlayersMessage;
+import dev.emortal.messaging.message.NumPlayersMessage;
 import dev.emortal.minestom.core.EmortalServer;
 import dev.emortal.minestom.lobby.LobbyEvents;
 import dev.emortal.minestom.lobby.config.ConfigItem;
@@ -56,7 +56,7 @@ public final class ServerSelector {
 
         this.inventory.eventNode().addListener(InventoryPreClickEvent.class, this::handleInventoryClick);
 
-        EmortalServer.getRedis().addMessageHandler(OnlinePlayersMessage.class, (_, msg) -> {
+        EmortalServer.getRedis().addMessageHandler(NumPlayersMessage.class, (_, msg) -> {
             this.updatePlayerCounts(msg.online());
         });
     }
@@ -111,16 +111,14 @@ public final class ServerSelector {
     }
 
     private void updatePlayerCounts(@NotNull Map<String, Integer> playerCounts) {
-        for (Map.Entry<String, Integer> entry : playerCounts.entrySet()) {
-            this.npcHandler.updatePlayerCount(entry.getKey(), entry.getValue());
+        for (GameModeConfig config : configs) {
+            if (!config.enabled()) continue;
+            if (config.displayItem() == null) continue;
 
-            for (GameModeConfig config : configs) {
-                if (!config.enabled()) continue;
-                if (!config.fleetName().equals(entry.getKey())) continue;
-                if (config.displayItem() == null) continue;
+            int online = playerCounts.getOrDefault(config.fleetName(), 0);
 
-                this.updatePlayerCountInDisplayItem(config, entry.getValue());
-            }
+            this.npcHandler.updatePlayerCount(config.fleetName(), online);
+            this.updatePlayerCountInDisplayItem(config, online);
         }
     }
 

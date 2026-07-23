@@ -1,6 +1,7 @@
 package dev.emortal.minestom.core.game;
 
 import dev.emortal.messaging.types.GameInfo;
+import dev.emortal.minestom.core.EmortalServer;
 import dev.emortal.minestom.core.game.config.GameCreationInfo;
 import dev.emortal.minestom.core.game.util.GameEventPredicates;
 import net.kyori.adventure.text.Component;
@@ -43,26 +44,35 @@ public final class PreGameInitializer {
 
         GameCreationInfo creationInfo = game.getCreationInfo();
 
-        this.preGameNode = EventNode.event(creationInfo.gameId().toString(), EventFilter.ALL, GameEventPredicates.inCreationInfo(creationInfo));
+        this.preGameNode = EventNode.event(creationInfo.gameId(), EventFilter.ALL, GameEventPredicates.inCreationInfo(creationInfo));
         GameEventNodes.PRE_GAME.addChild(this.preGameNode);
 
         this.preGameNode.addListener(AsyncPlayerConfigurationEvent.class, event -> {
+            if (!creationInfo.playerIds().contains(event.getPlayer().getUuid())) return;
+
             game.getPlayers().add(event.getPlayer());
             game.onPreJoin(event.getPlayer());
 
             event.setSpawningInstance(game.getSpawningInstance(event.getPlayer()));
+
+            EmortalServer.sendGameNumPlayersMessage();
         });
 
         this.preGameNode.addListener(PlayerDisconnectEvent.class, event -> {
-            game.getPlayers().remove(event.getPlayer());
+            boolean success = game.getPlayers().remove(event.getPlayer());
+            if (!success) return; // player was not in game anyway
             game.onLeave(event.getPlayer());
 
             if (game.getPlayers().isEmpty()) {
                 game.finish();
             }
+
+            EmortalServer.sendGameNumPlayersMessage();
         });
 
         this.preGameNode.addListener(PlayerSpawnEvent.class, event -> {
+            if (!creationInfo.playerIds().contains(event.getPlayer().getUuid())) return;
+
             event.getPlayer().showTitle(Title.title(
                     Component.text("\uE000", TextColor.color(100, 36, 48)),
                     Component.empty(),
@@ -81,6 +91,10 @@ public final class PreGameInitializer {
         this.preGameNode.addListener(GameFinishedEvent.class, event -> {
             if (!event.game().equals(game)) return;
             GameEventNodes.PRE_GAME.removeChild(this.preGameNode);
+            if (startTimeOutTask != null) {
+                startTimeOutTask.cancel();
+                startTimeOutTask = null;
+            }
         });
 
         this.startTimeOutTask = MinecraftServer.getSchedulerManager().buildTask(this::timeOut).delay(10, ChronoUnit.SECONDS).schedule();
@@ -91,8 +105,10 @@ public final class PreGameInitializer {
         if (actualPlayerCount >= this.info.minPlayers()) {
             this.gameManager.startGame(this.game);
         } else {
-            if (this.startTimeOutTask != null) this.startTimeOutTask.cancel();
-            GameEventNodes.PRE_GAME.removeChild(this.preGameNode);
+            if (this.startTimeOutTask != null) {
+                this.startTimeOutTask.cancel();
+                this.startTimeOutTask = null;
+            }
 
             // TODO: inform players that the game couldn't start and requeue them
             this.game.finish();

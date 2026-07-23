@@ -122,19 +122,21 @@ public class Matchmaker {
     }
 
     public void handleGameReady(GameReadyMessage msg) {
-        RegisteredServer server = plugin.getProxy().getServer(msg.gameUUID().toString()).orElse(null);
+        RegisteredServer server = plugin.getProxy().getServer(msg.serverUUID().toString()).orElse(null);
         if (server == null) {
-            LOGGER.error("Received game ready for {} but proxy doesn't know this server", msg.gameUUID());
+            LOGGER.error("Received game ready for {} but proxy doesn't know this server", msg.serverUUID());
             return;
         }
 
-        Set<UUID> players = waitingPlayersMap.get(msg.gameUUID());
+        Set<UUID> players = waitingPlayersMap.get(msg.serverUUID());
         if (players == null || players.isEmpty()) {
-            LOGGER.error("Received game ready for {} but no players waiting", msg.gameUUID());
+            LOGGER.error("Received game ready for {} but no players waiting", msg.serverUUID());
             return;
         }
 
         LOGGER.info("Sending players: {}", players);
+
+        waitingPlayersMap.remove(msg.serverUUID());
 
         // black wipe transition
         int transitionTime = 400;

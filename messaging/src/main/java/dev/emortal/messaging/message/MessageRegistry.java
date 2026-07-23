@@ -13,7 +13,8 @@ public class MessageRegistry {
         put("server_online", ServerOnlineMessage.class);
         put("create_game", CreateGameMessage.class);
         put("game_ready", GameReadyMessage.class);
-        put("online_players", OnlinePlayersMessage.class);
+        put("online_players", NumPlayersMessage.class);
+        put("game_online_players", GameNumPlayersMessage.class);
         put("matchmake", MatchmakeMessage.class);
         put("map_vote", MapVoteMessage.class);
         put("permissions", PermissionsMessage.class);

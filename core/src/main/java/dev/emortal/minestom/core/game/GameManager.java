@@ -115,6 +115,7 @@ public final class GameManager implements GameProvider {
 
             player.kick(Component.text("The game ended but we weren't able to connect you to a lobby. Please reconnect.", NamedTextColor.RED));
         }
+        game.getPlayers().clear();
     }
 
     @Override

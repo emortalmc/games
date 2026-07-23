@@ -7,20 +7,13 @@ import com.velocitypowered.api.event.player.PlayerChooseInitialServerEvent;
 import com.velocitypowered.api.event.player.ServerPostConnectEvent;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
-import dev.emortal.messaging.message.Channel;
-import dev.emortal.messaging.message.OnlinePlayersMessage;
-import dev.emortal.messaging.types.GameInfo;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 
 public class ServerListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(ServerListener.class);
@@ -45,7 +38,13 @@ public class ServerListener {
 
     @Subscribe
     void kicked(KickedFromServerEvent event) {
+        Component reason = event.getServerKickReason().orElse(null);
+        if (reason instanceof TextComponent t) {
+            if (t.content().toLowerCase().contains("invalid version")) return;
+            LOGGER.warn("{} kicked for {}", event.getPlayer().getUsername(), t.content());
+        }
         RegisteredServer lobby = plugin.getServer("lobby");
+        if (lobby == null) return;
         event.setResult(KickedFromServerEvent.RedirectPlayer.create(lobby, null));
     }
 
@@ -59,8 +58,6 @@ public class ServerListener {
     }
 
     private void updateOnlinePlayers() {
-        plugin.getRedis().sendMessage(Channel.ALL, new OnlinePlayersMessage(getOnlinePlayers()));
-
         proxy.sendPlayerListHeader(() -> createTablistHeader());
         proxy.sendPlayerListFooter(() -> createTablistFooter(proxy.getPlayerCount()));
     }
@@ -83,22 +80,6 @@ public class ServerListener {
                 .append(Component.text("└                                                  ", NamedTextColor.LIGHT_PURPLE))
                 .append(Component.text("┘ ", NamedTextColor.GOLD))
                 .build();
-    }
-
-    public Map<String, Integer> getOnlinePlayers() {
-        Map<String, Integer> onlinePlayers = new HashMap<>();
-
-        for (Map.Entry<UUID, Collection<GameInfo>> entry : plugin.getSupportedGamesMap().entrySet()) {
-            RegisteredServer server = proxy.getServer(entry.getKey().toString()).orElse(null);
-            if (server == null) continue;
-            int numOnline = server.getPlayersConnected().size();
-
-            for (GameInfo s : entry.getValue()) {
-                onlinePlayers.compute(s.gameId(), (_, b) -> (b == null ? 0 : b) + numOnline); // add to map
-            }
-        }
-
-        return onlinePlayers;
     }
 
 }

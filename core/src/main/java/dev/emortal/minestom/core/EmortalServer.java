@@ -143,6 +143,16 @@ public final class EmortalServer {
         }).delay(TaskSchedule.tick(6 * 20)).schedule();
     }
 
+    public static void sendGameNumPlayersMessage() {
+        GameManager gameManager = getGameManager();
+        Map<String, Integer> gamePlayers = new HashMap<>();
+        for (Game game : gameManager.getGames()) {
+            int players = game.getPlayers().size();
+            gamePlayers.compute(game.getCreationInfo().gameId(), (a, b) -> (b == null ? 0 : b) + players);
+        }
+        REDIS.sendMessage(Channel.PROXY, new GameNumPlayersMessage(SERVER_UUID, gamePlayers));
+    }
+
     public static RedisMessenger getRedis() {
         return REDIS;
     }
