@@ -45,7 +45,6 @@ subprojects {
                     nativeImageCapable = true
                 }
 
-                buildArgs.add("--gc=G1")
                 buildArgs.add("-march=native")
                 buildArgs.add("--enable-url-protocols=http,https")
                 buildArgs.add("--initialize-at-build-time=com.alibaba.fastjson2")
