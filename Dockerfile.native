@@ -4,8 +4,8 @@ USER container
 ENV USER=container HOME=/home/container
 WORKDIR /home/container
 
-COPY build/native/nativeCompile/server /server
-COPY run/ /
+COPY build/native/nativeCompile/server /home/container/server
+COPY run/ /home/container/
 
 CMD ["/bin/bash", "-c", "\
 MODIFIED_STARTUP=$(echo \"$STARTUP\" | sed -e 's/{{/${/g' -e 's/}}/}/g'); \
