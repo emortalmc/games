@@ -1,0 +1,18 @@
+{
+  "tagger": {
+    "x": 16.5,
+    "y": 59.0,
+    "z": 0.5,
+    "yaw": 90.0,
+    "pitch": 0.0
+  },
+  "goon": {
+    "x": -13.0,
+    "y": 59.0,
+    "z": 0.5,
+    "yaw": -90.0,
+    "pitch": 0.0
+  },
+  "name": "City",
+  "credits": ["emortaldev", "Iternalplayer"]
+}

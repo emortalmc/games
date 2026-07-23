@@ -1,0 +1,12 @@
+{
+  "circleRadius": 13.0,
+  "circleCenter": {
+    "x": 0.5,
+    "y": 62.0,
+    "z": 0.5
+  },
+  "name": "Caverns",
+  "credits": [
+    "4J Studios"
+  ]
+}

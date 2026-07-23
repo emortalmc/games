@@ -7,5 +7,7 @@ WORKDIR /home/container
 COPY build/native/nativeCompile/server /server
 COPY run/ /
 
-COPY ./entrypoint.sh /entrypoint.sh
-CMD [ "/bin/bash", "/entrypoint.sh" ]
+CMD ["/bin/bash", "-c", "\
+MODIFIED_STARTUP=$(echo \"$STARTUP\" | sed -e 's/{{/${/g' -e 's/}}/}/g'); \
+eval \"$MODIFIED_STARTUP\" \
+"]
