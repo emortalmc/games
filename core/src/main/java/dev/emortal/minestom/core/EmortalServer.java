@@ -55,12 +55,12 @@ public final class EmortalServer {
     public static void start(Collection<Module> modules) {
         System.setProperty("minestom.new-socket-write-lock", "true");
 
-        String address = getValue("address", DEFAULT_ADDRESS);
-        String publicAddress = getValue("publicAddress", DEFAULT_ADDRESS);
-        String velocitySecret = getValue("velocitySecret", "");
-        String redisAddress = getValue("redisAddress", DEFAULT_REDIS_ADDRESS);
-        boolean onlineMode = Boolean.parseBoolean(getValue("online", "false"));
-        int port = Integer.parseInt(getValue("port", DEFAULT_PORT));
+        String address = getValue("SERVER_ADDRESS", DEFAULT_ADDRESS);
+        String publicAddress = getValue("PUBLIC_ADDRESS", DEFAULT_ADDRESS);
+        String velocitySecret = getValue("VELOCITY_SECRET", "");
+        String redisAddress = getValue("REDIS_ADDRESS", DEFAULT_REDIS_ADDRESS);
+        boolean onlineMode = Boolean.parseBoolean(getValue("ONLINE_MODE", "false"));
+        int port = Integer.parseInt(getValue("SERVER_PORT", DEFAULT_PORT));
 
         REDIS = new RedisMessenger(redisAddress);
         REDIS.listenForServerUUID(SERVER_UUID);
@@ -176,7 +176,7 @@ public final class EmortalServer {
     }
 
     public static @NotNull String getValue(@NotNull String key, @NotNull String defaultValue) {
-        String value = System.getProperty(key);
+        String value = System.getenv(key);
         if (value != null && !value.isEmpty()) return value;
 
         return defaultValue;

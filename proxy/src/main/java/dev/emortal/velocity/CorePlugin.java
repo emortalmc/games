@@ -45,7 +45,7 @@ public final class CorePlugin {
     public CorePlugin(@NotNull ProxyServer server) {
         this.proxy = server;
 
-        String redisAddress = getValue("redisAddress", "redis://localhost");
+        String redisAddress = getValue("REDIS_ADDRESS", "redis://localhost");
         this.redis = new RedisMessenger(redisAddress);
         this.matchmaker = new Matchmaker(this, redis);
     }
@@ -164,7 +164,7 @@ public final class CorePlugin {
     }
 
     private static @NotNull String getValue(@NotNull String key, @NotNull String defaultValue) {
-        String value = System.getProperty(key);
+        String value = System.getenv(key);
         if (value != null && !value.isEmpty()) return value;
 
         return defaultValue;
