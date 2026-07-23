@@ -1,11 +1,8 @@
 FROM debian:trixie-slim
 
-USER container
-ENV USER=container HOME=/home/container
-WORKDIR /home/container
+WORKDIR /app
 
-COPY build/native/nativeCompile/server /server
-COPY run/ /
+COPY build/native/nativeCompile/server /app/server
+COPY run/ /app/
 
-COPY ./entrypoint.sh /entrypoint.sh
-CMD [ "/bin/bash", "/entrypoint.sh" ]
+ENTRYPOINT ["/app/server"]
