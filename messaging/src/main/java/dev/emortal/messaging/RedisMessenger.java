@@ -4,6 +4,7 @@ import dev.emortal.messaging.message.Channel;
 import dev.emortal.messaging.message.MessageRegistry;
 import dev.emortal.messaging.message.RedisMessage;
 import io.lettuce.core.RedisClient;
+import io.lettuce.core.api.async.RedisAsyncCommands;
 import io.lettuce.core.pubsub.RedisPubSubListener;
 import io.lettuce.core.pubsub.api.async.RedisPubSubAsyncCommands;
 
@@ -16,13 +17,24 @@ public class RedisMessenger {
     private final Map<Class<? extends RedisMessage>, List<CompletableFuture<RedisMessage>>> messageFuturesMap = new HashMap<>();
     private final RedisClient client;
     private final RedisPubSubAsyncCommands<String, String> pubSub;
+    private final RedisAsyncCommands<String, String> commands;
+
     public RedisMessenger(String url) {
         this.client = RedisClient.create(url);
 
         pubSub = client.connectPubSub().async();
+        commands = client.connect().async();
 
         pubSub.subscribe("all");
         pubSub.getStatefulConnection().addListener(new Listener());
+    }
+
+    public CompletableFuture<String> get(String key) {
+        return commands.get(key).toCompletableFuture();
+    }
+
+    public CompletableFuture<Long> increment(String key) {
+        return commands.incr(key).toCompletableFuture();
     }
 
     public void listenForChannel(Channel channel) {
