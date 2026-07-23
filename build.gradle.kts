@@ -45,7 +45,7 @@ subprojects {
                     nativeImageCapable = true
                 }
 
-                buildArgs.add("-march=neoverse-n1")
+                buildArgs.add("-march=armv8.1-a")
                 buildArgs.add("--enable-url-protocols=http,https")
                 buildArgs.add("--initialize-at-build-time=com.alibaba.fastjson2")
                 buildArgs.add("--enable-native-access=ALL-UNNAMED")
