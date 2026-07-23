@@ -10,8 +10,6 @@ import dev.emortal.minestom.core.game.GameManager;
 import dev.emortal.minestom.core.game.PreGameInitializer;
 import dev.emortal.minestom.core.game.config.GameConfig;
 import dev.emortal.minestom.core.game.config.GameCreationInfo;
-import dev.emortal.minestom.core.utils.command.ExtraConditions;
-import me.lucko.spark.minestom.SparkMinestom;
 import net.minestom.server.Auth;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.entity.Player;
@@ -21,7 +19,6 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.nio.file.Path;
 import java.util.*;
 
 public final class EmortalServer {
@@ -37,7 +34,7 @@ public final class EmortalServer {
     private static GameManager GAME_MANAGER;
     private static RedisMessenger REDIS;
     private static PermissionHandler PERMISSIONS;
-    private static SparkMinestom SPARK;
+//    private static SparkMinestom SPARK;
 
     private static final Map<String, GameConfig> GAME_MAP = new HashMap<>();
     private static final Map<String, GameInfo> GAME_INFO_MAP = new HashMap<>();
@@ -87,11 +84,11 @@ public final class EmortalServer {
             module.register();
         }
 
-        Path directory = Path.of("spark");
-        SPARK = SparkMinestom.builder(directory)
-                .commands(true)
-                .permissionHandler(ExtraConditions::hasPermission)
-                .enable();
+//        Path directory = Path.of("spark");
+//        SPARK = SparkMinestom.builder(directory)
+//                .commands(true)
+//                .permissionHandler(ExtraConditions::hasPermission)
+//                .enable();
 
         MinecraftServer.getCommandManager().register(new StopCommand());
         MinecraftServer.getCommandManager().register(new CreditsCommand());
@@ -129,7 +126,7 @@ public final class EmortalServer {
     }
 
     public static void stop() {
-        SPARK.shutdown();
+//        SPARK.shutdown();
 
         LOGGER.info("Finishing all games");
         for (Game game : GAME_MANAGER.getGames()) {
