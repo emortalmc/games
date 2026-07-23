@@ -10,14 +10,14 @@ version = "1.0-SNAPSHOT"
 application.mainClass = "dev.emortal.minestom.lobby.Main"
 
 repositories {
-    mavenLocal()
+    maven("https://jitpack.io")
 }
 
 dependencies {
     implementation(project(":core"))
 
     implementation("com.alibaba.fastjson2:fastjson2:2.0.61")
-    implementation("dev.emortal:bbstom:local")
+    implementation("com.github.emortalmc:bbstom:7583ae2a03")
     implementation("org.joml:joml:1.10.8")
 }
 
