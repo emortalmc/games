@@ -1,6 +1,7 @@
 plugins {
     id("java")
     id("com.gradleup.shadow") version "9.5.1"
+    id("org.graalvm.buildtools.native")
     application
 }
 
@@ -24,7 +25,7 @@ dependencies {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(26))
+        languageVersion.set(JavaLanguageVersion.of(25))
     }
 }
 
@@ -43,4 +44,22 @@ tasks {
     build {
         dependsOn(shadowJar)
     }
+}
+
+graalvmNative {
+    binaries.named("main") {
+        imageName = "server"
+        mainClass = application.mainClass
+    }
+}
+
+tasks.register<Copy>("stageMaps") {
+    listOf("blocksumo", "battle", "parkourtag").forEach {
+        from(project(":$it").layout.projectDirectory.dir("run/maps"))
+    }
+    into(layout.projectDirectory.dir("run/maps"))
+}
+
+tasks.named("nativeCompile") {
+    dependsOn("stageMaps")
 }

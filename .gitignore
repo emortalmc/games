@@ -1,5 +1,7 @@
 .gradle
 build/
+spark/
+fatserver/run/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/

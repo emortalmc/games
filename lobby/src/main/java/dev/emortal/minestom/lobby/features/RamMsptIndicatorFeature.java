@@ -16,6 +16,9 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.AxisAngle4f;
 import org.joml.Quaternionf;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 public final class RamMsptIndicatorFeature implements LobbyFeature {
     // Used to rotate the bars by 270 degrees so that they scale upwards
     private static final Quaternionf BAR_QUATERNION = new Quaternionf(new AxisAngle4f((float) Math.toRadians(270), 1, 0, 0));
@@ -47,16 +50,29 @@ public final class RamMsptIndicatorFeature implements LobbyFeature {
         DisplayPillar pillar = new DisplayPillar(Block.LIME_CONCRETE);
 
         instance.scheduler().buildTask(() -> {
-            long totalMem = Runtime.getRuntime().totalMemory() / 1024 / 1024;
-            long freeMem = Runtime.getRuntime().freeMemory() / 1024 / 1024;
-            long ramUsage = totalMem - freeMem;
-            float ramPercent = (float) ramUsage / (float) totalMem;
+            Runtime runtime = Runtime.getRuntime();
+            long heapUsed = runtime.totalMemory() - runtime.freeMemory();
+            long residentSet = residentSetSizeBytes();
+            long used = residentSet > 0 ? residentSet : heapUsed;
 
-            pillar.setText(Component.text(ramUsage + "MB"));
-            pillar.setBarPercent(ramPercent * 2);
+            pillar.setText(Component.text(used / 1024 / 1024 + "MB"));
+            pillar.setBarPercent(Math.min(2, (double) used / runtime.maxMemory() * 2));
         }).repeat(TaskSchedule.seconds(1)).schedule();
 
         pillar.place(instance, PillarPlacement.RAM);
+    }
+
+    private static long residentSetSizeBytes() {
+        try {
+            for (String line : Files.readAllLines(Path.of("/proc/self/status"))) {
+                if (line.startsWith("VmRSS:")) {
+                    return Long.parseLong(line.split("\\s+")[1]) * 1024;
+                }
+            }
+        } catch (Exception exception) {
+            return -1;
+        }
+        return -1;
     }
 
     private static final class DisplayPillar {

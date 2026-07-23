@@ -1,0 +1,47 @@
+name: "Build native images"
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'core/**'
+      - 'messaging/**'
+      - 'marathon/**'
+      - 'blocksumo/**'
+      - 'battle/**'
+      - 'minesweeper/**'
+      - 'parkourtag/**'
+      - 'lazertag/**'
+      - 'lobby/**'
+      - 'fatserver/**'
+      - 'build.gradle.kts'
+      - 'settings.gradle.kts'
+      - 'Dockerfile.native'
+      - '.github/workflows/build-native.yaml'
+
+jobs:
+  build:
+    runs-on: "ubuntu-latest"
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [fatserver, lazertag, lobby]
+    steps:
+      - uses: "actions/checkout@v4"
+
+      - uses: "graalvm/setup-graalvm@v1"
+        with:
+          java-version: "25"
+          distribution: "graalvm-community"
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          cache: "gradle"
+          native-image-job-reports: "true"
+
+      - uses: "emortalmc/actions/java/build@main"
+        with:
+          token: "${{ secrets.GITHUB_TOKEN }}"
+          project: "${{ matrix.target }}"
+          gradle-command: "./gradlew ${{ matrix.target }}:nativeCompile --no-daemon"
+          dockerfile-path: './Dockerfile.native'
+          dockerfile-context: './${{ matrix.target }}/'
