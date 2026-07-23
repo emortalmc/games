@@ -1,10 +1,11 @@
 {
   "reflection": [
     { "type": "dev.emortal.messaging.message.CreateGameMessage", "allDeclaredFields": true, "allDeclaredMethods": true, "allDeclaredConstructors": true },
+    { "type": "dev.emortal.messaging.message.GameNumPlayersMessage", "allDeclaredFields": true, "allDeclaredMethods": true, "allDeclaredConstructors": true },
     { "type": "dev.emortal.messaging.message.GameReadyMessage", "allDeclaredFields": true, "allDeclaredMethods": true, "allDeclaredConstructors": true },
     { "type": "dev.emortal.messaging.message.MapVoteMessage", "allDeclaredFields": true, "allDeclaredMethods": true, "allDeclaredConstructors": true },
     { "type": "dev.emortal.messaging.message.MatchmakeMessage", "allDeclaredFields": true, "allDeclaredMethods": true, "allDeclaredConstructors": true },
-    { "type": "dev.emortal.messaging.message.OnlinePlayersMessage", "allDeclaredFields": true, "allDeclaredMethods": true, "allDeclaredConstructors": true },
+    { "type": "dev.emortal.messaging.message.NumPlayersMessage", "allDeclaredFields": true, "allDeclaredMethods": true, "allDeclaredConstructors": true },
     { "type": "dev.emortal.messaging.message.PermissionsMessage", "allDeclaredFields": true, "allDeclaredMethods": true, "allDeclaredConstructors": true },
     { "type": "dev.emortal.messaging.message.ProxyOnlineMessage", "allDeclaredFields": true, "allDeclaredMethods": true, "allDeclaredConstructors": true },
     { "type": "dev.emortal.messaging.message.RedisMessage", "allDeclaredMethods": true },

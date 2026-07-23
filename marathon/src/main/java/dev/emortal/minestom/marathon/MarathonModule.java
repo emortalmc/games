@@ -33,9 +33,9 @@ public class MarathonModule implements Module {
     private RegistryKey<DimensionType> dimension;
 
     private void connectToLeaderboardDb() {
-        String dbConnString = EmortalServer.getValue("dbUrl", "");
-        String dbUserString = EmortalServer.getValue("dbUser", "");
-        String dbPassString = EmortalServer.getValue("dbPass", "");
+        String dbConnString = EmortalServer.getValue("DB_URL", "");
+        String dbUserString = EmortalServer.getValue("DB_USER", "");
+        String dbPassString = EmortalServer.getValue("DB_PASS", "");
         if (!dbConnString.isBlank()) {
             this.db = new LeaderboardDB(dbConnString, dbUserString, dbPassString);
             db.connect();

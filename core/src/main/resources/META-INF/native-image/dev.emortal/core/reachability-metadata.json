@@ -1,5 +1,9 @@
 {
   "reflection": [
+    { "type": "net.minestom.server.coordinate.Pos", "allDeclaredFields": true, "allDeclaredMethods": true, "allDeclaredConstructors": true },
+    { "type": "net.minestom.server.coordinate.Vec", "allDeclaredFields": true, "allDeclaredMethods": true, "allDeclaredConstructors": true },
+    { "type": "net.minestom.server.coordinate.Point", "allDeclaredFields": true, "allDeclaredMethods": true, "allDeclaredConstructors": true },
+
     {
       "type": "boolean[]"
     },

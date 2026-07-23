@@ -70,7 +70,15 @@ public final class CorePlugin {
                 gameInfoMap.put(gameInfo.gameId(), gameInfo);
             }
 
-            this.proxy.registerServer(new ServerInfo(msg.serverId().toString(), new InetSocketAddress(msg.address(), msg.port())));
+            InetSocketAddress newAddress = new InetSocketAddress(msg.address(), msg.port());
+
+            for (RegisteredServer allServer : this.proxy.getAllServers()) {
+                if (!allServer.getServerInfo().getAddress().equals(newAddress)) continue;
+                this.proxy.unregisterServer(allServer.getServerInfo());
+                LOGGER.info("Unregistering server {} as it was overridden", allServer.getServerInfo().getName());
+            }
+
+            this.proxy.registerServer(new ServerInfo(msg.serverId().toString(), newAddress));
             LOGGER.info("Registered server {}", msg.serverId());
         });
         this.redis.addMessageHandler(GameNumPlayersMessage.class, (_, msg) -> {
