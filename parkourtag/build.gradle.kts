@@ -11,9 +11,9 @@ dependencies {
 
     // jolt-jni
     runtimeOnly("com.github.oshi:oshi-core:7.4.2")
-    implementation("com.github.stephengold:jolt-jni-Linux_ARM64:6.0.0")
+    implementation("com.github.stephengold:jolt-jni-Linux_ARM64:6.0.2")
     runtimeOnly("com.github.stephengold:jolt-jni-Linux64:6.0.0:ReleaseSp")
-    runtimeOnly("com.github.stephengold:jolt-jni-Linux_ARM64:6.0.0:ReleaseSp")
+    runtimeOnly("com.github.stephengold:jolt-jni-Linux_ARM64:6.0.2:ReleaseSp")
     implementation("io.github.electrostat-lab:snaploader:1.1.1-stable")
 }
 
