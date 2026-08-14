@@ -28,7 +28,7 @@ public final class GraffitiFeature implements LobbyFeature {
     @Override
     public void register(@NotNull Instance instance) {
         DONATORS.put("CoPokBl", 4.83);
-        DONATORS.put("mudkip", 5.00);
+        DONATORS.put("mudkip", 5.00 + 5.00);
         DONATORS.put("aesturr", 3.00);
         DONATORS.put("The real cat", 300.00 + 50.00);
         DONATORS.put("xSehrMotiviert", 140.00);
@@ -167,7 +167,7 @@ public final class GraffitiFeature implements LobbyFeature {
                     meta.setShadow(true);
                 }
         );
-        
+
         List<String> donatorValues = new ArrayList<>(DONATORS.keySet());
         donatorValues.sort(Comparator.comparingDouble(DONATORS::get).reversed().thenComparing(a -> ((String)a).toLowerCase()));
 
