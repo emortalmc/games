@@ -48,19 +48,19 @@ public class ParkourTagGame extends Game {
 
     private static final Pos SPAWN_POINT = new Pos(0.5, 65.0, 0.5);
 
-    public static final Team TAGGER_TEAM = MinecraftServer.getTeamManager().createBuilder("taggers")
+    public static final Team TAGGER_TEAM = MinecraftServer.getTeamManager().createBuilder("parkourtag_taggers")
             .teamColor(TeamColor.RED)
             .nameTagVisibility(TeamsPacket.NameTagVisibility.ALWAYS)
             .collisionRule(TeamsPacket.CollisionRule.NEVER)
             .updateTeamPacket()
             .build();
-    public static final Team GOONS_TEAM = MinecraftServer.getTeamManager().createBuilder("goons")
+    public static final Team GOONS_TEAM = MinecraftServer.getTeamManager().createBuilder("parkourtag_goons")
             .teamColor(TeamColor.GREEN)
             .nameTagVisibility(TeamsPacket.NameTagVisibility.HIDE_FOR_OTHER_TEAMS)
             .collisionRule(TeamsPacket.CollisionRule.NEVER)
             .updateTeamPacket()
             .build();
-    public static final Team DEAD_TEAM = MinecraftServer.getTeamManager().createBuilder("dead")
+    public static final Team DEAD_TEAM = MinecraftServer.getTeamManager().createBuilder("parkourtag_dead")
             .teamColor(TeamColor.GRAY)
             .prefix(Component.text("☠ ", NamedTextColor.GRAY))
             .nameTagVisibility(TeamsPacket.NameTagVisibility.NEVER)

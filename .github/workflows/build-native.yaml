@@ -11,6 +11,7 @@ on:
       - 'blocksumo/**'
       - 'battle/**'
       - 'minesweeper/**'
+      - 'holeymoley/**'
       - 'parkourtag/**'
       - 'lazertag/**'
       - 'lobby/**'
