@@ -7,13 +7,13 @@ group = "dev.emortal.minestom.battle"
 version = "1.0-SNAPSHOT"
 
 repositories {
-    maven("https://jitpack.io")
+    maven("https://maven.skylite.gg/releases")
 }
 
 dependencies {
     implementation(project(":core"))
 
-    implementation("com.github.vibenilla:pvp:133ae66") {
+    implementation("rocks.minestom:pvp:2026.08.28-26.2") {
         exclude(group = "net.minestom", module = "minestom")
     }
 }
