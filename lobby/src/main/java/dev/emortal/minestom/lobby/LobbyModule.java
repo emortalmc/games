@@ -17,12 +17,18 @@ import dev.emortal.minestom.lobby.game.ServerSelector;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.command.CommandManager;
 import net.minestom.server.coordinate.Pos;
+import net.minestom.server.coordinate.Vec;
+import net.minestom.server.entity.Entity;
+import net.minestom.server.entity.EntityType;
+import net.minestom.server.entity.metadata.display.ItemDisplayMeta;
 import net.minestom.server.event.Event;
 import net.minestom.server.event.EventNode;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.InstanceContainer;
 import net.minestom.server.instance.block.Block;
 import net.minestom.server.instance.block.BlockManager;
+import net.minestom.server.item.ItemStack;
+import net.minestom.server.item.Material;
 import net.minestom.server.network.packet.server.play.TeamsPacket;
 import org.jetbrains.annotations.NotNull;
 
@@ -102,6 +108,14 @@ public class LobbyModule implements Module {
         CommandManager commandManager = MinecraftServer.getCommandManager();
         commandManager.register(new SpawnCommand(instance));
         commandManager.register(new TrainCommand(instance));
+
+        Entity entity = new Entity(EntityType.ITEM_DISPLAY);
+        entity.editEntityMeta(ItemDisplayMeta.class, meta -> {
+            meta.setItemStack(ItemStack.builder(Material.STICK).itemModel("mh:border/blue_border_wall").build());
+            meta.setBrightness(15, 15);
+            meta.setScale(new Vec(20));
+        });
+        entity.setInstance(instance, new Pos(0, 80, 0));
 
         spawnFeatures(instance);
 

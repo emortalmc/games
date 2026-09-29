@@ -11,6 +11,7 @@ import net.minestom.server.ServerFlag;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.GameMode;
 import net.minestom.server.entity.Player;
+import net.minestom.server.property.ServerProperties;
 import net.minestom.server.sound.SoundEvent;
 import net.minestom.server.timer.TaskSchedule;
 import org.jetbrains.annotations.NotNull;
@@ -86,7 +87,7 @@ public final class HotPotatoEvent implements BlockSumoEvent {
 
                 secondsLeft--;
 
-                return TaskSchedule.tick(ServerFlag.SERVER_TICKS_PER_SECOND);
+                return TaskSchedule.tick(ServerProperties.SERVER_TICKS_PER_SECOND.get());
             }
         });
     }

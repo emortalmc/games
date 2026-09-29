@@ -81,7 +81,7 @@ public final class BeeBlaster extends Gun {
 
             Pos pos = this.getPosition();
             // TODO: maybe merge the setvelocity below with the explosion packet
-            ServerPacket explosionPacket = new ExplosionPacket(pos, 2f, 0, null, Particle.EXPLOSION_EMITTER, SoundEvent.ENTITY_GENERIC_EXPLODE, WeightedList.of());
+            ServerPacket explosionPacket = new ExplosionPacket(pos, 2f, 0, null, Particle.EXPLOSION_EMITTER, SoundEvent.ENTITY_GENERIC_EXPLODE, WeightedList.of(), true);
             this.sendPacketToViewers(explosionPacket);
 
             if (collidedPlayer != null) {

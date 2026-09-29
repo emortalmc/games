@@ -1,12 +1,12 @@
 package dev.emortal.minestom.lobby.features;
 
 import dev.emortal.minestom.core.utils.command.ExtraConditions;
-import net.minestom.server.ServerFlag;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.player.PlayerEntityInteractEvent;
 import net.minestom.server.event.player.PlayerInputEvent;
 import net.minestom.server.instance.Instance;
+import net.minestom.server.property.ServerProperties;
 import org.jetbrains.annotations.NotNull;
 
 public final class ThrowingFeature implements LobbyFeature {
@@ -32,7 +32,7 @@ public final class ThrowingFeature implements LobbyFeature {
             for (Entity passenger : player.getPassengers()) {
                 if (!(passenger instanceof Player)) continue;
                 player.removePassenger(passenger);
-                passenger.setVelocity(player.getPosition().direction().mul(ServerFlag.SERVER_TICKS_PER_SECOND).mul(4));
+                passenger.setVelocity(player.getPosition().direction().mul(ServerProperties.SERVER_TICKS_PER_SECOND.get()).mul(4));
             }
         });
     }

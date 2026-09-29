@@ -72,7 +72,7 @@ public final class ExplosionManager {
 
     public void explode(@NotNull Point origin, @NotNull ExplosionData data, @Nullable Player source, @NotNull Entity entity) {
         this.doExplosionDamage(origin, data, source, entity);
-        this.game.sendGroupedPacket(new ExplosionPacket(origin, 2f, 0, null, Particle.EXPLOSION_EMITTER, SoundEvent.ENTITY_GENERIC_EXPLODE, WeightedList.of()));
+        this.game.sendGroupedPacket(new ExplosionPacket(origin, 2f, 0, null, Particle.EXPLOSION_EMITTER, SoundEvent.ENTITY_GENERIC_EXPLODE, WeightedList.of(), true));
 
         if (!data.breakBlocks()) return;
         this.explodeBlocks(origin, data);

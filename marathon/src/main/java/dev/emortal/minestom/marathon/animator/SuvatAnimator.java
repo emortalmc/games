@@ -1,7 +1,6 @@
 package dev.emortal.minestom.marathon.animator;
 
 import dev.emortal.minestom.marathon.MarathonGame;
-import net.minestom.server.ServerFlag;
 import net.minestom.server.collision.Aerodynamics;
 import net.minestom.server.coordinate.Point;
 import net.minestom.server.coordinate.Vec;
@@ -10,6 +9,7 @@ import net.minestom.server.entity.EntityType;
 import net.minestom.server.entity.metadata.other.FallingBlockMeta;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.block.Block;
+import net.minestom.server.property.ServerProperties;
 import net.minestom.server.timer.TaskSchedule;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -44,7 +44,7 @@ public final class SuvatAnimator implements BlockAnimator {
         Point velocityXZ = displacementXZ.div(time);
 
         Vec combinedVelocity = velocityXZ.withY(velocityY).asVec();
-        lastEntity.setVelocity(combinedVelocity.mul(ServerFlag.SERVER_TICKS_PER_SECOND));
+        lastEntity.setVelocity(combinedVelocity.mul(ServerProperties.SERVER_TICKS_PER_SECOND.get()));
 
         lastEntity.setInstance(instance, realLastPoint);
 

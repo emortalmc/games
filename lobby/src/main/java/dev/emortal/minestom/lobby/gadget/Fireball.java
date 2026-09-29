@@ -75,7 +75,7 @@ public final class Fireball extends BlockChangingGadget {
 
         Player shooter = (Player) ((EntityProjectile) entity).getShooter();
         if (shooter == null) return;
-        shooter.sendPacket(new ExplosionPacket(pos, 2f, 0, null, Particle.EXPLOSION_EMITTER, SoundEvent.ENTITY_GENERIC_EXPLODE, WeightedList.of()));
+        shooter.sendPacket(new ExplosionPacket(pos, 2f, 0, null, Particle.EXPLOSION_EMITTER, SoundEvent.ENTITY_GENERIC_EXPLODE, WeightedList.of(), true));
     }
 
     private void explodeBlocks(@NotNull Instance instance, @NotNull List<WorldBlock> blocks) {

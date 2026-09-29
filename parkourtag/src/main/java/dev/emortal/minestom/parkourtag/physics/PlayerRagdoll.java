@@ -12,6 +12,7 @@ import net.minestom.server.coordinate.Pos;
 import net.minestom.server.coordinate.Vec;
 import net.minestom.server.entity.Player;
 import net.minestom.server.instance.Instance;
+import net.minestom.server.property.ServerProperties;
 import net.minestom.server.timer.TaskSchedule;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -68,7 +69,7 @@ public class PlayerRagdoll {
             leftLeg.destroy();
             rightLeg.destroy();
             leftArm.destroy();
-        }).delay(TaskSchedule.tick(20 * ServerFlag.SERVER_TICKS_PER_SECOND)).schedule();
+        }).delay(TaskSchedule.tick(20 * ServerProperties.SERVER_TICKS_PER_SECOND.get())).schedule();
 
         return torso;
     }

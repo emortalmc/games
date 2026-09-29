@@ -10,7 +10,6 @@ import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.title.Title;
-import net.minestom.server.ServerFlag;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.coordinate.Vec;
 import net.minestom.server.entity.EntityType;
@@ -22,6 +21,7 @@ import net.minestom.server.entity.metadata.display.AbstractDisplayMeta;
 import net.minestom.server.entity.metadata.display.TextDisplayMeta;
 import net.minestom.server.event.player.PlayerMoveEvent;
 import net.minestom.server.network.packet.server.play.HitAnimationPacket;
+import net.minestom.server.property.ServerProperties;
 import net.minestom.server.sound.SoundEvent;
 import net.minestom.server.tag.Tag;
 import net.minestom.server.timer.TaskSchedule;
@@ -145,7 +145,7 @@ public final class DamageHandler {
                 random.nextDouble(3 + healthPercentage * 1, 4 + healthPercentage * 1),
                 random.nextDouble(-1, 1)
         );
-        entity.setVelocity(newVelocity.mul(0.1 * ServerFlag.SERVER_TICKS_PER_SECOND));
+        entity.setVelocity(newVelocity.mul(0.1 * ServerProperties.SERVER_TICKS_PER_SECOND.get()));
 
 //        Pos newPos = playerPos.add(random.nextDouble(-1.5, 1.5), random.nextDouble(1.7, 2.2), random.nextDouble(-1.5, 1.5));
         Pos newPos = playerPos.add(0, 1.7, 0);
@@ -183,7 +183,7 @@ public final class DamageHandler {
                 random.nextDouble(3, 4),
                 random.nextDouble(-1, 1)
         );
-        entity.setVelocity(newVelocity.mul(0.1 * ServerFlag.SERVER_TICKS_PER_SECOND));
+        entity.setVelocity(newVelocity.mul(0.1 * ServerProperties.SERVER_TICKS_PER_SECOND.get()));
 
 //        Pos newPos = playerPos.add(random.nextDouble(-1.5, 1.5), random.nextDouble(1.7, 2.2), random.nextDouble(-1.5, 1.5));
         Pos newPos = playerPos.add(0, 1.7, 0);

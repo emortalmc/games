@@ -49,7 +49,7 @@ public final class LightningRod extends BlockChangingGadget {
         List<WorldBlock> blocks = SphereUtil.getNearbyBlocks(hitPos, BLOCKS_IN_SPHERE, instance, block -> !block.air());
 
         this.explodeBlocks(instance, blocks);
-        user.sendPacket(new ExplosionPacket(hitPos, 2f, 0, null, Particle.EXPLOSION_EMITTER, SoundEvent.ENTITY_GENERIC_EXPLODE, WeightedList.of()));
+        user.sendPacket(new ExplosionPacket(hitPos, 2f, 0, null, Particle.EXPLOSION_EMITTER, SoundEvent.ENTITY_GENERIC_EXPLODE, WeightedList.of(), true));
 
         super.regenerateInstanceBlocks(instance, blocks);
     }

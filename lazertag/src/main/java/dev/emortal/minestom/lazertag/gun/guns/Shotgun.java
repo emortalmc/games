@@ -5,9 +5,9 @@ import dev.emortal.minestom.lazertag.gun.Gun;
 import dev.emortal.minestom.lazertag.gun.GunItemInfo;
 import dev.emortal.minestom.lazertag.gun.ItemRarity;
 import net.kyori.adventure.sound.Sound;
-import net.minestom.server.ServerFlag;
 import net.minestom.server.entity.Player;
 import net.minestom.server.item.Material;
+import net.minestom.server.property.ServerProperties;
 import net.minestom.server.sound.SoundEvent;
 import net.minestom.server.timer.TaskSchedule;
 import org.jetbrains.annotations.NotNull;
@@ -44,6 +44,6 @@ public final class Shotgun extends Gun {
                 .delay(TaskSchedule.tick(6))
                 .schedule();
 
-        shooter.setVelocity(shooter.getPosition().direction().mul(-0.75 * ServerFlag.SERVER_TICKS_PER_SECOND));
+        shooter.setVelocity(shooter.getPosition().direction().mul(-0.75 * ServerProperties.SERVER_TICKS_PER_SECOND.get()));
     }
 }

@@ -1,6 +1,5 @@
 package dev.emortal.minestom.blocksumo.utils;
 
-import net.minestom.server.ServerFlag;
 import net.minestom.server.component.DataComponents;
 import net.minestom.server.coordinate.Point;
 import net.minestom.server.coordinate.Vec;
@@ -9,10 +8,11 @@ import net.minestom.server.entity.Player;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.component.EnchantmentList;
 import net.minestom.server.item.enchant.Enchantment;
+import net.minestom.server.property.ServerProperties;
 import org.jetbrains.annotations.NotNull;
 
 public final class KnockbackUtil {
-    private static final int TPS = ServerFlag.SERVER_TICKS_PER_SECOND;
+    private static final int TPS = ServerProperties.SERVER_TICKS_PER_SECOND.get();
     private static final double HORIZONTAL_KNOCKBACK = 0.4 * TPS;
     private static final double VERTICAL_KNOCKBACK = HORIZONTAL_KNOCKBACK;
     private static final double EXTRA_HORIZONTAL_KNOCKBACK = 0.5 * TPS;

@@ -87,7 +87,7 @@ public final class Catipult extends Gun {
         private void collide() {
             Pos pos = this.getPosition();
             // TODO: maybe merge the setvelocity below with the explosion packet
-            ServerPacket explosionPacket = new ExplosionPacket(pos, 2f, 0, null, Particle.EXPLOSION_EMITTER, SoundEvent.ENTITY_GENERIC_EXPLODE, WeightedList.of());
+            ServerPacket explosionPacket = new ExplosionPacket(pos, 2f, 0, null, Particle.EXPLOSION_EMITTER, SoundEvent.ENTITY_GENERIC_EXPLODE, WeightedList.of(), true);
             this.sendPacketToViewers(explosionPacket);
 
             for (Player victim : Catipult.this.game.getInstance().getPlayers()) {

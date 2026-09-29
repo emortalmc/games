@@ -18,6 +18,7 @@ import net.minestom.server.item.Material;
 import net.minestom.server.item.component.AttributeList;
 import net.minestom.server.item.component.EnchantmentList;
 import net.minestom.server.item.enchant.Enchantment;
+import net.minestom.server.property.ServerProperties;
 import net.minestom.server.timer.TaskSchedule;
 import org.jetbrains.annotations.NotNull;
 
@@ -48,7 +49,7 @@ public class InstaBreakEvent implements BlockSumoEvent {
             this.replaceShearsItem(player, ENCHANTED_SHEARS);
         }
 
-        this.game.getInstance().scheduler().buildTask(this::end).delay(TaskSchedule.tick(ServerFlag.SERVER_TICKS_PER_SECOND * 10)).schedule();
+        this.game.getInstance().scheduler().buildTask(this::end).delay(TaskSchedule.tick(ServerProperties.SERVER_TICKS_PER_SECOND.get() * 10)).schedule();
     }
 
     private void end() {

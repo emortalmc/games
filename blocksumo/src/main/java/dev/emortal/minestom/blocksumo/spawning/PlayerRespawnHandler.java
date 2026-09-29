@@ -25,6 +25,7 @@ import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.block.Block;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
+import net.minestom.server.property.ServerProperties;
 import net.minestom.server.sound.SoundEvent;
 import net.minestom.server.timer.Task;
 import net.minestom.server.timer.TaskSchedule;
@@ -207,7 +208,7 @@ public final class PlayerRespawnHandler {
             Instance instance = PlayerRespawnHandler.this.game.getInstance();
             MinecraftServer.getSchedulerManager()
                     .buildTask(() -> instance.setBlock(pos.blockX(), pos.blockY() - 1, pos.blockZ(), replacedBlock.air() ? Block.WHITE_WOOL : replacedBlock))
-                    .delay(TaskSchedule.tick(restoreDelay * ServerFlag.SERVER_TICKS_PER_SECOND))
+                    .delay(TaskSchedule.tick(restoreDelay * ServerProperties.SERVER_TICKS_PER_SECOND.get()))
                     .schedule();
         }
     }

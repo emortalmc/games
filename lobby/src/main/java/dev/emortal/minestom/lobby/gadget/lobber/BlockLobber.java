@@ -9,7 +9,6 @@ import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import net.minestom.server.ServerFlag;
 import net.minestom.server.component.DataComponents;
 import net.minestom.server.coordinate.Point;
 import net.minestom.server.coordinate.Pos;
@@ -24,6 +23,7 @@ import net.minestom.server.instance.block.Block;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
 import net.minestom.server.network.packet.server.play.WorldEventPacket;
+import net.minestom.server.property.ServerProperties;
 import net.minestom.server.sound.SoundEvent;
 import net.minestom.server.timer.TaskSchedule;
 import org.jetbrains.annotations.NotNull;
@@ -79,7 +79,7 @@ public final class BlockLobber extends Gadget {
             Point velocityXZ = displacementXZ.div(time);
 
             Vec combinedVelocity = velocityXZ.withY(velocityY).asVec();
-            thrownBlockEntity.setVelocity(combinedVelocity.mul(ServerFlag.SERVER_TICKS_PER_SECOND));
+            thrownBlockEntity.setVelocity(combinedVelocity.mul(ServerProperties.SERVER_TICKS_PER_SECOND.get()));
 
             initialTargetPosition = target.getPosition();
         }

@@ -11,7 +11,6 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.title.Title;
-import net.minestom.server.ServerFlag;
 import net.minestom.server.collision.BoundingBox;
 import net.minestom.server.coordinate.Vec;
 import net.minestom.server.entity.Entity;
@@ -26,6 +25,7 @@ import net.minestom.server.item.ItemStack;
 import net.minestom.server.network.packet.server.play.HitAnimationPacket;
 import net.minestom.server.potion.PotionEffect;
 import net.minestom.server.potion.TimedPotion;
+import net.minestom.server.property.ServerProperties;
 import net.minestom.server.registry.RegistryKey;
 import net.minestom.server.tag.Tag;
 import net.minestom.server.utils.time.TimeUnit;
@@ -195,7 +195,7 @@ public final class PvpListener {
     }
 
     private void doBurningDamage(@NotNull Player player, int durationSeconds, RegistryKey<DamageType> damageType, float damageAmount) {
-        player.setFireTicks(durationSeconds * ServerFlag.SERVER_TICKS_PER_SECOND);
+        player.setFireTicks(durationSeconds * ServerProperties.SERVER_TICKS_PER_SECOND.get());
         if (player.getAliveTicks() % 10L != 0L) return;
 
         boolean hasFireResistance = false;

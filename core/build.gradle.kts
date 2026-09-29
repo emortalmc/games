@@ -9,7 +9,7 @@ dependencies {
     api(project(":messaging"))
 
     // Minestom
-    api("net.minestom:minestom:2026.07.22-26.2")
+    api("net.minestom:minestom:26_3-SNAPSHOT")
     api("net.kyori:adventure-text-minimessage:5.2.0")
     compileOnlyApi("it.unimi.dsi:fastutil:8.5.18")
     api("dev.hollowcube:polar:1.16.0")

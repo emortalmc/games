@@ -72,7 +72,7 @@ public final class LobbyEvents {
         if (spawnInstance != instance) return;
 
         player.getInventory().clear();
-        player.setGameMode(GameMode.ADVENTURE);
+        player.setGameMode(GameMode.CREATIVE);
 
         player.getInventory().setItemStack(4, SERVER_SELECTOR_ITEM);
         player.getInventory().setItemStack(0, MUSIC_PLAYER_ITEM);

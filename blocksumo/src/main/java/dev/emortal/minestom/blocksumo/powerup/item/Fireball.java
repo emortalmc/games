@@ -21,6 +21,7 @@ import net.minestom.server.entity.PlayerHand;
 import net.minestom.server.item.Material;
 import net.minestom.server.network.packet.server.play.ParticlePacket;
 import net.minestom.server.particle.Particle;
+import net.minestom.server.property.ServerProperties;
 import net.minestom.server.sound.SoundEvent;
 import net.minestom.server.timer.TaskSchedule;
 import org.jetbrains.annotations.NotNull;
@@ -119,7 +120,7 @@ public final class Fireball extends PowerUp {
 
         @Override
         public @NotNull TaskSchedule get() {
-            if (this.fireball.getAliveTicks() > 5L * ServerFlag.SERVER_TICKS_PER_SECOND) { // Remove if alive for longer than 5 seconds
+            if (this.fireball.getAliveTicks() > 5L * ServerProperties.SERVER_TICKS_PER_SECOND.get()) { // Remove if alive for longer than 5 seconds
                 this.fireball.remove();
                 return TaskSchedule.stop();
             }

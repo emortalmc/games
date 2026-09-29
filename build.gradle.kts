@@ -22,6 +22,14 @@ allprojects {
 
     repositories {
         mavenCentral()
+
+        maven(url = "https://central.sonatype.com/repository/maven-snapshots/") {
+            content { // This filtering is optional, but recommended
+                includeModule("net.minestom", "minestom")
+                includeModule("net.minestom", "testing")
+            }
+        }
+
         maven("https://repo.hypera.dev/snapshots/") // spark-minestom
         maven("https://repo.lucko.me/") // spark-common
         maven("https://oss.sonatype.org/content/repositories/snapshots/") // spark-common's dependencies

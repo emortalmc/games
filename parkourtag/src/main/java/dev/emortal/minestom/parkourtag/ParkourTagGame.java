@@ -19,7 +19,6 @@ import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.title.Title;
 import net.minestom.server.MinecraftServer;
-import net.minestom.server.ServerFlag;
 import net.minestom.server.color.TeamColor;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.Entity;
@@ -29,6 +28,7 @@ import net.minestom.server.entity.Player;
 import net.minestom.server.entity.metadata.other.AreaEffectCloudMeta;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.network.packet.server.play.TeamsPacket;
+import net.minestom.server.property.ServerProperties;
 import net.minestom.server.scoreboard.Team;
 import net.minestom.server.sound.SoundEvent;
 import net.minestom.server.timer.Task;
@@ -281,7 +281,7 @@ public class ParkourTagGame extends Game {
                     }
 
                     secondsLeft--;
-                    return TaskSchedule.tick(ServerFlag.SERVER_TICKS_PER_SECOND);
+                    return TaskSchedule.tick(ServerProperties.SERVER_TICKS_PER_SECOND.get());
                 }
             });
         });
@@ -368,7 +368,7 @@ public class ParkourTagGame extends Game {
                 bossBar.progress((float) secondsLeft / (float) playTime);
 
                 secondsLeft--;
-                return TaskSchedule.tick(ServerFlag.SERVER_TICKS_PER_SECOND);
+                return TaskSchedule.tick(ServerProperties.SERVER_TICKS_PER_SECOND.get());
             }
         });
     }

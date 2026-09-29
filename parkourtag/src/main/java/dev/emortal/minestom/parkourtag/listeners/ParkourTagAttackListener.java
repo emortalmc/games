@@ -3,6 +3,7 @@ package dev.emortal.minestom.parkourtag.listeners;
 import dev.emortal.minestom.parkourtag.GameStage;
 import dev.emortal.minestom.parkourtag.ParkourTagGame;
 import dev.emortal.minestom.parkourtag.physics.PlayerRagdoll;
+import dev.emortal.minestom.parkourtag.utils.CoordinateUtils;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -10,7 +11,6 @@ import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.title.Title;
-import net.minestom.server.ServerFlag;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.coordinate.Vec;
 import net.minestom.server.entity.Entity;
@@ -22,6 +22,7 @@ import net.minestom.server.event.Event;
 import net.minestom.server.event.EventNode;
 import net.minestom.server.event.entity.EntityAttackEvent;
 import net.minestom.server.network.packet.server.play.HitAnimationPacket;
+import net.minestom.server.property.ServerProperties;
 import net.minestom.server.sound.SoundEvent;
 import net.minestom.server.tag.Tag;
 import net.minestom.server.timer.TaskSchedule;
@@ -29,8 +30,6 @@ import net.minestom.server.timer.TaskSchedule;
 import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
-
-import static dev.emortal.minestom.parkourtag.utils.CoordinateUtils.toVec;
 
 public class ParkourTagAttackListener {
 
@@ -113,7 +112,7 @@ public class ParkourTagAttackListener {
                     public void run() {
                         double lengthSq = torso.getBody().getLinearVelocity().lengthSq();
 
-                        if (lastDir == null || lengthSq > 5*5) lastDir = toVec(torso.getBody().getLinearVelocity()).normalize();
+                        if (lastDir == null || lengthSq > 5*5) lastDir = CoordinateUtils.toVec(torso.getBody().getLinearVelocity()).normalize();
 
                         spectatingEntity.teleport(torso.getEntity().getPosition().sub(lastDir.mul(3)).withLookAt(torso.getEntity().getPosition()));
                     }
@@ -126,7 +125,7 @@ public class ParkourTagAttackListener {
                 target.lookAt(torso.getEntity().getPosition());
                 spectatingEntity.remove();
                 target.stopSpectating();
-            }).delay(TaskSchedule.tick(4 * ServerFlag.SERVER_TICKS_PER_SECOND)).schedule();
+            }).delay(TaskSchedule.tick(4 * ServerProperties.SERVER_TICKS_PER_SECOND.get())).schedule();
 
             game.getTaggers().remove(target);
             game.getGoons().remove(target);
