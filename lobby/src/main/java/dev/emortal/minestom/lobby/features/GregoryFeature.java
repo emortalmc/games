@@ -8,6 +8,7 @@ import net.minestom.server.entity.metadata.animal.SnifferMeta;
 import net.minestom.server.event.player.PlayerEntityInteractEvent;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.sound.SoundEvent;
+import net.minestom.server.timer.TaskSchedule;
 import org.jetbrains.annotations.NotNull;
 
 public final class GregoryFeature implements LobbyFeature {
@@ -22,8 +23,19 @@ public final class GregoryFeature implements LobbyFeature {
 
         instance.eventNode().addListener(PlayerEntityInteractEvent.class, e -> {
             if (e.getTarget() != gregory) return;
-            ((SnifferMeta)e.getTarget().getEntityMeta()).setState(SnifferMeta.State.SNIFFING);
+
+            SnifferMeta meta = (SnifferMeta) gregory.getEntityMeta();
+
+            if (meta.getState() == SnifferMeta.State.SNIFFING) {
+                return;
+            }
+
+            meta.setState(SnifferMeta.State.SNIFFING);
             e.getPlayer().playSound(Sound.sound(SoundEvent.ENTITY_SNIFFER_SNIFFING, Sound.Source.MASTER, 1f, 1f), e.getTarget().getPosition());
+
+            instance.scheduler().buildTask(() -> meta.setState(SnifferMeta.State.IDLING))
+                    .delay(TaskSchedule.tick(20))
+                    .schedule();
         });
     }
 }
