@@ -21,6 +21,7 @@ dependencies {
     implementation(project(":blocksumo"))
     implementation(project(":lazertag"))
     implementation(project(":minesweeper"))
+    implementation(project(":holeymoley"))
 }
 
 java {

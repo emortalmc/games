@@ -3,7 +3,7 @@ plugins {
     id("com.gradleup.shadow") version "9.5.1"
 }
 
-group = "dev.emortal.minestom.battle"
+group = "dev.emortal.minestom.holeymoley"
 version = "1.0-SNAPSHOT"
 
 repositories {
@@ -31,7 +31,7 @@ tasks {
 
         manifest {
             attributes(
-                "Main-Class" to "dev.emortal.minestom.battle.Main",
+                "Main-Class" to "dev.emortal.minestom.holeymoley.Main",
                 "Multi-Release" to true
             )
         }

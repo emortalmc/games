@@ -379,7 +379,7 @@
     },
     {
       "id": "holeymoley",
-      "enabled": false,
+      "enabled": true,
       "fleetName": "holeymoley",
       "priority": 120,
       "friendlyName": "Holey Moley",
@@ -388,7 +388,7 @@
       "maxPlayers": 20,
       "displayItem": {
         "material": "minecraft:iron_shovel",
-        "slot": 10,
+        "slot": 23,
         "name": "<gradient:gold:yellow><bold>Holey Moley</bold></gradient>",
         "lore": [
           "<gray>Fight to be the last",
