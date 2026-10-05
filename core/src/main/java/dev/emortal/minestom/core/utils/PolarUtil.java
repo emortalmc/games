@@ -16,7 +16,7 @@ public class PolarUtil {
     public static CompletableFuture<Void> stream(InstanceContainer instance, Path path) {
         try {
             File file = path.toFile();
-            CompletableFuture<Void> future = PolarLoader.streamLoad(instance, FileChannel.open(path), file.length(), null, null, true);
+            CompletableFuture<Void> future = PolarLoader.streamLoad(instance, FileChannel.open(path), file.length(), null, new FixedPolarWorldAccess(), true);
             future.exceptionally(a -> {
                 a.printStackTrace();
                 return null;
