@@ -23,6 +23,8 @@ allprojects {
     repositories {
         mavenCentral()
 
+        maven("https://maven.skylite.gg/releases")
+
         maven(url = "https://central.sonatype.com/repository/maven-snapshots/") {
             content { // This filtering is optional, but recommended
                 includeModule("net.minestom", "minestom")
@@ -30,9 +32,9 @@ allprojects {
             }
         }
 
-        maven("https://repo.hypera.dev/snapshots/") // spark-minestom
-        maven("https://repo.lucko.me/") // spark-common
-        maven("https://oss.sonatype.org/content/repositories/snapshots/") // spark-common's dependencies
+//        maven("https://repo.hypera.dev/snapshots/") // spark-minestom
+//        maven("https://repo.lucko.me/") // spark-common
+//        maven("https://oss.sonatype.org/content/repositories/snapshots/") // spark-common's dependencies
     }
 
     dependencies {

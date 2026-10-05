@@ -6,11 +6,6 @@ plugins {
 group = "dev.emortal.minestom.battle"
 version = "1.0-SNAPSHOT"
 
-repositories {
-    maven("https://jitpack.io")
-    maven("https://maven.skylite.gg/releases")
-}
-
 dependencies {
     implementation(project(":core"))
 
