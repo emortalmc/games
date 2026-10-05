@@ -109,14 +109,6 @@ public class LobbyModule implements Module {
         commandManager.register(new SpawnCommand(instance));
         commandManager.register(new TrainCommand(instance));
 
-        Entity entity = new Entity(EntityType.ITEM_DISPLAY);
-        entity.editEntityMeta(ItemDisplayMeta.class, meta -> {
-            meta.setItemStack(ItemStack.builder(Material.STICK).itemModel("mh:border/blue_border_wall").build());
-            meta.setBrightness(15, 15);
-            meta.setScale(new Vec(20));
-        });
-        entity.setInstance(instance, new Pos(0, 80, 0));
-
         spawnFeatures(instance);
 
         byte[] jsonBytes;
