@@ -63,6 +63,7 @@ subprojects {
                 buildArgs.add("-H:+UnlockExperimentalVMOptions")
                 buildArgs.add("-H:+ReportExceptionStackTraces")
                 buildArgs.add("-H:+SharedArenaSupport")
+                buildArgs.add("-Djava.awt.headless=true")
 
                 quickBuild = providers.gradleProperty("nativeQuickBuild").isPresent
                 fallback = false

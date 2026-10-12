@@ -33,7 +33,8 @@ jobs:
       - uses: "graalvm/setup-graalvm@v1"
         with:
           java-version: "25"
-          distribution: "graalvm-community"
+          java-package: "jdk+fx"
+          distribution: "liberica"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           cache: "gradle"
           native-image-job-reports: "true"
