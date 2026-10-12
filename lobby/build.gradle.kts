@@ -40,6 +40,10 @@ tasks {
     }
 }
 
+tasks.named<JavaExec>("run") {
+    workingDir = layout.projectDirectory.dir("run").asFile
+}
+
 graalvmNative {
     binaries.named("main") {
         imageName = "server"
