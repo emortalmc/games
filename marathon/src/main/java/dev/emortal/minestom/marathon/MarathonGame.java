@@ -17,6 +17,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.ShadowColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.util.HSVLike;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.component.DataComponents;
 import net.minestom.server.coordinate.Point;
@@ -61,6 +62,8 @@ public final class MarathonGame {
     private static final int NEXT_BLOCKS_COUNT = 7;
     public static final Pos RESET_POINT = new Pos(0.5, 150, 0.5);
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("mm:ss");
+    private static final float BASE_SCORE_HUE = 0.8915F;
+    private static final int SCORE_HUE_CYCLE = 350;
     public static final @NotNull Tag<Boolean> MARATHON_ENTITY_TAG = Tag.Boolean("marathonEntity");
 
     private final @NotNull Instance instance;
@@ -261,7 +264,7 @@ public final class MarathonGame {
         String scorePerSecond = this.score < 5 ? "-.-" : String.valueOf(MathUtils.clamp(Math.floor(this.score / secondsTaken * 10.0) / 10.0, 0.0, 9.9));
 
         Component message = Component.text()
-                .append(Component.text(this.score, TextColor.fromHexString("#ff00a6"), TextDecoration.BOLD))
+                .append(Component.text(this.score, this.getScoreColor(), TextDecoration.BOLD))
                 .append(Component.text(" | ", NamedTextColor.DARK_GRAY).shadowColor(ShadowColor.none()))
                 .append(Component.text(formattedTime, NamedTextColor.GRAY))
                 .append(Component.text(" | ", NamedTextColor.DARK_GRAY).shadowColor(ShadowColor.none()))
@@ -275,6 +278,11 @@ public final class MarathonGame {
 //                Component.text(score, MARATHON_COLOR),
 //                Title.Times.times(Duration.ZERO, Duration.ofMillis(600), Duration.ofMillis(200))
 //        ));
+    }
+
+    private @NotNull TextColor getScoreColor() {
+        float hue = (BASE_SCORE_HUE + (float) this.score / SCORE_HUE_CYCLE) % 1.0F;
+        return TextColor.color(HSVLike.hsvLike(hue, 1.0F, 1.0F));
     }
 
     private void generateNextBlock(boolean shouldAnimate) {
