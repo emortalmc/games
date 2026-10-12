@@ -2,8 +2,8 @@ package dev.emortal.minestom.lobby.features;
 
 import dev.emortal.bbstom.BBAnimation;
 import dev.emortal.bbstom.BBModel;
-import dev.emortal.bbstom.renderer.BlockbenchPlayerRenderer;
 import dev.emortal.minestom.lobby.emote.Emote;
+import dev.emortal.minestom.lobby.emote.EmoteRenderer;
 import dev.emortal.minestom.lobby.util.entity.BetterEntity;
 import dev.emortal.minestom.lobby.util.entity.BetterLivingEntity;
 import dev.emortal.minestom.lobby.util.entity.InteractionEntity;
@@ -131,10 +131,10 @@ public final class HotelReceptionistFeature implements LobbyFeature {
 
         BBAnimation spin = Emote.MODEL.getAnimationByName("zakspin");
         String torsoUUID = Emote.MODEL.getElementUUID("Body");
-        BlockbenchPlayerRenderer renderer = new BlockbenchPlayerRenderer(Emote.MODEL, spin, instance, pos.withYaw(90f), ZAK_SKIN);
+        EmoteRenderer renderer = new EmoteRenderer(Emote.MODEL, spin, instance, pos.withYaw(90f), "emortaldev");
         renderer.render();
 
-        Quaternionf rot = new Quaternionf(0, 0, 0, 1).rotateX((float) Math.toRadians(-20));
+        Quaternionf rot = new Quaternionf().rotateX((float) Math.toRadians(-20));
 
         instance.scheduler().buildTask(() -> {
             float time = renderer.getCurrentTime();

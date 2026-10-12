@@ -20,6 +20,7 @@ dependencies {
 
 //    implementation("dev.lu15:spark-minestom:1.10-SNAPSHOT")
 
+    implementation("io.github.toxicity188:dynamicuv:1.2.2")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.0")
 }

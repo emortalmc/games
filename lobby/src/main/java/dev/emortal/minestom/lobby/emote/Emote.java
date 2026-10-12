@@ -1,7 +1,6 @@
 package dev.emortal.minestom.lobby.emote;
 
 import dev.emortal.bbstom.BBModel;
-import dev.emortal.bbstom.renderer.BlockbenchPlayerRenderer;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.sound.SoundStop;
@@ -72,13 +71,13 @@ public class Emote {
 
         private final Player player;
         private final Type emote;
-        private final BlockbenchPlayerRenderer renderer;
+        private final EmoteRenderer renderer;
         public EmoteTask(Player player, Type emote) {
             this.player = player;
             this.emote = emote;
             PlayerSkin skin = player.getSkin();
-            if (skin == null) skin = PlayerSkin.fromUsername("emortaldev");
-            this.renderer = new BlockbenchPlayerRenderer(MODEL, MODEL.getAnimationByName(emote.animationName), player.getInstance(), player.getPosition(), skin);
+            if (skin == null) this.renderer = new EmoteRenderer(MODEL, MODEL.getAnimationByName(emote.animationName), player.getInstance(), player.getPosition(), "emortaldev");
+            else this.renderer = new EmoteRenderer(MODEL, MODEL.getAnimationByName(emote.animationName), player.getInstance(), player.getPosition(), skin);
 
             this.originalPos = player.getPosition();
 
@@ -94,7 +93,7 @@ public class Emote {
 
             renderer.setPosition(player.getPosition());
 
-            if (!player.isOnline() || stop || !this.renderer.getTorso().getInstance().getUuid().equals(instance.getUuid())) {
+            if (!player.isOnline() || stop || !this.renderer.getFigure().getInstance().getUuid().equals(instance.getUuid())) {
                 stop();
                 return TaskSchedule.stop();
             }
