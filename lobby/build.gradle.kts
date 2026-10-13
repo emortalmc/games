@@ -17,7 +17,8 @@ dependencies {
     implementation(project(":core"))
 
     implementation("com.alibaba.fastjson2:fastjson2:2.0.61")
-    implementation("com.github.EmortalMC:BBStom:fd3d436826")
+    implementation("com.github.EmortalMC:BBStom:4da8fefc98")
+//    implementation("dev.emortal:bbstom:local")
     implementation("org.joml:joml:1.10.8")
 }
 

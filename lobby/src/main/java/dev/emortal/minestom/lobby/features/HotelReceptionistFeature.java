@@ -131,7 +131,7 @@ public final class HotelReceptionistFeature implements LobbyFeature {
 
         BBAnimation spin = Emote.MODEL.getAnimationByName("zakspin");
         String torsoUUID = Emote.MODEL.getElementUUID("Body");
-        EmoteRenderer renderer = new EmoteRenderer(Emote.MODEL, spin, instance, pos.withYaw(90f), "emortaldev");
+        EmoteRenderer renderer = new EmoteRenderer(Emote.MODEL, spin, instance, pos.withYaw(90f), ZAK_SKIN);
         renderer.render();
 
         Quaternionf rot = new Quaternionf().rotateX((float) Math.toRadians(-20));
