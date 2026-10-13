@@ -252,7 +252,8 @@
           "parameterTypes": [
             "java.lang.String",
             "java.lang.String",
-            "dev.emortal.bbstom.BBKeyframe[]"
+            "dev.emortal.bbstom.BBKeyframe[]",
+            "boolean"
           ]
         }
       ]
