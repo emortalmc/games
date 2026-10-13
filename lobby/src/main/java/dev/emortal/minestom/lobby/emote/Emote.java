@@ -78,6 +78,7 @@ public class Emote {
             PlayerSkin skin = player.getSkin();
             if (skin == null) this.renderer = new EmoteRenderer(MODEL, MODEL.getAnimationByName(emote.animationName), player.getInstance(), player.getPosition(), "emortaldev");
             else this.renderer = new EmoteRenderer(MODEL, MODEL.getAnimationByName(emote.animationName), player.getInstance(), player.getPosition(), skin);
+            this.renderer.setAnimationSpeed(emote.animationSpeed);
 
             this.originalPos = player.getPosition();
 
@@ -134,13 +135,17 @@ public class Emote {
         BOOGIE_DOWN("Boogie Down", Key.key("emote.song.boogiedown"), 357, false, "boogiedown"),
         GANGNAM_STYLE("Gangnam Style", Key.key("emote.song.gangnamstyle"), 286, false, "gangnam"),
         SKEDADDLE("Skedaddle", null, 0, true, "skedaddle"),
-        REANIMATED("Reanimated", Key.key("emote.song.reanimated"), 194, false, "reanimated");
+        REANIMATED("Reanimated", Key.key("emote.song.reanimated"), 194, false, "reanimated"),
+        STURDY("Sturdy", null, 0, false, "sturdy"),
+        DRLIVESEY("Dr. Livesey", Key.key("emote.song.drlivesey"), 80, true, "drlivesey", 1.06f),
+        ;
 
         private final String friendlyName;
         private final Key soundKey;
         private final int soundTicks;
         private final boolean allowMovement;
         private final String animationName;
+        private final float animationSpeed;
 
         Type(String friendlyName, Key soundKey, int soundTicks, boolean allowMovement, String animationName) {
             this.friendlyName = friendlyName;
@@ -148,6 +153,16 @@ public class Emote {
             this.soundTicks = soundTicks;
             this.allowMovement = allowMovement;
             this.animationName = animationName;
+            this.animationSpeed = 1f;
+        }
+
+        Type(String friendlyName, Key soundKey, int soundTicks, boolean allowMovement, String animationName, float animationSpeed) {
+            this.friendlyName = friendlyName;
+            this.soundKey = soundKey;
+            this.soundTicks = soundTicks;
+            this.allowMovement = allowMovement;
+            this.animationName = animationName;
+            this.animationSpeed = animationSpeed;
         }
 
         public String getFriendlyName() {
@@ -164,6 +179,10 @@ public class Emote {
 
         public boolean getAllowMovement() {
             return allowMovement;
+        }
+
+        public float getAnimationSpeed() {
+            return animationSpeed;
         }
     }
 
