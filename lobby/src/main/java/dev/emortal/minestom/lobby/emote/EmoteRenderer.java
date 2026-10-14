@@ -86,8 +86,12 @@ public class EmoteRenderer extends AnimationRenderer {
                 if (headDisplay == null) return TaskSchedule.tick(1);
                 renderEntity(yawQuat, model, animation, headDisplay, headUUID, time);
                 renderEntity(yawQuat, model, animation, figure.getDisplay(prefix + "body"), bodyUUID, time);
-                renderEntity(yawQuat, model, animation, figure.getDisplay(prefix + "left_arm"), leftArmUUID, time);
-                renderEntity(yawQuat, model, animation, figure.getDisplay(prefix + "right_arm"), rightArmUUID, time);
+                Entity leftArm = figure.getDisplay(prefix + "left_arm");
+                if (leftArm == null) leftArm = figure.getDisplay(prefix + "left_arm_slim");
+                Entity rightArm = figure.getDisplay(prefix + "right_arm");
+                if (rightArm == null) rightArm = figure.getDisplay(prefix + "right_arm_slim");
+                renderEntity(yawQuat, model, animation, leftArm, leftArmUUID, time);
+                renderEntity(yawQuat, model, animation, rightArm, rightArmUUID, time);
                 renderEntity(yawQuat, model, animation, figure.getDisplay(prefix + "left_leg"), leftLegUUID, time);
                 renderEntity(yawQuat, model, animation, figure.getDisplay(prefix + "right_leg"), rightLegUUID, time);
 
