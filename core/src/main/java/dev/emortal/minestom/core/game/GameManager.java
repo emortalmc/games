@@ -79,6 +79,7 @@ public final class GameManager implements GameProvider {
         LOGGER.info("Game {} finished", game.getCreationInfo());
 
         this.removeGame(game);
+        EmortalServer.sendGameNumPlayersMessage();
 //        switch (this.config.finishBehaviour()) {
 //            case LOBBY -> Entrypoint.getRedis().sendToLobby(playersToUuids(game.getPlayers()));
 //            case REQUEUE -> {} // TODO: this

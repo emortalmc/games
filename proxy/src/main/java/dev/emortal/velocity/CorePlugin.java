@@ -110,6 +110,7 @@ public final class CorePlugin {
             value.remove(uuid);
         }
         gameOnlinePlayers.remove(uuid);
+        this.redis.sendMessage(Channel.ALL, new NumPlayersMessage(sumOnlinePlayers()));
     }
 
 

@@ -113,7 +113,6 @@ public final class ServerSelector {
     private void updatePlayerCounts(@NotNull Map<String, Integer> playerCounts) {
         for (GameModeConfig config : configs) {
             if (!config.enabled()) continue;
-            if (config.displayItem() == null) continue;
 
             int online = playerCounts.getOrDefault(config.fleetName(), 0);
 
